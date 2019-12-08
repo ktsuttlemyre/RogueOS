@@ -1,0 +1,207 @@
+#!/bin/bash
+set -e 
+set -o pipefail
+
+
+
+is_url(){
+    regex='(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
+    if [[ "$1" =~ $regex ]]
+    then 
+        return 0
+    else
+        return 1
+    fi
+}
+
+#https://stackoverflow.com/questions/6250698/how-to-decode-url-encoded-string-in-shell
+urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+
+#"Droid Sans Mono for Powerline Nerd Font Complete.otf"
+#https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+#TODO add patching ability. maybe list all fonts availble.
+install_font(){ #currently only supports nerd fonts pre patched
+    LOCATION="$1" #path or url
+    NAME=$(basename "$LOCATION")
+
+    mkdir -p ~/.local/share/fonts
+
+    if [[ -d $LOCATION ]]; then #diretory
+        cp "$LOCATION/*" "~/.local/share/fonts/"
+    elif [[ -f $PASSED ]]; then #is a file
+        cp "$LOCATION" "~/.local/share/fonts/$LOCATION"
+    elif is_url "$LOCATION"; then #url
+        NAME=urldecode "$NAME"
+        HUMAN_NAME="${NAME%.*}"
+        curl -fLo "~/.local/share/fonts/$NAME" "$LOCATION"
+    else
+        echo "$LOCATION is not valid"
+        exit 1
+    fi
+
+    #reload cache
+    fc-cache -fv
+
+    echo "Font Installed"
+    return 0
+}
+
+#https://askubuntu.com/questions/181850/change-font-programmatically-for-gtk3-textview-quickly-widgets-texteditor
+set_font(){
+
+}
+
+set_theme(){
+    lxappearance
+
+    i3-msg reload
+}
+
+online(){
+    url=${1:-google.com}
+    if ! curl --output /dev/null \
+     --silent \
+     --head \
+     --fail \
+     --connect-timeout 5 \
+     --max-time 10 \
+     --retry 5 \
+     --retry-delay 0 \
+     --retry-max-time 40 \
+     "$url"; then
+        exit 1
+    fi
+    # --max-time 10     (how long each retry will wait)
+    # --retry 5         (it will retry 5 times)
+    # --retry-delay 0   (an exponential backoff algorithm)
+    # --retry-max-time  (total time before it's considered failed)
+}
+
+is_pi(){
+    #accepted arguments nothing (returns if it is a pi or not)
+    #zero, one, two, three, four
+    #if number (word) follows see if it is that pi type
+    if [[ -z "${$1}" ]]; then
+        sudo raspi-config nonint "is_pi$1"
+        return $?
+    else #if no arguments then see if it is a pi
+        sudo raspi-config nonint is_pi
+        return $?
+    fi
+}
+
+spotlight(){
+    grep --exclude-dir proc --exclude-dir  sys --exclude-dir  dev --color=always -rnwI "$1" -e "$2" | less -R
+}
+
+run-menu(){
+    PIDS=pidof i3-dmenu-desktop
+    if $?; then
+        i3-dmenu-desktop
+    else
+        pkill i3-dmenu-desktop
+    fi
+}
+
+detect_device(){
+    case $1 in
+      keyboard)
+        ls /dev/input/by-id/ | grep "kbd$"
+        ;;
+
+      mouse)
+        ls /dev/input/by-id/ | grep "mouse$"
+        ;;
+
+      display)
+        echo "not implemented"
+        #TODO
+        #/sys/devices/virtual/vtconsole/vtcon0/ # dummy
+        #/sys/devices/virtual/vtconsole/vtcon1/ #monitor?
+        ;;
+
+      *)
+        echo -n "unknown"
+        ;;
+    esac
+}
+
+confirm_prompt(){
+    read -p "$1" -n 1 -r
+    echo    # (optional) move to a new line
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+#if no arguments
+if [ $# -eq 0 ]; then
+    #if not RogueOS
+    if [[ -z "${ROGUEOS}" ]]; then
+        if confirm_prompt "Would you like to install RogueOS?"; then
+            . ./install.sh
+        else
+            [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
+        fi
+    fi
+fi
+#we have arguments!
+
+
+#https://stackoverflow.com/questions/85880/determine-if-a-function-exists-in-bash
+isFunction() { declare -Ff "$1" >/dev/null; }
+
+
+#args
+
+SET_VAR(){
+
+}
+
+#https://unix.stackexchange.com/questions/364495/sed-function-to-replace-any-config-file-entry
+SET_EXISTING_VAR() {
+    FILE="$1"
+    VAR="$2"
+    VAL="$3"
+
+    #detect changes
+    #TODO (this could be done a better way but for now this works)
+    HASH=$(md5sum "$FILE")
+    sed -i "s/^\($VAR\s*=\s*\).*\$/\1$VAL/" "$FILE"
+    EXITCODE=$?
+    if [ "$HASH" != $(md5sum "$FILE") ]; then
+        return 1
+    else
+        returf EXITCODE
+    }
+
+}
+
+GET_VAR()k
+    FILE=""
+    VAR=""
+
+}
+
+
+#use argqments to run a function
+if isFunction "$1"; then
+    ${@}"
+    exit $?
+fi
+
+
+#if we are .ot rUnning on rogue os
+if [S -z "${ROGUEOS}" ]]; then
+    #Not rmgueOS
+else
+    #on rogue os
+fi
+
+
+
+
+
+
