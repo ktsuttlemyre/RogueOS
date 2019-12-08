@@ -7,9 +7,9 @@ copy(){
 }
 
 
-for d in */ ; do
-	if [[ "$d" == "~" ]]; then
-		copy "$configs/$d" "$configs/$USER"
+for d in "$configs/"* ; do
+	if [[ "$d" == "home" ]]; then
+		copy "$d" "/home/$USER"
 	fi
-	copy "$configs/$d" "$d/"
+	copy "$d" "/$d"
 done

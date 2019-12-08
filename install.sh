@@ -10,6 +10,23 @@ FOURIER="YES"
 
 BASE_DIR="./installs"
 
+confirm_prompt(){
+    read -p "$1" -n 1 -r
+    echo    # (optional) move to a new line
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+if [ -f /usr/local/bin/rogueOS ]; then
+	if confirm_prompt "Would you like to reset configs?"; then
+		
+	fi
+fi
+
+
 # Bash Menu Script Example
 PS3='Choose what build you would like to start with: '
 options=("HEADLESS" "BASE_DTE" "RICE" "Quit")

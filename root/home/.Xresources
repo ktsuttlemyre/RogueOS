@@ -1,0 +1,3 @@
+URxvt.foreground: rgb:a8/a8/a8
+URxvt.background: rgb:00/00/00
+URxvt.scrollBar: false
