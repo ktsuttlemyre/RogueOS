@@ -1,0 +1,91 @@
+#todo SEE IF THIS EXISTS AND RUN IT
+sudo ubuntu-drivers autoinstall
+sudo apt-get install exfat-fuse exfat-utils
+
+
+
+#https://unix.stackexchange.com/questions/963/how-to-verify-if-hardware-acceleration-is-enabled
+#todo make this a docker image?
+sudo apt-get install mesa-utils
+#todo see if this says yes and fix it so it says yes
+glxinfo | grep "direct rendering"
+echo "If this is lubntu or xlde go to window effects > other > and turn on GLX before continuing"
+read -n 1 -s -r -p "Press any key to continue"
+
+#control mouse with arrowkeys when you press 
+#https://forum.lxde.org/viewtopic.php?t=31747
+sudo apt-get -y install xwit xdotool
+
+#snap windows to edges
+sudo add-apt-repository ppa:lawl/opensnap
+sudo apt-get update && sudo apt-get install opensnap
+sudo leafpad /etc/xdg/lxsession/Lubuntu/autostart
+
+########
+# add apps 
+#######
+
+#https://askubuntu.com/questions/79280/how-to-install-chrome-browser-properly-via-command-line
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
+sudo sh -c 'echo "deb https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+sudo apt-get update
+sudo apt-get install -y google-chrome-stable
+
+wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add - &&
+apt-get install -y apt-transport-https &&
+echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list &&
+apt-get update && apt-get install -y sublime-text sublime-merge
+
+
+sudo apt-get -y install curl
+
+#install docker https://medium.freecodecamp.org/the-easy-way-to-set-up-docker-on-a-raspberry-pi-7d24ced073ef
+curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
+#if docker group doesn't exist. Add it
+if [  $(getent group docker) ]; then
+  echo "adding docker group"
+  sudo groupadd docker
+  sudo gpasswd -a $USER docker
+  newgrp docker
+fi
+
+#install docker compose via a  container itself
+docker run \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v "$PWD:/rootfs/$PWD" \
+    -w="/rootfs/$PWD" \
+    docker/compose:1.13.0 up
+#Next, make an alias to docker compose
+echo alias docker-compose="'"'docker run \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v "$PWD:/rootfs/$PWD" \
+    -w="/rootfs/$PWD" \
+    docker/compose:1.13.0'"'" >> ~/.bashrc
+#Then reload bash
+. ~/.bashrc
+
+#https://github.com/mviereck/x11docker#installation
+curl -fsSL https://raw.githubusercontent.com/mviereck/x11docker/master/x11docker | sudo bash -s -- --update
+
+
+docker pull erichough/kodi
+
+x11docker --xorg                                 \
+            --pulseaudio                           \
+            --gpu                                  \
+            --homedir /home/kyles      \
+            erichough/kodi
+
+
+x11docker --xorg                                 \
+            --vt 7                                 \
+            --pulseaudio                           \
+            --wm none                              \                
+            --gpu                                  \
+            --homedir /home/kyles      \
+            erichough/kodi
+
+#        -- -v /host/path/to/media:/media:ro -- \
+
+
+

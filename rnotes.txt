@@ -1,0 +1,239 @@
+#i3 todo stuff
+    #i3 minimal install
+    https://ericren.me/posts/2019-01-27-minimal-ubuntu-tiling-wm-setup/
+
+
+    #decide on tabs or new work spaces
+    if new workspace then figure how to script it
+    https://www.google.com/search?q=i3+open+window+in+new+workspace
+
+
+    #screenshot area
+    https://www.reddit.com/r/linux/comments/9u285g/after_a_lot_of_frustration_with_various/
+
+    #phi layout
+    https://www.google.com/search?q=i3+split+window+unevenly
+    #this guy alternates v and h every window open so i can leverage this event to resize mine
+    https://www.reddit.com/r/i3wm/comments/1sdc39/alternating_horizontal_and_vertical_splitting/
+    https://github.com/olemartinorg/i3-alternating-layout
+    #resizing keyboard only
+    https://unix.stackexchange.com/questions/255344/resizing-windows-in-i3-using-keyboard-only
+    #other information
+    https://www.reddit.com/r/i3wm/comments/bzwnwl/set_window_splitting_sequence_such_that_screen_is/
+    https://apiumhub.com/tech-blog-barcelona/golden-ratio-in-web-design/
+
+    python libraries
+    https://github.com/ziberna/i3-py
+    #should probably use this one instead
+    https://github.com/altdesktop/i3ipc-python
+
+
+    #Mouse
+    #move mouse around edges of monitors that dont line up properly uses xdotool
+    https://askubuntu.com/questions/585296/is-there-a-way-to-run-a-command-every-time-the-mouse-moves
+    #mouse wrap
+    https://forum.xfce.org/viewtopic.php?id=9768
+
+    #layouts
+    https://github.com/talwrii/i3-clever-layout
+    https://www.reddit.com/r/i3wm/comments/808685/create_your_own_i3_layouts_that_are_actually/
+
+    #focus magnify bounce?
+
+    #focus turns window float and extends it by a small percentage
+
+    #use i3 specifically as floating (could set this as a workspace?)
+    https://www.reddit.com/r/i3wm/comments/8s6xrz/floating_windows_in_i3/
+
+    #compton must be turned off for fullscreen (games) when using multi monitors
+
+    #configuration git project i should think about using
+    https://github.com/anishathalye/dotbot
+
+    #i3lock customization
+    simple wallpaper
+    https://faq.i3wm.org/question/274/use-desktop-wallpaper-as-i3lock-image.1.html
+    #better lockscreen
+    https://www.reddit.com/r/unixporn/comments/7iddwn/i3lock_faster_and_better_lockscreen/
+    https://github.com/pavanjadhaw/betterlockscreen
+
+    #i3 save state
+    #i3 only partly saves state to be loaded again.
+    #https://i3wm.org/docs/layout-saving.html
+    # This script will clean up that save state and allow it to be automated
+    https://github.com/klaxalk/i3-layout-manager
+
+    #Windows version
+    https://superuser.com/questions/10347/what-tiling-window-manager-for-windows-do-you-recommend
+    https://github.com/fuhsjr00/bug.n/tree/master/doc
+
+    #alternate bars
+    https://github.com/geommer/yabar
+    #might should use this bar instaead
+    https://polybar.github.io/
+
+    #compton
+    https://github.com/chjj/compton
+
+    #animation
+    #xdotool
+    https://www.reddit.com/r/unixporn/comments/92guq6/i3polybar_animated_polybar_drop_down_menus/
+    #python c module called xautomation
+    https://unix.stackexchange.com/questions/199325/what-are-the-differences-between-xdotool-and-xautomation
+
+    #xdotool can also get the id under the mouse. Use this for hover interactions on the statusbar
+    #you can also use XQueryPointer directly in python for more programming refinement
+    https://unix.stackexchange.com/questions/16131/how-do-i-find-the-x-window-id-under-the-mouse-pointer-in-bash/70749
+
+    #xdotool also does hot corners
+    https://askubuntu.com/questions/1060170/xdotool-what-are-class-and-classname-for-a-window
+
+    https://unix.stackexchange.com/questions/179743/xdotool-how-to-get-window-id-given-its-x-and-y
+
+
+    #make rofi act like alt tab menu
+    https://www.reddit.com/r/i3wm/comments/95b2hx/alttab_like_behavior/
+    bindsym Mod1+Tab exec --no-startup-id rofi -modi combi -combi-modi window -show combi
+
+
+TODO make modifier click alone show rofi
+  https://www.reddit.com/r/i3wm/comments/7svdfw/is_it_possible_to_create_a_bindsym_on_the_mod_key/
+
+  tool
+  https://wiki.archlinux.org/index.php/Keyboard_input#Identifying_keycodes_in_Xorg
+  #hack using keyboard redirect xcape
+  https://www.reddit.com/r/i3wm/comments/71hd3z/set_bindsym_on_single_mod_press/
+
+Cursor
+  #install unclutter
+
+  find cursor
+  https://unix.stackexchange.com/questions/183910/highlight-current-mouse-position
+  https://github.com/arp242/find-cursor
+
+
+compton
+  make sure to add event to turn compton on and off when a window goes fullscreen
+  also run compton with this ruleset (comes from above cursor find program)
+  compton --shadow-exclude 'bounding_shaped'
+  #todo find other dot files and find their window management rulesets for float windows and compton exclusions and compile them into a list
+
+
+#RogueOS stuff
+    #rasbian
+      advanced quick start
+      https://www.raspberrypi.org/forums/viewtopic.php?p=890408#p890408
+
+      # readonly
+      https://www.raspberrypi.org/blog/adafruits-read-only/
+      https://learn.adafruit.com/read-only-raspberry-pi/
+      http://reboot.pro/topic/14547-linux-load-your-root-partition-to-ram-and-boot-it/
+      https://www.google.com/search?q=x11+from+ram
+
+      run x11 wo wm or desktop
+      https://linuxconfig.org/how-to-run-x-applications-without-a-desktop-or-a-wm
+
+      #adafruit installers
+      https://github.com/adafruit/Raspberry-Pi-Installer-Scripts
+
+      #raspberian lite vs raspberian
+      https://www.reddit.com/r/raspberry_pi/comments/885ixk/is_the_only_difference_between_raspbian_and/
+      https://n8henrie.com/2017/09/list-of-default-packages-on-raspbian-stretch-and-stretch-lite/
+
+      http://downloads.raspberrypi.org/raspbian_full/images/raspbian_full-2019-09-30/2019-09-26-raspbian-buster-full.info
+      http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-09-30/2019-09-26-raspbian-buster-lite.info
+
+      ###raspberrypi downloads ftp site
+      http://downloads.raspberrypi.org/
+
+    #pihole
+    https://github.com/pi-hole/docker-pi-hole
+
+    #wifi to ethernet
+
+    #ethernet to wifi
+
+    #kodi
+    https://hub.docker.com/r/codafog/kodi-rpi/
+
+    #steamlink
+    https://github.com/xsamurai/steamlink/tree/master/docker
+
+    #general server and docker ideas!!!!! LOOK AT THIS ONE!
+    https://jordancrawford.kiwi/rpi-home-server/
+    https://jordancrawford.kiwi/home-server-without-portforward/
+
+    #voice 2 text
+
+    #text 2 voice
+
+    #phone control
+
+    #kubernetes?
+    i might need this especailly if i make it read only
+
+    #emulators
+    RetroArch
+    https://retropie.org.uk/forum/topic/23738/difference-between-retropie-and-lakka/2
+    https://www.smarthomebeginner.com/recalbox-vs-retropie/
+    https://retropie.org.uk/forum/topic/8171/retropie-into-a-docker-container/6
+    https://github.com/waltisfrozen/retropie-docker
+
+    #docker
+    https://www.freecodecamp.org/news/the-easy-way-to-set-up-docker-on-a-raspberry-pi-7d24ced073ef/
+
+    #Xpra+docker
+    https://xpra.org/trac/wiki/Usage/Docker
+    https://hub.docker.com/r/mgtsai/dockerui.base-xpra/
+
+    https://github.com/JAremko/docker-x11-bridge
+    https://github.com/retog/docker-x11-xpra
+    https://hub.docker.com/r/enricomariam42/x11-xpra/
+
+
+    Security
+    #https://subuser.org/
+
+
+#research
+https://unix.stackexchange.com/questions/14085/x-xorg-and-d-bus-what-is-the-difference
+
+
+Toggle i3status between invisible and dock 
+#!/usr/bin/env sh
+# i3bar appears in tree iff it is in dock mode.
+if i3-msg -t get_tree | grep -Fq '"class":"i3bar"'; then
+    i3-msg bar mode invisible
+else
+    i3-msg bar mode dock
+fi
+
+
+RogueOS requrements
+bash - os glue code
+python - kodi i3(sorta)
+nodejs - my ideal language
+go - kubernetes
+
+
+
+TODO make rogueos menu-key $mod grave a thing
+  #xcape will map one key to another. This is how we make the mod key work as a key in i3
+  #currently clicking mod will make it press $mod+grave which is mapped to the dmenu
+  #xcape key mappings (i3 might use this too)
+  #https://www.cl.cam.ac.uk/~mgk25/ucs/keysymdef.h
+
+
+ssl hacks
+https://www.freecodecamp.org/news/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec/
+
+#rediect if ssl isnt in keychain
+https://stackoverflow.com/questions/2618944/check-in-javascript-if-a-ssl-certificate-is-valid
+
+add ca on osx, windows, linux
+https://manuals.gfi.com/en/kerio/connect/content/server-configuration/ssl-certificates/adding-trusted-root-certificates-to-the-server-1605.html
+
+
+add CA to android
+https://support.securly.com/hc/en-us/articles/212869927-How-to-install-Securly-SSL-certificate-on-Android-device-
+https://www.lastbreach.com/blog/importing-private-ca-certificates-in-android

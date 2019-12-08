@@ -1,0 +1,18 @@
+#!/bin/bash
+#https://askubuntu.com/questions/882659/super-and-arrow-key-has-started-switching-tty
+#https://unix.stackexchange.com/questions/16530/what-is-raw-keyboard-mode/16555#16555
+#https://askubuntu.com/questions/202416/how-to-give-control-over-keyboard-back-to-x-server-after-alt-sysrq-r-trick
+#raspberry pi seems to put the keyboard in an unknown state. Fix that by setting it to RAW
+#    -s: scancode mode (RAW),
+#    -k: keycode mode (MEDIUMRAW),
+#    -a: ASCII mode (XLATE),
+#    -u: UTF-8 mode (UNICODE).
+#this file will run on start of any x11 session and when i3 runs
+
+
+autorun(){
+	#TODO figure out if x11 or i3 opened and take that as a conditional
+	pidof "$1" && "$1" &&
+}
+autorun autocutsel
+sudo kbd_mode -s & #-C /dev/tty7

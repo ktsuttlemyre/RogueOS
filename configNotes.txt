@@ -1,0 +1,405 @@
+#https://www.google.com/search?q=i3+config+dotfiles+github
+#https://github.com/maximbaz/dotfiles
+#https://github.com/jayywolff/dotfiles
+#https://github.com/Olical/dotfiles
+
+
+https://faq.i3wm.org/question/150/how-to-launch-a-terminal-from-here/%3C/p%3E.html
+https://unix.stackexchange.com/questions/32508/how-can-i-open-a-new-terminal-in-the-same-directory-of-the-last-used-one-from-a
+
+#default keyboard repeat is too slow for me
+exec xset r rate 175 25
+
+popup_during_fullscreen smart
+
+
+#normal|none|pixel <px>
+default_border normal
+#normal|none|pixel <px>
+default_floating_border normal
+
+
+# Start background processes.
+exec --no-startup-id nm-applet
+exec --no-startup-id gnome-keyring-daemon --start --components=pkcs11,secrets,ssh
+exec --no-startup-id (/usr/lib/geoclue-2.0/demos/agent | redshift-gtk)
+exec --no-startup-id pa-applet
+exec --no-startup-id parcellite
+#https://github.com/Olical/dotfiles/blob/master/i3/.i3/compton.conf
+exec --no-startup-id compton --config ~/.i3/compton.conf -b
+exec --no-startup-id thunar --daemon
+#https://github.com/Olical/dotfiles/tree/master/i3/.i3
+exec --no-startup-id xautolock -time 10 -locker "~/.i3/locker.sh"
+
+#https://github.com/Olical/dotfiles/tree/master/i3/.i3
+# Power management
+set $Locker ~/.i3/locker.sh
+set $Docker ~/.i3/docker.sh
+
+
+
+#edit gaps mode
+#########################################################################
+set $mode_gaps Gaps: (o) outer, (i) inner
+set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
+bindsym $mod+Shift+g mode "$mode_gaps"
+mode "$mode_gaps" {
+        bindsym o      mode "$mode_gaps_outer"
+        bindsym i      mode "$mode_gaps_inner"
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+mode "$mode_gaps_inner" {
+        bindsym plus  gaps inner current plus 5
+        bindsym minus gaps inner current minus 5
+        bindsym 0     gaps inner current set 0
+
+        bindsym Shift+plus  gaps inner all plus 5
+        bindsym Shift+minus gaps inner all minus 5
+        bindsym Shift+0     gaps inner all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_outer" {
+        bindsym plus  gaps outer current plus 5
+        bindsym minus gaps outer current minus 5
+        bindsym 0     gaps outer current set 0
+
+        bindsym Shift+plus  gaps outer all plus 5
+        bindsym Shift+minus gaps outer all minus 5
+        bindsym Shift+0     gaps outer all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+##########################################################################
+
+
+
+#AUTOSTART STUFF
+exec --no-startup-id bash ~/dotfiles/scripts/display_setup.sh
+exec --no-startup-id redshift
+exec_always --no-startup-id feh --bg-scale ~/Pictures/wallpaper.*
+#https://github.com/jayywolff/dotfiles/blob/master/.config/i3/i3-autoname-workspaces.py
+exec_always --no-startup-id  python3 ~/.config/i3/i3-autoname-workspaces.py
+
+# Move workspace between displays
+bindsym $mod+Shift+$sup+l move workspace to output right
+bindsym $mod+Shift+$sup+h move workspace to output left
+
+# Start a launcher (=)(d)(o)(t)(p)
+bindcode $hyper+21 fullscreen disable, exec "pgrep -x rofi && pkill rofi || rofi-calc"
+bindcode $hyper+40 fullscreen disable, exec "pgrep -x rofi && pkill rofi || rofi -normal-window -show drun"
+bindcode $hyper+32 fullscreen disable, exec "pgrep -x rofi && pkill rofi || rofi -normal-window -show window"
+bindcode $hyper+28 fullscreen disable, exec "pgrep -x rofi && pkill rofi || rofimoji --rofi-args='-normal-window -matching normal -columns 3'"
+bindcode $hyper+33 exec "passmenu"
+
+
+# Sreen brightness controls
+bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
+bindsym XF86MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
+
+# Media player controls
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
+# Media keys
+bindsym XF86AudioMute         exec py3-cmd click 1 volume_status
+bindsym XF86AudioRaiseVolume  exec py3-cmd click 4 volume_status
+bindsym XF86AudioLowerVolume  exec py3-cmd click 5 volume_status
+bindsym XF86MonBrightnessUp   exec set-brightness inc
+bindsym XF86MonBrightnessDown exec set-brightness dec
+bindsym XF86AudioPlay         exec playerctl -p $(tail -1 /tmp/player-last) play-pause
+bindsym XF86AudioNext         exec playerctl -p $(tail -1 /tmp/player-last) next
+
+
+# Volume control. Since I change sinks so frequently, do it for a lot
+bindsym Control+$sup+Up exec "pactl set-sink-volume 0 +5% && pactl set-sink-volume 1 +5% && pactl set-sink-volume 2 +5%"
+bindsym Control+$sup+Down exec "pactl set-sink-volume 0 -5% && pactl set-sink-volume 1 -5% && pactl set-sink-volume 2 -5%"
+bindsym Control+$sup+Left exec "pactl set-sink-mute 0 toggle && pactl set-sink-mute 1 toggle && pactl set-sink-mute 2 toggle"
+
+
+#use "xmodmap -pke" to get list of special keys
+#custom special key fixes
+
+#audio controls
+bindsym XF86AudioRaiseVolume exec pulsemixer --change-volume +5
+bindsym XF86AudioLowerVolume exec pulsemixer --change-volume -5
+bindsym XF86AudioMute exec pulsemixer --toggle-mute
+bindsym $mod+equal exec pulsemixer --change-volume +5
+bindsym $mod+minus exec pulsemixer --change-volume -5
+bindsym $mod+0 exec pulsemixer --toggle-mute
+
+#cmus controls
+bindsym $mod+p exec cmus-remote --pause
+bindsym $mod+bracketleft exec cmus-remote --prev
+bindsym $mod+bracketright exec cmus-remote --next
+bindsym $mod+Shift+bracketleft exec cmus-remote -C "seek -10"
+bindsym $mod+Shift+bracketright exec cmus-remote -C "seek +10"
+
+#backlight controls (laptop monitor)
+bindsym XF86MonBrightnessDown exec xbacklight -dec 4
+bindsym XF86MonBrightnessUp exec xbacklight -inc 4
+bindsym $mod+Shift+minus exec xbacklight -dec 4
+bindsym $mod+Shift+plus exec xbacklight -inc 4
+
+bindsym $mod+Ctrl+Escape exec i3lock --blur=2
+bindsym XF86Sleep exec i3lock --blur=4 && echo mem > /sys/power/state
+bindsym XF86TouchpadToggle exec synclient TouchpadOff=$(synclient -l | grep -c 'TouchpadOff.*=.*0')
+bindsym Print exec scrot -e 'mv $f ~/Pictures/screenshots/'
+bindsym $mod+Print exec scrot -u -e 'mv $f ~/Pictures/screenshots/'
+bindsym $mod+Shift+Print exec termite -e "scrot -s -e 'mv \$f ~/Pictures/screenshots/'"
+
+
+bindsym $mod+Tab workspace back_and_forth
+
+
+#-- Configuration --#
+# Specific window configuration
+for_window    [class=".*"]                   sticky enable
+for_window    [window_role="pop-up"]         floating enable
+for_window    [class="Pinentry"]             floating enable
+for_window    [class="copyq"]                floating enable
+for_window    [class="Peek"]                 floating enable
+for_window    [class="Rofi"]                 floating enable
+for_window [class="^.*"] border pixel 2
+for_window [title="^Telegram"] floating enable
+for_window [class="Slack"] floating enable
+for_window [title="^galculator"] floating enable
+#custom app commands (?i) just means case insenitive..
+#for_window [class="(?i)feh"] floating enable
+for_window [class="(?i)pavucontrol"] floating enable
+#for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [title="About Mozilla Firefox"] floating enable
+for_window [title="Library"] floating enable
+for_window [window_role="Preferences"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+# Start more windows floating.
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+
+
+# Programs to workspaces
+assign [class="Thunderbird"]   → $ws1
+assign [class="Firefox"]       → $ws2
+assign [class="Google-chrome"] → $ws4
+assign [class="Steam"]         → $ws6
+
+# Workspaces to displays
+workspace $ws4 output HDMI-1-2
+workspace $ws6 output HDMI-1-2
+
+# Middle button over titlebar kills window (on release)
+#bindsym --release button2 kill
+
+
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
+bar {
+        status_command i3status
+        i3bar_command i3bar -t
+        position top
+        tray_output primary
+
+        colors {
+            background $dark_neutral
+            #background #1d2021a0
+            statusline $tertiary
+            separator $mid_neutral
+
+            # Type             Border   Backgr.  Text
+                                        #ff99ff
+            focused_workspace  $dark_neutral  $dark_neutral  $primary
+            active_workspace   $dark_neutral  $dark_neutral  $light_neutral
+            inactive_workspace $dark_neutral  $dark_neutral  $mid_neutral
+            urgent_workspace   $dark_neutral  $dark_neutral  $secondary
+        }
+
+        separator_symbol "|"
+
+}
+#https://github.com/jayywolff/dotfiles/blob/master/.config/i3/i3blocks.conf
+bar {
+    status_command i3blocks -c ~/.config/i3/i3blocks.conf 2> ~/.config/i3/i3blocks.err
+    strip_workspace_numbers no
+    output primary
+    tray_output primary
+    mode dock
+    position top
+    height 30
+    font pango: Iosevka Nerd Font Regular 16
+    colors {
+        background $back
+        separator $primary
+        statusline $primary
+        focused_workspace $primary $primary $back
+        active_workspace #1D2021 #1D2021 $primary
+        inactive_workspace $back $back $primary
+        urgent_workspace #CC241D #CC241D #EBDBB2
+    }
+}
+
+
+#-- Modes --#
+
+# Suspend, lock, etc.
+set $mode_system SYSTEM (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id $HOME/.scripts/i3exit lock, mode "default"
+    bindsym e exec --no-startup-id $HOME/.scripts/i3exit logout, mode "default"
+    bindsym s exec --no-startup-id $HOME/.scripts/i3exit suspend, mode "default"
+    bindsym h exec --no-startup-id $HOME/.scripts/i3exit hibernate, mode "default"
+    bindsym r exec --no-startup-id $HOME/.scripts/i3exit reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id $HOME/.scripts/i3exit shutdown, mode "default"
+
+    # Back to normal
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym Control+Escape mode "$mode_system"
+
+set $mode_system System (l) lock, (e) logout, (s) suspend, (r) reboot, (S) shutdown, (d|D) dock
+mode "$mode_system" {
+    bindsym l exec --no-startup-id $Locker, mode "default"
+    bindsym e exec --no-startup-id i3-msg exit, mode "default"
+    bindsym s exec --no-startup-id $Locker && sleep 0.25 && systemctl suspend, mode "default"
+    bindsym r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id systemctl poweroff -i, mode "default"
+    bindsym d exec --no-startup-id $Docker, mode "default"
+    bindsym Shift+d exec --no-startup-id $Docker eDP1 --off, mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+shift+p mode "$mode_system"
+
+#ALTERNATE
+#mode "exit: [l]ogout, [r]eboot, [s]hutdown" {
+#  bindsym l exec i3-msg exit
+#  bindsym r exec systemctl reboot
+#  bindsym s exec systemctl shutdown
+#  bindsym Escape mode "default"
+#  bindsym Return mode "default"
+#}
+#bindsym $mod+x mode "exit: [l]ogout, [r]eboot, [s]hutdown"
+#display
+###bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
+
+#3rd ALTERNATE
+https://faq.i3wm.org/question/1262/exiting-i3-without-mouse-click.1.html
+
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym w resize shrink width 10 px or 10 ppt
+        bindsym Shift+h resize grow height 10 px or 10 ppt
+        bindsym h resize shrink height 10 px or 10 ppt
+        bindsym Shift+w resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+
+#-- A E S T H E T I C --#
+# Gaps 
+gaps inner 10
+gaps outer 1
+smart_gaps on
+smart_borders on
+
+# Turn off window titlebar with gaps
+for_window [class="^.*"] border pixel 3
+
+# No borders for single-window containers
+#hide_edge_borders smart_no_gaps
+
+
+https://faq.i3wm.org/question/2332/flexible-monitor-setup.1.html
+
+https://www.donarmstrong.com/posts/autorandr/
+
+# Global hotkeys
+bindcode $win+49 fullscreen disable, exec copyq toggle
+https://hluk.github.io/CopyQ/
+https://github.com/hluk/CopyQ/tree/master/shared/themes
+
+
+# Move workspaces between monitors (m)
+set $mode_workspaces_monitors Move workspace between monitors
+mode "$mode_workspaces_monitors" {
+  # (h)
+  bindcode 43 exec i3-msg move workspace to output left, mode "default"
+  # (l)
+  bindcode 46 exec i3-msg move workspace to output right, mode "default"
+
+  # back to normal: Enter or Escape
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+bindcode $win+58 mode $mode_workspaces_monitors
+
+# Autostart some apps
+
+exec_always "killall picom; picom &"
+exec_always hsetroot -solid '#333333' &
+exec_always numlockx &
+exec_always "pgrep -x unclutter || (unclutter &)"
+exec_always "pgrep -x copyq || (copyq &)"
+exec_always "pgrep -x neomutt || (kitty --class neomutt neomutt &)"
+exec_always "pgrep -x wire-desktop || (wire-desktop &)"
+exec_always "pgrep -x udiskie || (udiskie --smart-tray &)"
+exec_always "pgrep -x playerctl || (playerctl status --format '{{ playerName  }}' --follow > /tmp/player-last &)"
+exec_always xmodmap ~/.Xmodmap
+
+
+
+# Workspaces
+focus_follows_mouse no
+
+
+# Switch to workspace using keypad
+bindcode $numlock+$hyper+87 $workspace1
+bindcode $numlock+$hyper+88 $workspace2
+bindcode $numlock+$hyper+89 $workspace3
+bindcode $numlock+$hyper+83 $workspace4
+bindcode $numlock+$hyper+84 $workspace5
+bindcode $numlock+$hyper+85 $workspace6
+bindcode $numlock+$hyper+79 $workspace7
+bindcode $numlock+$hyper+80 $workspace8
+bindcode $numlock+$hyper+81 $workspace9
+bindcode $numlock+$hyper+90 $workspace0
+
+# Move window to workspace using keypad
+bindcode $numlock+$win+87 move container to $workspace1
+bindcode $numlock+$win+88 move container to $workspace2
+bindcode $numlock+$win+89 move container to $workspace3
+bindcode $numlock+$win+83 move container to $workspace4
+bindcode $numlock+$win+84 move container to $workspace5
+bindcode $numlock+$win+85 move container to $workspace6
+bindcode $numlock+$win+79 move container to $workspace7
+bindcode $numlock+$win+80 move container to $workspace8
+bindcode $numlock+$win+81 move container to $workspace9
+bindcode $numlock+$win+90 move container to $workspace0
