@@ -1,0 +1,26 @@
+{
+	"default":[
+		{
+			"name":"docker",
+			"alt":"",
+			"type":"gui",
+			"finalize":true,
+			"tags":[""],
+			"managers":[""],
+		},
+		{
+			"name":"tiles",
+			"alt":"",
+			"type":"gui",
+			"tags":["mac"],
+			"managers":[""],
+		},
+		{
+			"name":"sublime",
+			"alt":"",
+			"type":"gui",
+			"tags":[""],
+			"managers":[""],
+		}
+	]
+}
