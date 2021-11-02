@@ -43,10 +43,14 @@ if [ machine == "mac" ]; then
 fi
 
 PACKAGES = ''
-function getPackagesJSON()
-{
-    local  retval= $(echo $packageFile | python3 -c "import sys, json; print(json.load(sys.stdin)['$1'].join(' '))")
-    IFS=', ' read -r -a PACKAGES <<< "$retval"
+function getPackagesJSON() #list, tags, attr, value
+{ 
+    local  retval= $(echo $packageFile | python3 - "$SHELL" << 'END'
+    import sys, json;
+        print('Testing $SHELL '+"$SHELL"+' '+sys.argv[1])
+        print(json.load(sys.stdin)['$1'].join(' '))
+    END)
+    IFS=' ' read -r -a PACKAGES <<< "$retval"
 }
 
 
