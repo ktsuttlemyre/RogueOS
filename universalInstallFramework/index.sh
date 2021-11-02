@@ -44,7 +44,7 @@ fi
 
 PACKAGES = ''
 function getPackagesJSON() #list, tags, attr, value
-{ 
+{ #https://stackoverflow.com/questions/2189098/embedding-short-python-scripts-inside-a-bash-script/2189116#2189116
     local  retval= $(echo $packageFile | python3 - "$SHELL" << 'END'
     import sys, json;
         print('Testing $SHELL '+"$SHELL"+' '+sys.argv[1])
