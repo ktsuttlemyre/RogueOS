@@ -25,6 +25,7 @@ sudo apt-get update
 #install
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+snap install sublime-text --classic
 
 ##### Install window manager #####
 #https://www.adamlabay.net/2019/08/10/raspberry-pi-4-kodi-and-chrome-an-uncomfortable-alliance/
