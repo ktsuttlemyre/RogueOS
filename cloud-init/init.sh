@@ -53,7 +53,12 @@ sudo apt install -y kodi chromium-browser seahorse
 #Return to the pi and open Kodi. Install Advanced Launcher.
 #Navigate to Add-ons | Add-On Browser (the open box at the top next to the Settings gear)
 
+RESTART='YES'
+if [ "$RESTART" = 'YES' ]; then
+   sudo shutdown -r now
+else
+  #Start xserver
+  startx
+fi
 
 
-#Start xserver
-startx
