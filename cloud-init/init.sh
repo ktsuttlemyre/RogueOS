@@ -1,6 +1,6 @@
 ##### Install rasp-config #####
 #https://elbruno.com/2022/09/02/raspberrypi-install-raspi-config-on-ubuntu-22-04-1-lts/
-sudo apt-get install -y raspi-config
+$(sudo apt-get install -y raspi-config)
 #echo "deb http://archive.raspberrypi.org/debian/ buster main" >> /etc/apt/sources.list
 #apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7FA3303E
 
