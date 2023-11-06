@@ -19,7 +19,7 @@ for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker c
 sudo apt-get update
 sudo apt-get install ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor --output - > /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 # Add the repository to Apt sources:
 echo \
@@ -41,7 +41,7 @@ echo "exec i3" > .xinit.rc
 #run raspi-config-> boot, select auto login desktop
 
 ##### Install kodi and chrome #####
-apt install -y kodi chromium-browser seahorse
+sudo apt install -y kodi chromium-browser seahorse
 
 
 ##### Download Advanced Launcher by typing
