@@ -3,7 +3,10 @@
 sudo apt-get install -y raspi-config
 #echo "deb http://archive.raspberrypi.org/debian/ buster main" >> /etc/apt/sources.list
 #apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7FA3303E
-sudo raspi-config
+
+#automate rasberry pi config
+# https://raspberrypi.stackexchange.com/questions/28907/how-could-one-automate-the-raspbian-raspi-config-setup
+#sudo raspi-config
 
 ####
 # remove docker for official build
