@@ -1,3 +1,4 @@
+#! /bin/bash
 ##### Install rasp-config #####
 #https://elbruno.com/2022/09/02/raspberrypi-install-raspi-config-on-ubuntu-22-04-1-lts/
 #install in subshell cause whiptail not responding to inputs on ubuntu server 32 bit when ran from wget -O - <url> | bash
