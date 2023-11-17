@@ -29,6 +29,10 @@ echo \
 sudo apt-get update
 #install
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo groupadd docker
+#Add the connected user "$USER" to the docker group. Change the user name to match your preferred user if you do not want to use your current user:
+sudo usermod -aG docker $USER
+newgrp docker
 
 snap install sublime-text --classic
 
