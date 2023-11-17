@@ -47,6 +47,12 @@ echo "exec i3" > .xinit.rc
 ##### Install kodi and chrome #####
 sudo apt install -y kodi chromium-browser seahorse
 
+#guacamole
+git clone "https://github.com/boschkundendienst/guacamole-docker-compose.git"
+cd guacamole-docker-compose
+$(./prepare.sh)
+#docker-compose up -d
+cd -
 
 ##### Download Advanced Launcher by typing
 #wget https://github.com/SpiralCut/plugin.program.advanced.launcher/archive/master.zip
