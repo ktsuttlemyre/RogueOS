@@ -1,4 +1,5 @@
 #! /bin/bash
+set -o pipefail
 ##### Install rasp-config #####
 #https://elbruno.com/2022/09/02/raspberrypi-install-raspi-config-on-ubuntu-22-04-1-lts/
 #install in subshell cause whiptail not responding to inputs on ubuntu server 32 bit when ran from wget -O - <url> | bash
@@ -33,6 +34,24 @@ sudo groupadd docker
 #Add the connected user "$USER" to the docker group. Change the user name to match your preferred user if you do not want to use your current user:
 sudo usermod -aG docker $USER
 newgrp docker
+
+ARCH='arm'
+BITS='32'
+case $(uname -m) in
+    i386)   ARCH="x86"; BITS="32" ;;
+    i686)   ARCH="x86"; BITS="32" ;;
+    x86_64) ARCH="x86"; BITS="64" ;;
+    arm)    dpkg --print-architecture | grep -q "arm64" && ARCH="arm" && BITS="64" ;;
+esac
+
+
+MACHINE_TYPE=`uname -m`
+if [ ${ARCH} == 'arm' ]; then
+  sudo apt-get install -y qemu-system-arm
+else
+  sudo apt-get install -y qemu qemu-user-static
+fi
+
 
 snap install sublime-text --classic
 
