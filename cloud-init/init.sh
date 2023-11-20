@@ -4,7 +4,7 @@
 # check if it is a raspberry pi, because we'll need a special ruby first
 MACHINE=false
 if [ -x "$(command -v python)" ] ; then
-  R_PI=`python -c "import platform; print('raspberrypi' in platform.uname())"`
+  R_PI=`python -c "import platform; print('-rpi-' in platform.uname())"`
   if [ "$MACHINE" = "True" ] ; then
     MACHINE='PI'
   fi
