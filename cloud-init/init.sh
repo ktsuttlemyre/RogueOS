@@ -1,8 +1,27 @@
 #! /bin/bash
 set -o pipefail
+
+# check if it is a raspberry pi, because we'll need a special ruby first
+MACHINE=false
+if [ -x "$(command -v python)" ] ; then
+  R_PI=`python -c "import platform; print 'raspberrypi' in platform.uname()"`
+  if [ "$MACHINE" = "True" ] ; then
+    MACHINE='PI'
+  fi
+fi
+ARCH='arm'
+BITS='32'
+case $(uname -m) in
+    i386)   ARCH="x86"; BITS="32" ;;
+    i686)   ARCH="x86"; BITS="32" ;;
+    x86_64) ARCH="x86"; BITS="64" ;;
+    arm)    dpkg --print-architecture | grep -q "arm64" && ARCH="arm" && BITS="64" ;;
+esac
+
 ##### Install rasp-config #####
 #https://elbruno.com/2022/09/02/raspberrypi-install-raspi-config-on-ubuntu-22-04-1-lts/
 #install in subshell cause whiptail not responding to inputs on ubuntu server 32 bit when ran from wget -O - <url> | bash
+echo 'Installing rasbi-config'
 $(sudo apt-get install -y raspi-config)
 #echo "deb http://archive.raspberrypi.org/debian/ buster main" >> /etc/apt/sources.list
 #apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7FA3303E
@@ -35,17 +54,6 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 newgrp docker || true #continue if group exits
 
-ARCH='arm'
-BITS='32'
-case $(uname -m) in
-    i386)   ARCH="x86"; BITS="32" ;;
-    i686)   ARCH="x86"; BITS="32" ;;
-    x86_64) ARCH="x86"; BITS="64" ;;
-    arm)    dpkg --print-architecture | grep -q "arm64" && ARCH="arm" && BITS="64" ;;
-esac
-
-
-MACHINE_TYPE=`uname -m`
 if [ ${ARCH} == 'arm' ]; then
   sudo apt-get install -y qemu-system-arm
 else
