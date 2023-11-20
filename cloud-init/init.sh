@@ -1,5 +1,5 @@
 #! /bin/bash
-set -o pipefail
+#set -o pipefail
 
 # check if it is a raspberry pi, because we'll need a special ruby first
 MACHINE=false
