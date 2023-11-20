@@ -18,21 +18,27 @@ case $(uname -m) in
     arm)    dpkg --print-architecture | grep -q "arm64" && ARCH="arm" && BITS="64" ;;
 esac
 
-##### Install rasp-config #####
-#https://elbruno.com/2022/09/02/raspberrypi-install-raspi-config-on-ubuntu-22-04-1-lts/
-#install in subshell cause whiptail not responding to inputs on ubuntu server 32 bit when ran from wget -O - <url> | bash
-echo 'Installing rasbi-config'
-$(sudo apt-get install -y raspi-config)
-#echo "deb http://archive.raspberrypi.org/debian/ buster main" >> /etc/apt/sources.list
-#apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7FA3303E
+function header () {
+ echo "##############"
+ echo "$1"
+}
 
-#automate rasberry pi config
-# https://raspberrypi.stackexchange.com/questions/28907/how-could-one-automate-the-raspbian-raspi-config-setup
-#sudo raspi-config
+if [ "$MACHINE" = "PI" ]; then
+  ##### Install rasp-config #####
+  #https://elbruno.com/2022/09/02/raspberrypi-install-raspi-config-on-ubuntu-22-04-1-lts/
+  #install in subshell cause whiptail not responding to inputs on ubuntu server 32 bit when ran from wget -O - <url> | bash
+  header 'Installing raspi-config'
+  $(sudo apt-get install -y raspi-config)
+  #echo "deb http://archive.raspberrypi.org/debian/ buster main" >> /etc/apt/sources.list
+  #apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7FA3303E
+  
+  #automate rasberry pi config
+  # https://raspberrypi.stackexchange.com/questions/28907/how-could-one-automate-the-raspbian-raspi-config-setup
+  #sudo raspi-config
+fi
 
-####
-# remove docker for official build
-#
+
+header 'remove docker for official build'
 for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 #add repo
 # Add Docker's official GPG key:
@@ -54,16 +60,17 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 newgrp docker || true #continue if group exits
 
+header 'docker emulation extentions'
 if [ ${ARCH} == 'arm' ]; then
   sudo apt-get install -y qemu-system-arm
 else
   sudo apt-get install -y qemu qemu-user-static
 fi
 
-
+header 'developer tools'
 snap install sublime-text --classic
 
-##### Install window manager #####
+header 'Install window manager'
 #https://www.adamlabay.net/2019/08/10/raspberry-pi-4-kodi-and-chrome-an-uncomfortable-alliance/
 apt update & sudo apt install -y xinit i3 dmenu suckless-tools
 #Add i3 to our xinit.rc file so startx will run i3
@@ -71,10 +78,10 @@ echo "exec i3" > .xinit.rc
 
 #run raspi-config-> boot, select auto login desktop
 
-##### Install kodi and chrome #####
+header 'Install kodi and chrome'
 sudo apt install -y kodi chromium-browser seahorse
 
-#guacamole
+header 'Install guacamole'
 git clone "https://github.com/boschkundendienst/guacamole-docker-compose.git"
 cd guacamole-docker-compose
 $(./prepare.sh)
@@ -91,6 +98,7 @@ cd -
 #Navigate to Add-ons | Add-On Browser (the open box at the top next to the Settings gear)
 
 RESTART='YES'
+header "Is this forcing restart? $RESTART'
 if [ "$RESTART" = 'YES' ]; then
    sudo shutdown -r now
 else
