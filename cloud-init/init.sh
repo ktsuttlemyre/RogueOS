@@ -2,13 +2,25 @@
 #set -o pipefail
 
 # check if it is a raspberry pi, because we'll need a special ruby first
-MACHINE=false
+BOARD=false
 if [ -x "$(command -v python)" ] ; then
   R_PI=`python -c "import platform; print('-rpi-' in platform.uname())"`
-  if [ "$MACHINE" = "True" ] ; then
-    MACHINE='PI'
+  if [ "$BOARD" = "True" ] ; then
+    BOARD='PI'
   fi
 fi
+
+. /etc/os-release
+DISTRO=false
+case $ID in
+  rasbian) DISTRO="rasbian" ;;
+  ubuntu) DISTRO="ubuntu" ;;
+  arch) DISTRO="arch" ;;
+  centos) DISTRO="centos" ;;
+  *) echo "This is an unknown distribution."
+      ;;
+esac
+
 ARCH='arm'
 BITS='32'
 case $(uname -m) in
@@ -23,7 +35,7 @@ function header () {
  echo "$1"
 }
 
-if [ "$MACHINE" = "PI" ]; then
+if [ "$BOARD" = "PI" ]; then
   ##### Install rasp-config #####
   #https://elbruno.com/2022/09/02/raspberrypi-install-raspi-config-on-ubuntu-22-04-1-lts/
   #install in subshell cause whiptail not responding to inputs on ubuntu server 32 bit when ran from wget -O - <url> | bash
@@ -45,10 +57,7 @@ for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker c
 sudo apt-get update
 sudo apt-get install ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
-$REPO='ubuntu'
-if [ "$MACHINE" = "PI" ] ||  [ $BITS = "32" ]; then
-  $REPO='raspbian'
-fi
+$REPO=$DISTRO #known values are rasbian and ubuntu others expected to work based on the $DISTRO var detemined from /etc/os-release #ID var
 curl -fsSL https://download.docker.com/linux/$REPO/gpg | sudo gpg --dearmor --output - > /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 # Add the repository to Apt sources:
