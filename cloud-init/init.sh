@@ -45,15 +45,20 @@ for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker c
 sudo apt-get update
 sudo apt-get install ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor --output - > /etc/apt/keyrings/docker.gpg
+$REPO='ubuntu'
+if [ "$MACHINE" = "PI" ] ||  [ $BITS = "32" ]; then
+  $REPO='raspbian'
+fi
+curl -fsSL https://download.docker.com/linux/$REPO/gpg | sudo gpg --dearmor --output - > /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 # Add the repository to Apt sources:
 echo \
-  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$REPO \
   "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
-#install
+
+header 'installing docker'
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo groupadd docker
 #Add the connected user "$USER" to the docker group. Change the user name to match your preferred user if you do not want to use your current user:
