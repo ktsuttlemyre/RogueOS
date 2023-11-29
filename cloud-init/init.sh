@@ -1,7 +1,14 @@
 #! /bin/bash
 #set -o pipefail
 
-# check if it is a raspberry pi, because we'll need a special ruby first
+
+#source <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/cloud-init/headless_32bit_restreamer.sh)
+#OS='RogueOS'
+#curl -LkSs https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball -o $OS.tar.gz
+#mkdir $OS
+#tar -xzf $OS.tar.gz -C $OS
+
+# check if it is a raspberry pi
 BOARD=false
 if [ -x "$(command -v python)" ] ; then
   R_PI=`python -c "import platform; print('-rpi-' in platform.uname())"`
@@ -9,7 +16,7 @@ if [ -x "$(command -v python)" ] ; then
     BOARD='PI'
   fi
 fi
-
+#load os vars for identification
 . /etc/os-release
 DISTRO=false
 case $ID in
@@ -81,39 +88,45 @@ else
   sudo apt-get install -y qemu qemu-user-static
 fi
 
-header 'developer tools'
-snap install sublime-text --classic
+if [ ${DESKTOP} = true ]; then
+  header 'Install window manager'
+  #https://www.adamlabay.net/2019/08/10/raspberry-pi-4-kodi-and-chrome-an-uncomfortable-alliance/
+  apt update & sudo apt install -y xinit i3 dmenu suckless-tools
+  #Add i3 to our xinit.rc file so startx will run i3
+  echo "exec i3" > .xinit.rc
+  
+  #run raspi-config-> boot, select auto login desktop
+  header 'Install kodi and chrome'
+  sudo apt install -y kodi chromium-browser seahorse
 
-header 'Install window manager'
-#https://www.adamlabay.net/2019/08/10/raspberry-pi-4-kodi-and-chrome-an-uncomfortable-alliance/
-apt update & sudo apt install -y xinit i3 dmenu suckless-tools
-#Add i3 to our xinit.rc file so startx will run i3
-echo "exec i3" > .xinit.rc
+  header 'Install guacamole'
+  git clone "https://github.com/boschkundendienst/guacamole-docker-compose.git"
+  cd guacamole-docker-compose
+  $(./prepare.sh)
+  #docker-compose up -d
+  cd -
+  
+  ##### Download Advanced Launcher by typing
+  #wget https://github.com/SpiralCut/plugin.program.advanced.launcher/archive/master.zip
+  #Type nano chromium.sh and enter the following file contents:
+  ##! /bin/bash
+  #chromium-browser --user-agent="Mozilla/5.0 (X11; CrOS armv7l 10895.56.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.102 Safari/537.36" --window-size=1920,1080 $1
+  
+  #Return to the pi and open Kodi. Install Advanced Launcher.
+  #Navigate to Add-ons | Add-On Browser (the open box at the top next to the Settings gear)
+fi
 
-#run raspi-config-> boot, select auto login desktop
+if [ ${DEVELOPER_TOOLS} = true ]; then
+  header 'developer tools'
+  snap install sublime-text --classic
+fi
 
-header 'Install kodi and chrome'
-sudo apt install -y kodi chromium-browser seahorse
 
-header 'Install guacamole'
-git clone "https://github.com/boschkundendienst/guacamole-docker-compose.git"
-cd guacamole-docker-compose
-$(./prepare.sh)
-#docker-compose up -d
-cd -
 
-##### Download Advanced Launcher by typing
-#wget https://github.com/SpiralCut/plugin.program.advanced.launcher/archive/master.zip
-#Type nano chromium.sh and enter the following file contents:
-##! /bin/bash
-#chromium-browser --user-agent="Mozilla/5.0 (X11; CrOS armv7l 10895.56.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.102 Safari/537.36" --window-size=1920,1080 $1
-
-#Return to the pi and open Kodi. Install Advanced Launcher.
-#Navigate to Add-ons | Add-On Browser (the open box at the top next to the Settings gear)
-
-RESTART='YES'
-header "Is this forcing restart? $RESTART'
-if [ "$RESTART" = 'YES' ]; then
+RESTART=true
+header "Is install script forcing restart? $RESTART"
+for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
+if [ "$RESTART" = true ]; then
    sudo shutdown -r now
 else
   #Start xserver
