@@ -1,6 +1,7 @@
 #! /bin/bash
 #set -o pipefail
-
+DEVELOPER_TOOLS=false
+DESKTOP=false
 
 #source <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/cloud-init/headless_32bit_restreamer.sh)
 #OS='RogueOS'
