@@ -43,6 +43,31 @@ RoguePad - Gaming pad for the phone
 
 
 #Install
-run `install.sh` in a bash shell and you will get an interactive install. Currently supports rasberian/debian buster lite but will extend to others someday
+```bash
+wget -O - https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/cloud-init/init.sh | bash
+```
+```bash
+bash <( curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/cloud-init/init.sh )
+```
+
+Use the command 
+```bash
+OS='RogueOS'
+curl -LkSs https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball -o $OS.tar.gz
+mkdir $OS
+tar -xzf $OS.tar.gz -C $OS
+```
+to download the whole repo
 
 
+In a runcmd cloud-init script
+```yaml
+runcmd:
+  - export OS='RogueOS'
+  - curl -LkSs https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball -o $OS.tar.gz
+  - mkdir $OS
+  - tar -xzf $OS.tar.gz -C $OS
+  - chmod +x $OS.sh
+  - ./$OS.sh
+```
+The above can be appended to the `system-boot:/user-data` file in a raspberry pi image even on a windows machine after using etcher as the `system-boot` partition is fat32
