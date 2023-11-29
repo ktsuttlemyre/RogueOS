@@ -2,7 +2,7 @@
 #set -o pipefail
 DEVELOPER_TOOLS=false
 DESKTOP=false
-RESTART=true
+RESTART=false
 
 #source <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/cloud-init/headless_32bit_restreamer.sh)
 #OS='RogueOS'
@@ -44,6 +44,9 @@ function header () {
  echo "$1"
 }
 
+header "Install script has determined you are running Hardware Board = ${BOARD} \n DISTRO = ${DISTRO} \n ARCH = ${ARCH} \n BITS = ${BITS}"
+header "Current Config is _____"
+
 if [ "$BOARD" = "PI" ]; then
   ##### Install rasp-config #####
   #https://elbruno.com/2022/09/02/raspberrypi-install-raspi-config-on-ubuntu-22-04-1-lts/
@@ -66,7 +69,7 @@ for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker c
 sudo apt-get update
 sudo apt-get install ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
-$REPO=$DISTRO #known values are rasbian and ubuntu others expected to work based on the $DISTRO var detemined from /etc/os-release #ID var
+$REPO="$DISTRO" #known values are rasbian and ubuntu others expected to work based on the $DISTRO var detemined from /etc/os-release #ID var
 curl -fsSL https://download.docker.com/linux/$REPO/gpg | sudo gpg --dearmor --output - > /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 # Add the repository to Apt sources:
@@ -132,7 +135,13 @@ if [ "$RESTART" = true ]; then
    sudo shutdown -r now
 else
   #Start xserver
-  startx
+  if [ ${DESKTOP} = true ]; then
+    if command -v startx &> /dev/null; then
+      startx
+    else
+      sway
+    fi
+  fi
 fi
 
 
