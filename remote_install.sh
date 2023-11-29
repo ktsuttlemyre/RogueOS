@@ -25,7 +25,7 @@ fi
 . /etc/os-release
 DISTRO=false
 case $ID in
-  rasbian) DISTRO="rasbian" ;;
+  raspbian) DISTRO="raspbian" ;;
   ubuntu) DISTRO="ubuntu" ;;
   arch) DISTRO="arch" ;;
   centos) DISTRO="centos" ;;
