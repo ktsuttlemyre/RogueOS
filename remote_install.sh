@@ -17,6 +17,9 @@ if [ -x "$(command -v python)" ] ; then
   if [ "$BOARD" = "True" ] ; then
     BOARD='PI'
   fi
+else
+  echo "Python not installed"
+  exit 1
 fi
 #load os vars for identification
 . /etc/os-release
@@ -26,7 +29,7 @@ case $ID in
   ubuntu) DISTRO="ubuntu" ;;
   arch) DISTRO="arch" ;;
   centos) DISTRO="centos" ;;
-  *) echo "This is an unknown distribution."
+  *) echo "This is an unknown distribution. Value observed is $ID"
       ;;
 esac
 
