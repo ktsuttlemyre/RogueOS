@@ -44,10 +44,10 @@ RoguePad - Gaming pad for the phone
 
 #Install
 ```bash
-wget -O - https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/cloud-init/init.sh | bash
+wget -O - https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/remote_install.sh | bash
 ```
 ```bash
-bash <( curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/cloud-init/init.sh )
+bash <( curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/remote_install.sh )
 ```
 
 Use the command 
@@ -71,3 +71,4 @@ runcmd:
   - ./$OS.sh
 ```
 The above can be appended to the `system-boot:/user-data` file in a raspberry pi image even on a windows machine after using etcher as the `system-boot` partition is fat32
+s
