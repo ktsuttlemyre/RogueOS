@@ -2,6 +2,7 @@
 #set -o pipefail
 DEVELOPER_TOOLS=false
 DESKTOP=false
+RESTART=true
 
 #source <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/cloud-init/headless_32bit_restreamer.sh)
 #OS='RogueOS'
@@ -124,7 +125,7 @@ fi
 
 
 
-RESTART=true
+
 header "Is install script forcing restart? $RESTART"
 for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
 if [ "$RESTART" = true ]; then
