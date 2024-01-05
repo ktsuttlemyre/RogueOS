@@ -13,7 +13,7 @@ if curl -ss https://api.github.com/repos/ktsuttlemyre/RogueOS/branches/$host_nam
   read -p "Do you wish to continue with read only Master branch? " -n 1 -r
   echo    # (optional) move to a new line
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      branch='master'
+      branch=''
       remote_install='ro'
   else
     echo "exiting"
