@@ -48,7 +48,7 @@ RoguePad - Gaming pad for the phone
 wget -O - https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh | bash
 ```
 ```bash
-bash <( curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh )
+bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh)
 ```
 
 if first argument is `dev` it will use git to install `$hostname` branch
