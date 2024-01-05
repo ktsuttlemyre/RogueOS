@@ -51,8 +51,9 @@ wget -O - https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/remote_i
 bash <( curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/remote_install.sh )
 ```
 
-if first argument is `dev` it will use git to install RogueOS
-if first argument is empty then it will be downloaded as a file
+if first argument is `dev` it will use git to install `$hostname` branch
+if first argument is `ro` it will remote install `$hostname` branch from a tarball
+if first argument is empty then it will assume install is local
 
 
 
