@@ -39,6 +39,7 @@ if [ $remote_install = "dev" ]; then
 elif [ $remote_install = "ro" ]; then
   # Downloads the whole repo
   # without version control (read only install)
+  sudo mkdir $dir
   sudo curl -LkSs "https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball/$branch" | tar xz --strip=1 -C $dir
   #ensure we are in /opt/RogueOS path
   sudo cd $dir # "$(dirname "$0")"
