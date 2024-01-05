@@ -21,8 +21,17 @@ if curl -ss https://api.github.com/repos/ktsuttlemyre/RogueOS/branches/$host_nam
   fi
 fi
 
+#if already installed then ask to delete and replace
 if [ -d "$dir" ]; then
- sudo rm -rf $dir
+  read -p "Do you wish to replace the current RogueOS? " -n 1 -r
+  echo    # (optional) move to a new line
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+      echo "Deleteing $dir"
+      sudo rm -rf $dir
+  else
+    echo "exiting"
+    exit 0
+  fi
 fi
 
 if [ $remote_install = "dev" ]; then
