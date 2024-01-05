@@ -52,7 +52,7 @@ fi
 #allows only user (owner) to do all actions; group and other users are allowed only to read.
 sudo chown -R 744 $dir
 #make all .sh files excutible
-find $dir -type f -iname "*.sh" -exec chmod +x {} \;
+find $dir -type f -iname "*.sh" -exec sudo chmod +x {} \;
 
 ./install_config.sh $host_name
 
