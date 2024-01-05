@@ -35,14 +35,14 @@ if [ $remote_install = "dev" ]; then
   # using git (for devs)
   sudo git clone "https://github.com/ktsuttlemyre/$os.git" -b $branch $dir
   #ensure we are in /opt/RogueOS path
-  sudo cd $dir # "$(dirname "$0")"
+  cd $dir # "$(dirname "$0")"
 elif [ $remote_install = "ro" ]; then
   # Downloads the whole repo
   # without version control (read only install)
   sudo mkdir $dir
   curl -LkSs "https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball/$branch" | sudo tar xz --strip=1 -C $dir
   #ensure we are in /opt/RogueOS path
-  sudo cd $dir # "$(dirname "$0")"
+  cd $dir # "$(dirname "$0")"
 fi
 
 if ! [[ $(pwd) -ef $dir ]]; then
