@@ -10,8 +10,7 @@ remote_install="ro"
 
 if curl -ss https://api.github.com/repos/ktsuttlemyre/RogueOS/branches/$host_name | grep '"message": "Branch not found"' ; then 
   echo "You do not have a branch for this host_name = $host_name"
-  read -p "Do you wish to continue with read only Master branch? " -n 1 -r
-  echo    # (optional) move to a new line
+  read -p "Do you wish to continue with read only Master branch? " -n 1 -r; echo
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       branch='' # blank means use master branch
       remote_install='ro'
@@ -23,10 +22,8 @@ fi
 
 #if already installed then ask to delete and replace
 if [ -d "$dir" ]; then
-  read -p "Do you wish to replace the current RogueOS? " -n 1 -r
-  echo    # (optional) move to a new line
+  read -p "Do you wish to replace the current RogueOS? located at $dir? " -n 1 -r; echo
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      echo "Deleteing $dir"
       sudo rm -rf $dir
   else
     echo "exiting"
@@ -42,9 +39,11 @@ if [ $remote_install = "dev" ]; then
 elif [ $remote_install = "ro" ]; then
   # Downloads the whole repo
   # without version control (read only install)
-  curl -LkSs https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball/$branch -o $os.tar.gz
+  tmp_dir=$(mktemp -d 2>/dev/null || mktemp -d -t "$OS") #works in linux and mac
+  curl -LkSs "https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball/$branch" -o $tmp_dir/$os.tar.gz
   sudo mkdir $dir
   tar -xzf $os.tar.gz -C $dir
+  rm -rf $tmp_dir
   #ensure we are in /opt/RogueOS path
   sudo cd $dir # "$(dirname "$0")"
 fi
