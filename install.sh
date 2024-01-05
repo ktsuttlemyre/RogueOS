@@ -13,12 +13,16 @@ if curl -ss https://api.github.com/repos/ktsuttlemyre/RogueOS/branches/$host_nam
   read -p "Do you wish to continue with read only Master branch? " -n 1 -r
   echo    # (optional) move to a new line
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      branch=''
+      branch='' # blank means use master branch
       remote_install='ro'
   else
     echo "exiting"
     exit 0
   fi
+fi
+
+if [ -d "$dir" ]; then
+ sudo rm -rf $dir
 fi
 
 if [ $remote_install = "dev" ]; then
