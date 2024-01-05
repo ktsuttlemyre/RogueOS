@@ -36,7 +36,7 @@ elif [ $remote_install = "ro" ]; then
   sudo cd $dir # "$(dirname "$0")"
 fi
 
-if ![[ $(pwd) -ef $dir ]]; then
+if ! [[ $(pwd) -ef $dir ]]; then
   echo "Must install RogueOS to $dir"
   exit 1
 fi
