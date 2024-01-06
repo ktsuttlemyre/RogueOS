@@ -49,6 +49,15 @@ if ! [[ $(pwd) -ef $dir ]]; then
   echo "Must install RogueOS to $dir"
   exit 1
 fi
+
+#TODO create RogueOS user and chown all files and services
+# if [[ is mac os ]]; then
+# ./utils/adduser_mac.sh RogueOS
+# else
+# adduser RogueOS
+# fi
+# sudo chown -R $(whoami) .
+
 #allows only user (owner) to do all actions; group and other users are allowed only to read.
 sudo chown -R 744 $dir
 #make all .sh files excutible
