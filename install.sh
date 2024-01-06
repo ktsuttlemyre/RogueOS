@@ -32,11 +32,13 @@ if [ -d "$dir" ]; then
 fi
 
 if [ $remote_install = "dev" ]; then
+  echo "Developer mode"
   # using git (for devs)
   sudo git clone "https://github.com/ktsuttlemyre/$os.git" -b $branch $dir
   #ensure we are in /opt/RogueOS path
   cd $dir # "$(dirname "$0")"
 elif [ $remote_install = "ro" ]; then
+  echo "Read only mode"
   # Downloads the whole repo
   # without version control (read only install)
   sudo mkdir $dir
