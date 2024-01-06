@@ -6,7 +6,8 @@ DEVELOPER_TOOLS=false
 DESKTOP=false
 RESTART=false
 
-source ./hosts/$host_name/init.env
+file=./hosts/$host_name/init.env
+[[ -f "$file" ]] && source "$file"
 
 # check if it is a raspberry pi
 BOARD=false
