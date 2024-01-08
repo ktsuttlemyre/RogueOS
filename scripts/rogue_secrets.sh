@@ -90,9 +90,8 @@ echo $list |jq -c '.[]' | while read i; do
 		unset $var_name
 	done
 done
-
-
-
+bw logout
+unset BW_SESSION
 
 
 
