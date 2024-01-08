@@ -1,2 +1,3 @@
 #!/bin/bash
-docker compose --env-file secrets.env up
+host_name="${1:-$(hostname | cut -d. -f1)}"
+docker compose --env-file ~/.env up
