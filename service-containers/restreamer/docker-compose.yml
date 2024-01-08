@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+    restreamer:
+        container_name: restreamer
+        restart: unless-stopped
+        privileged: true
+        volumes:
+            - ~/restreamer/core/config:/core/config
+            - ~/restreamer/core/data:/core/data
+        ports:
+            - 80:8080
+            - 443:8181
+            - 1935:1935
+            - 1936:1936
+            - 6000:6000/udp
+        image: docker.io/datarhei/restreamer:latest
+        networks:
+            - restreamer_network
+
+    cloudflared:
+        container_name: cloudflared
+        restart: unless-stopped
+        image: docker.io/cloudflare/cloudflared
+        command:
+            - tunnel
+            - --no-autoupdate
+            - run
+            - --token
+            - ${CLOUDFLARED_TUNNEL_TOKEN}
+        depends_on:
+            - restreamer
+        network_mode: host
+
+networks:
+  restreamer_network:
+    driver: bridge
