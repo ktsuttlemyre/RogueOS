@@ -33,11 +33,15 @@ fi
 
 if [ $remote_install = "dev" ]; then
   echo "Developer mode"
-    #get github token
-  source ./scripts/rogue_secrets.sh user_tokens
+  read -p "Do you want to set a ssh key in github for this machine?" -n 1 -r; echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+      echo "geting github token to create sshkey"
+      #get github token
+      source ./scripts/rogue_secrets.sh user_tokens
 
-  #set ssh key 
-  ./scripts/generate_github_ssh_key.sh github_public_key_rw
+      #set ssh key 
+      ./scripts/generate_github_ssh_key.sh github_public_key_rw
+  fi
 
   # using git (for devs)
   sudo git clone "git@github.com:ktsuttlemyre/$os.git" -b $branch $dir
