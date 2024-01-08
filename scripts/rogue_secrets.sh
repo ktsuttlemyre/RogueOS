@@ -65,7 +65,7 @@ echo $list |jq -c '.[]' | while read i; do
 	if [ -z ${rogue_secret_field_path+x} ]; then
 		# load as envirnment variable
 		echo "exporting $rogue_secret_name to shell environment"
-		export "${rogue_secret_name%.*}=$rogue_secret_notes"
+		export "${rogue_secret_name}=$rogue_secret_notes"
 	else
 		#make the file
 		echo "writing $rogue_secret_name to $rogue_secret_field_path"

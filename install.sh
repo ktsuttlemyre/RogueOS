@@ -33,8 +33,18 @@ fi
 
 if [ $remote_install = "dev" ]; then
   echo "Developer mode"
+  read -p "Do you want to set a ssh key in github for this machine?" -n 1 -r; echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+      echo "geting github token to create sshkey"
+      #get github token
+      source ./scripts/rogue_secrets.sh user_tokens
+
+      #set ssh key 
+      ./scripts/generate_github_ssh_key.sh github_public_key_rw
+  fi
+
   # using git (for devs)
-  sudo git clone "https://github.com/ktsuttlemyre/$os.git" -b $branch $dir
+  sudo git clone "git@github.com:ktsuttlemyre/$os.git" -b $branch $dir
   #ensure we are in /opt/RogueOS path
   cd $dir # "$(dirname "$0")"
 elif [ $remote_install = "ro" ]; then
@@ -65,14 +75,6 @@ sudo chown -R $(whoami) .
 sudo chown -R 744 $dir
 #make all .sh files excutible
 find $dir -type f -iname "*.sh" -exec sudo chmod +x {} \;
-
-if [ $remote_install = "dev" ]; then
-  #get github token
-  source ./scripts/rogue_secrets.sh rogue_secrets:cab1kqsfl
-
-  #set ssh key 
-  ./scripts/generate_github_ssh_key.sh github_public_key_rw
-fi
 
 ./install_config.sh $host_name
 
