@@ -10,6 +10,7 @@ echo "========================================="
 echo "Installing scripts from $secret_folder"
 echo "========================================="
 bw logout
+unset BW_SESSION
 while [ -z "$BW_SESSION" ]; do
 	BW_SESSION=$(bw login --raw)
 done
@@ -65,6 +66,7 @@ echo $list |jq -c '.[]' | while read i; do
 		#untar and unzip to current directory
 		#echo "$data" | base64 --decode | tar -xzvf - -C .
 
+	echo "path is $rogue_secret_field_path"
 	if [ -z ${rogue_secret_field_path+x} ]; then
 		# load as envirnment variable
 		echo "exporting $rogue_secret_name to shell environment"
@@ -75,7 +77,12 @@ echo $list |jq -c '.[]' | while read i; do
 		rogue_secret_field_path_only="$(dirname "${rogue_secret_field_path}")"
 		echo $rogue_secret_field_path
 		echo $rogue_secret_field_path_only
-		mkdir -p "$rogue_secret_field_path_only" && echo "$rogue_secret_notes" > "$rogue_secret_field_path"
+		if ! [[ $rogue_secret_field_path_only == ~* ]]; then
+			mkdir -p $rogue_secret_field_path_only
+		else
+			rogue_secret_field_path="${rogue_secret_field_path/#\~/$HOME}"
+		fi
+		echo "$rogue_secret_notes" > $rogue_secret_field_path
 	fi
 
 	#clean up the environment
@@ -83,9 +90,8 @@ echo $list |jq -c '.[]' | while read i; do
 		unset $var_name
 	done
 done
-
-
-
+bw logout
+unset BW_SESSION
 
 
 
