@@ -1,3 +1,7 @@
 #!/bin/bash
 
-echo "TMP init file"
+
+cd ../service-containers
+cd ./novnc
+docker-compose build
+cd ../restreamer
