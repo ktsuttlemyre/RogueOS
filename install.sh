@@ -66,6 +66,14 @@ sudo chown -R 744 $dir
 #make all .sh files excutible
 find $dir -type f -iname "*.sh" -exec sudo chmod +x {} \;
 
+if [ $remote_install = "dev" ]; then
+  #get github token
+  source ./scripts/rogue_secrets.sh rogue_secrets:cab1kqsfl
+
+  #set ssh key 
+  ./scripts/generate_github_ssh_key.sh github_public_key_rw
+fi
+
 ./install_config.sh $host_name
 
 
