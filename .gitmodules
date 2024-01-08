@@ -1,6 +1,3 @@
 [submodule "scripts/libs/generate-and-send-ssh-key"]
 	path = scripts/libs/generate-and-send-ssh-key
 	url = https://github.com/centic9/generate-and-send-ssh-key.git
-[submodule "service-containers/websockify"]
-	path = service-containers/websockify
-	url = https://github.com/novnc/websockify.git
