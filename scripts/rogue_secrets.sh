@@ -6,6 +6,9 @@
 #rogue_secret_field_gzip means it is gzipped
 
 secret_folder=$1
+echo "========================================="
+echo "Installing scripts from $secret_folder"
+echo "========================================="
 bw logout
 while [ -z "$BW_SESSION" ]; do
 	BW_SESSION=$(bw login --raw)
