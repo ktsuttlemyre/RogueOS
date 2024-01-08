@@ -2,6 +2,11 @@
 #set -o pipefail
 host_name="${1:-$(hostname | cut -d. -f1)}"
 
+
+#get secrets
+source ./scripts/rogue_secrets.sh "rogue_secrets:$host_name"
+
+
 DEVELOPER_TOOLS=false
 DESKTOP=false
 RESTART=false
