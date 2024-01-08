@@ -69,7 +69,10 @@ fi
 # adduser RogueOS
 # fi
 # sudo chown -R RogueOS .
-sudo chown -R $USER .
+the_user="${USER:-$(whoami)}"
+the_user="${the_user:-$LOGNAME}"
+the_user="${the_user:-$(id -n -u)}"
+sudo chown -R $the_user .
 
 #allows only user (owner) to do all actions; group and other users are allowed only to read.
 sudo chown -R 744 $dir
