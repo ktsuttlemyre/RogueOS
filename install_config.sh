@@ -1,5 +1,4 @@
 #! /bin/bash
-#set -o pipefail
 host_name="${1:-$(hostname | cut -d. -f1)}"
 
 

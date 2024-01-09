@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/bash
 #reads all secrets from a bitwarden folder and loads them based on their path field
 #rogue_secret_notes is the value
 #rogue_secret_field_path is where to put the value (- is shell environment)
@@ -7,7 +7,7 @@
 
 secret_folder=$1
 echo "========================================="
-echo "Installing scripts from $secret_folder"
+echo "Installing scripts from $secret_folder" 
 echo "========================================="
 bw logout
 unset BW_SESSION
@@ -31,6 +31,7 @@ echo $list |jq -c '.[]' | while read i; do
 
 	#if there is a fields area then itereate the fields array of objects
 	if ! [ -z ${rogue_secret_fields+x} ]; then 
+		echo "found secret fields $rogue_secret_fields"
 		echo $rogue_secret_fields |jq -c '.[]' | while read j; do
 			#echo "$j"
 			#load them into bash variables
@@ -42,9 +43,11 @@ echo $list |jq -c '.[]' | while read i; do
 
 		#fix the scope of the vairable namespace
 		export "rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
+		echo "exporting rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
 		done
 		#clean up the environment
 		printenv |  grep '^rogue_secret_field_tmp_' | sed 's;=.*;;' | while read var_name; do
+			echo "unsetting $var_name"
 			unset $var_name
 		done
 
