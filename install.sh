@@ -69,7 +69,7 @@ fi
 # adduser RogueOS
 # fi
 # sudo chown -R RogueOS .
-the_user="${USER:-$(whoami)}"
+the_user="${USER:-$SUDO_USER}"
 the_user="${the_user:-$LOGNAME}"
 the_user="${the_user:-$(id -n -u)}"
 sudo chown -R $the_user $dir
