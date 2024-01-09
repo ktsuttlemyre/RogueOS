@@ -1,4 +1,3 @@
-cd /opt/RogueOS/service-containers/novnc/
-docker compose up -d
-
-/opt/RogueOS/service-containers/restreamer/restreamer.sh &
+dir=/opt/RogueOS/service-containers/
+docker compose -f $dir/novnc/docker-compose.yml up -d
+docker-compose -f $dir/restreamer/docker-compose.yml --env-file $HOME/.env up -d
