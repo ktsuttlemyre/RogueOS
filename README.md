@@ -69,4 +69,15 @@ runcmd:
   - ./$OS.sh
 ```
 The above can be appended to the `system-boot:/user-data` file in a raspberry pi image even on a windows machine after using etcher as the `system-boot` partition is fat32
-s
+
+
+
+#Software used
+https://github.com/fractalnetworksco/selfhosted-gateway
+
+#Software Services
+
+
+
+
+

@@ -79,6 +79,15 @@ sudo chown -R 744 $dir
 #make all .sh files excutible
 find $dir -type f -iname "*.sh" -exec sudo chmod +x {} \;
 
+#todo encrypt this somehow and feed it through in memory FS
+cat > $dir/.env <<EOF
+os="$os"
+dir="/opt/$os"
+host="$hostname"
+secrets="$/secrets"
+secrets_size=".5G"
+EOF
+
 source ./install_config.sh $host_name
 
 

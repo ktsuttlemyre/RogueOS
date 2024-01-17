@@ -1,16 +1,18 @@
 #! /bin/bash
 host_name="${1:-$(hostname | cut -d. -f1)}"
-
+rogue_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "$rogue_dir/.env"
 
 #get secrets
-source ./scripts/rogue_secrets.sh "rogue_secrets:$host_name"
-
+#todo use memory for secret storage
+mount -o size=$"secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
+source $rogue_dir/scripts/rogue_secrets.sh "rogue_secrets:$host_name"
 
 DEVELOPER_TOOLS=false
 DESKTOP=false
 RESTART=false
 
-file=./hosts/$host_name/init.env
+file=rogue_dir/hosts/$host_name/init.env
 [[ -f "$file" ]] && source "$file"
 
 # check if it is a raspberry pi
@@ -25,7 +27,7 @@ else
   exit 1
 fi
 #load os vars for identification
-. /etc/os-release
+source /etc/os-release
 DISTRO=false
 if [ -z ${ID+x} ]; then 
   ID="$(uname -s)"
@@ -41,12 +43,27 @@ case "$ID" in
       ;;
 esac
 
+#create alias
+type python >/dev/null 2>&1 || alias python=python3
+python -m ensurepip --upgrade
+type pip >/dev/null 2>&1 || alias pip=pip3
+
+#create template json for jinja2 interpolation
+#https://stackoverflow.com/questions/74556998/create-json-of-environment-variables-name-value-pairs-from-array-of-environment
+arr=($(tr '\n' ' ' <  <(printenv  | sed 's;=.*;;')))
+env_json=jq -n '$ARGS.positional | map({ (.): env[.] }) | add' --args "${arr[@]}"
+
 if [ "$DISTRO" = "mac" ]; then
   echo "installing Mac software"
+
+  pip3 install jinja2-cli
+  pip3 install obs-cli
+
   echo "install hooks"
   #startup
-  #jinja /opt/RogueOS/util/mac/startup.plist.jinja > /System/Library/LaunchAgents
+  #jinja2 /opt/RogueOS/util/mac/startup.plist.jinja "$env_json" > /System/Library/LaunchAgents
   #login
+  sudo mv distro-configs/$DISTRO/Library/LaunchDaemons/com.startup.sysctl.plist /Library/LaunchDaemons/
   
 
 else
@@ -147,7 +164,7 @@ else
   fi
 fi
 
-./hosts/$host_name/init.sh
+rogue_dir/hosts/$host_name/init.sh
 
 header "Is install script forcing restart? $RESTART"
 for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
