@@ -41,7 +41,7 @@ if [ -d "$rogue_wdir" ]; then
 fi
 
 if [ $remote_install = "dev" ]; then
-  echo "Developer mode"
+  header "Installing as Developer mode"
   read -p "Do you want to set a ssh key in github for this machine?" -n 1 -r; echo
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       echo "geting github token to create sshkey"
@@ -57,8 +57,9 @@ if [ $remote_install = "dev" ]; then
   sudo git clone "git@github.com:ktsuttlemyre/$os.git" -b $branch $rogue_wdir
   #ensure we are in /opt/RogueOS path
   cd $rogue_wdir # "$(dirname "$0")"
+  git submodule update --init --recursive
 elif [ $remote_install = "ro" ]; then
-  echo "Read only mode"
+  header "Installing as READ ONLY mode"
   # Downloads the whole repo
   # without version control (read only install)
   sudo mkdir $rogue_wdir
@@ -68,7 +69,7 @@ elif [ $remote_install = "ro" ]; then
 fi
 
 if ! [[ $(pwd) -ef $rogue_wdir ]]; then
-  echo "Must install RogueOS to $rogue_wdir"
+  header "Must install RogueOS to $rogue_wdir"
   exit 1
 fi
 
@@ -103,7 +104,7 @@ if [ -x "$(command -v python3)" ] ; then
     cpu_board='PI'
   fi
 else
-  echo "RogueOS found that Python3 not installed"
+  header "found that Python3 not installed"
   exit 1
 fi
 #load os vars for identification
@@ -143,7 +144,7 @@ fi
 header "Install script has determined you are running cpu_board = ${cpu_board} \n linux_distro = ${linux_distro} \n processor_arch = ${processor_arch} \n processor_bits = ${processor_bits}"
 
 #todo encrypt secrets somehow and feed it through in memory FS
-echo "Writing host specific .env for RogueOS to $rogue_wdir/.env"
+header "Writing host specific .env to $rogue_wdir/.env"
 cat > $rogue_wdir/.env <<EOF
 os="$os"
 rogue_wdir="$rogue_wdir"

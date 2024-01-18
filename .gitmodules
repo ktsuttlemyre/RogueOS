@@ -4,3 +4,6 @@
 [submodule "service-containers/websockify"]
 	path = service-containers/websockify
 	url = https://github.com/novnc/websockify.git
+[submodule "scripts/libs/log4bash"]
+	path = scripts/libs/log4bash
+	url = https://github.com/fredpalmer/log4bash.git

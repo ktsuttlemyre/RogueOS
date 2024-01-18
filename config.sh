@@ -33,8 +33,8 @@ env_json=$(jq -n '$ARGS.positional | map({ (.): env[.] }) | add' --args "${arr[@
 
 if [ "$linux_distro" = "mac" ]; then
   echo "installing Mac software"
-  brew upgrade
-  brew upgrade --cask
+  brew upgrade || true
+  brew upgrade --cask || true
 
   pip3 install jinja2-cli
   pip3 install obs-cli
