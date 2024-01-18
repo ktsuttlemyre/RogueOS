@@ -55,18 +55,17 @@ if [ $remote_install = "dev" ]; then
 
   # using git (for devs)
   sudo git clone "git@github.com:ktsuttlemyre/$os.git" -b $branch $rogue_wdir
-  #ensure we are in /opt/RogueOS path
-  cd $rogue_wdir # "$(dirname "$0")"
-  git submodule update --init --recursive
 elif [ $remote_install = "ro" ]; then
   header "Installing as READ ONLY mode"
   # Downloads the whole repo
   # without version control (read only install)
   sudo mkdir $rogue_wdir
   curl -LkSs "https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball/$branch" | sudo tar xz --strip=1 -C $rogue_wdir
-  #ensure we are in /opt/RogueOS path
-  cd $rogue_wdir # "$(dirname "$0")"
+
 fi
+
+#set work dir to /opt/RogueOS path
+cd $rogue_wdir # "$(dirname "$0")"
 
 if ! [[ $(pwd) -ef $rogue_wdir ]]; then
   header "Must install RogueOS to $rogue_wdir"
@@ -90,6 +89,11 @@ sudo chmod -R 744 $rogue_wdir
 #make all .sh files excutible
 find $rogue_wdir -type f -iname "*.sh" -exec sudo chmod +x {} \;
 
+#if we are in a git repo then update submodules
+if [ git rev-parse --is-inside-work-tree ]; then
+    git submodule update --init --recursive
+    git submodule update --recursive
+fi
 
 #create alias
 #type python >/dev/null 2>&1 || alias python=python3
