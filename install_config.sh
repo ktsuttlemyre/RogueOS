@@ -175,7 +175,7 @@ else
   fi
 fi
 
-rogue_wdir/hosts/$machine_name/init.sh
+$rogue_wdir/hosts/$machine_name/init.sh
 
 header "Is install script forcing restart? $RESTART"
 for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
