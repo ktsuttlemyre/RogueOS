@@ -86,7 +86,7 @@ find $rogue_wdir -type f -iname "*.sh" -exec sudo chmod +x {} \;
 echo "Writing host specific .env for RogueOS to $rogue_wdir/.env"
 cat > $rogue_wdir/.env <<EOF
 os="$os"
-rogue_wdirir="$rogue_wdir"
+rogue_wdir="$rogue_wdir"
 host="$host"
 machine_name="$machine_name"
 secrets="$/secrets"
