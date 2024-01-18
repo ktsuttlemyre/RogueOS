@@ -80,6 +80,7 @@ sudo chown -R 744 $dir
 find $dir -type f -iname "*.sh" -exec sudo chmod +x {} \;
 
 #todo encrypt this somehow and feed it through in memory FS
+echo "Writing host specific .env for RogueOS to $dir/.env"
 cat > $dir/.env <<EOF
 os="$os"
 dir="/opt/$os"
