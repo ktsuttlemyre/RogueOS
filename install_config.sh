@@ -54,7 +54,7 @@ case "$ID" in
   ubuntu) DISTRO="ubuntu" ;;
   arch) DISTRO="arch" ;;
   centos) DISTRO="centos" ;;
-  Darwin*) DISTRO=mac;
+  Darwin*) DISTRO="mac" ;;
   *) echo "This is an unknown distribution. Value observed is $ID"
       ;;
 esac
