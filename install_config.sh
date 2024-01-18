@@ -16,12 +16,17 @@ DEVELOPER_TOOLS=false
 DESKTOP=false
 RESTART=false
 
-file=rogue_dir/hosts/$host_name/init.env
+file=rogue_dir/hosts/$host_name/.env
 [[ -f "$file" ]] && source "$file"
+
+#create alias
+type python >/dev/null 2>&1 || alias python=python3
+python -m ensurepip --upgrade
+type pip >/dev/null 2>&1 || alias pip=pip3
 
 # check if it is a raspberry pi
 BOARD=false
-if [ -x "$(command -v p ython)" ] ; then
+if [ -x "$(command -v python)" ] ; then
   R_PI=`python -c "import platform; print('-rpi-' in platform.uname())"`
   if [ "$BOARD" = "True" ] ; then
     BOARD='PI'
@@ -46,11 +51,6 @@ case "$ID" in
   *) echo "This is an unknown distribution. Value observed is $ID"
       ;;
 esac
-
-#create alias
-type python >/dev/null 2>&1 || alias python=python3
-python -m ensurepip --upgrade
-type pip >/dev/null 2>&1 || alias pip=pip3
 
 #create template json for jinja2 interpolation
 #https://stackoverflow.com/questions/74556998/create-json-of-environment-variables-name-value-pairs-from-array-of-environment
