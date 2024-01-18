@@ -1,14 +1,13 @@
 #! /bin/bash
 set -ex
 shopt -s expand_aliases
-host_name="${1:-$(hostname | cut -d. -f1)}"
-rogue_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source "$rogue_dir/.env"
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "$script_dir/.env"
 
 #get secrets
 #todo use memory for secret storage
 #mount -o size="$secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
-if ! source $rogue_dir/scripts/rogue_secrets.sh "rogue_secrets:$host_name"; then
+if ! source $rogue_wdir/scripts/rogue_secrets.sh "rogue_secrets:$machine_name"; then
   echo "Did not set environment secrets. Exiting now"
   exit 1
 fi
@@ -17,7 +16,7 @@ DEVELOPER_TOOLS=false
 DESKTOP=false
 RESTART=false
 
-file=rogue_dir/hosts/$host_name/.env
+file=rogue_wdir/hosts/$machine_name/.env
 [[ -f "$file" ]] && source "$file"
 unset file
 
@@ -27,21 +26,21 @@ python3 -m ensurepip --upgrade
 #type pip >/dev/null 2>&1 || alias pip=pip3
 
 # check if it is a raspberry pi
-BOARD=false
+cpu_board=false
 if [ -x "$(command -v python3)" ] ; then
   R_PI=`python3 -c "import platform; print('-rpi-' in platform.uname())"`
-  if [ "$BOARD" = "True" ] ; then
-    BOARD='PI'
+  if [ "$cpu_board" = "True" ] ; then
+    cpu_board='PI'
   fi
 else
-  echo "Python3 not installed"
+  echo "RogueOS found that Python3 not installed"
   exit 1
 fi
 #load os vars for identification
 if [ -f /etc/os-release ]; then
   source /etc/os-release
 else
-  $rogue_dir/scripts/os-release.sh
+  source $rogue_wdir/scripts/os-release.sh
 fi
 ID="${ID:-$OS}"
 
@@ -94,10 +93,10 @@ else
    echo "$1"
   }
 
-  header "Install script has determined you are running Hardware Board = ${BOARD} \n DISTRO = ${DISTRO} \n ARCH = ${ARCH} \n BITS = ${BITS}"
+  header "Install script has determined you are running cpu_board = ${cpu_board} \n DISTRO = ${DISTRO} \n ARCH = ${ARCH} \n BITS = ${BITS}"
   header "Current Config is _____"
 
-  if [ "$BOARD" = "PI" ]; then
+  if [ "$cpu_board" = "PI" ]; then
     ##### Install rasp-config #####
     #https://elbruno.com/2022/09/02/raspberrypi-install-raspi-config-on-ubuntu-22-04-1-lts/
     #install in subshell cause whiptail not responding to inputs on ubuntu server 32 bit when ran from wget -O - <url> | bash
@@ -176,7 +175,7 @@ else
   fi
 fi
 
-rogue_dir/hosts/$host_name/init.sh
+$rogue_wdir/hosts/$machine_name/init.sh
 
 header "Is install script forcing restart? $RESTART"
 for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
