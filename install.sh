@@ -90,7 +90,7 @@ sudo chmod -R 744 $rogue_wdir
 find $rogue_wdir -type f -iname "*.sh" -exec sudo chmod +x {} \;
 
 #if we are in a git repo then update submodules
-if [ "$git rev-parse --is-inside-work-tree" = "true" ]; then
+if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
   echo "updating git submodules"
   git submodule update --init --recursive
   git submodule update --recursive
