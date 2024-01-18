@@ -1,16 +1,14 @@
 #! /bin/bash
 set -ex
-shopt -s expand_aliases
+
 script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source "$script_dir/.env"
+unset script_dir
 
-#get secrets
-#todo use memory for secret storage
-#mount -o size="$secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
-if ! source $rogue_wdir/scripts/rogue_secrets.sh "rogue_secrets:$machine_name"; then
-  echo "Did not set environment secrets. Exiting now"
-  exit 1
-fi
+function header () {
+ echo "##############"
+ echo "$1"
+}
 
 DEVELOPER_TOOLS=false
 DESKTOP=false
@@ -20,52 +18,23 @@ file=rogue_wdir/hosts/$machine_name/.env
 [[ -f "$file" ]] && source "$file"
 unset file
 
-#create alias
-#type python >/dev/null 2>&1 || alias python=python3
-python3 -m ensurepip --upgrade
-#type pip >/dev/null 2>&1 || alias pip=pip3
-
-# check if it is a raspberry pi
-cpu_board=false
-if [ -x "$(command -v python3)" ] ; then
-  R_PI=`python3 -c "import platform; print('-rpi-' in platform.uname())"`
-  if [ "$cpu_board" = "True" ] ; then
-    cpu_board='PI'
-  fi
-else
-  echo "RogueOS found that Python3 not installed"
+#get secrets
+#todo use memory for secret storage
+#mount -o size="$secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
+if ! source $rogue_wdir/scripts/rogue_secrets.sh "rogue_secrets:$machine_name"; then
+  echo "Did not set environment secrets. Exiting now"
   exit 1
 fi
-#load os vars for identification
-if [ -f /etc/os-release ]; then
-  source /etc/os-release
-else
-  source $rogue_wdir/scripts/os-release.sh
-fi
-ID="${ID:-$OS}"
-
-DISTRO=false
-if [ -z ${ID+x} ]; then 
-  ID="$(uname -s)"
-fi
-
-case "$ID" in
-  raspbian) DISTRO="raspbian" ;;
-  ubuntu) DISTRO="ubuntu" ;;
-  arch) DISTRO="arch" ;;
-  centos) DISTRO="centos" ;;
-  Darwin*) DISTRO="mac" ;;
-  *) echo "This is an unknown distribution. Value observed is $ID"
-      ;;
-esac
 
 #create template json for jinja2 interpolation
 #https://stackoverflow.com/questions/74556998/create-json-of-environment-variables-name-value-pairs-from-array-of-environment
 arr=($(tr '\n' ' ' <  <(printenv  | sed 's;=.*;;')))
 env_json=$(jq -n '$ARGS.positional | map({ (.): env[.] }) | add' --args "${arr[@]}")
 
-if [ "$DISTRO" = "mac" ]; then
+if [ "$linux_distro" = "mac" ]; then
   echo "installing Mac software"
+  brew upgrade
+  brew upgrade --cask
 
   pip3 install jinja2-cli
   pip3 install obs-cli
@@ -74,26 +43,10 @@ if [ "$DISTRO" = "mac" ]; then
   #startup
   #jinja2 /opt/RogueOS/util/mac/startup.plist.jinja "$env_json" > /System/Library/LaunchAgents
   #login
-  sudo mv distro-configs/$DISTRO/Library/LaunchDaemons/com.startup.sysctl.plist /Library/LaunchDaemons/
-  
-
+  sudo mv distro-configs/$linux_distro/Library/LaunchDaemons/com.startup.sysctl.plist /Library/LaunchDaemons/
 else
   echo "installing Linux software"
-  ARCH='arm'
-  BITS='32'
-  case $(uname -m) in
-      i386)   ARCH="x86"; BITS="32" ;;
-      i686)   ARCH="x86"; BITS="32" ;;
-      x86_64) ARCH="x86"; BITS="64" ;;
-      arm)    dpkg --print-architecture | grep -q "arm64" && ARCH="arm" && BITS="64" ;;
-  esac
 
-  function header () {
-   echo "##############"
-   echo "$1"
-  }
-
-  header "Install script has determined you are running cpu_board = ${cpu_board} \n DISTRO = ${DISTRO} \n ARCH = ${ARCH} \n BITS = ${BITS}"
   header "Current Config is _____"
 
   if [ "$cpu_board" = "PI" ]; then
@@ -117,7 +70,7 @@ else
   sudo apt-get update
   sudo apt-get install ca-certificates curl gnupg
   sudo install -m 0755 -d /etc/apt/keyrings
-  REPO="$DISTRO" #known values are rasbian and ubuntu others expected to work based on the $DISTRO var detemined from /etc/os-release #ID var
+  REPO="$linux_distro" #known values are rasbian and ubuntu others expected to work based on the $linux_distro var detemined from /etc/os-release #ID var
   curl -fsSL https://download.docker.com/linux/$REPO/gpg | sudo gpg --dearmor --output - > /etc/apt/keyrings/docker.gpg
   sudo chmod a+r /etc/apt/keyrings/docker.gpg
   # Add the repository to Apt sources:
@@ -135,7 +88,7 @@ else
   getent group docker || newgrp docker || true #continue if group exits
 
   header 'docker emulation extentions'
-  if [ ${ARCH} == 'arm' ]; then
+  if [ ${processor_arch} == 'arm' ]; then
     sudo apt-get install -y qemu-system-arm
   else
     sudo apt-get install -y qemu qemu-user-static

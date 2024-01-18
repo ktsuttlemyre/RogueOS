@@ -82,7 +82,60 @@ sudo chmod -R 744 $rogue_wdir
 #make all .sh files excutible
 find $rogue_wdir -type f -iname "*.sh" -exec sudo chmod +x {} \;
 
-#todo encrypt this somehow and feed it through in memory FS
+
+#create alias
+#type python >/dev/null 2>&1 || alias python=python3
+python3 -m ensurepip --upgrade
+#type pip >/dev/null 2>&1 || alias pip=pip3
+
+# check if it is a raspberry pi
+cpu_board=false
+if [ -x "$(command -v python3)" ] ; then
+  R_PI=`python3 -c "import platform; print('-rpi-' in platform.uname())"`
+  if [ "$cpu_board" = "True" ] ; then
+    cpu_board='PI'
+  fi
+else
+  echo "RogueOS found that Python3 not installed"
+  exit 1
+fi
+#load os vars for identification
+if [ -f /etc/os-release ]; then
+  source /etc/os-release
+else
+  source $rogue_wdir/scripts/os-release.sh
+fi
+ID="${ID:-$OS}"
+
+linux_distro=false
+if [ -z ${ID+x} ]; then 
+  ID="$(uname -s)"
+fi
+
+case "$ID" in
+  raspbian) linux_distro="raspbian" ;;
+  ubuntu) linux_distro="ubuntu" ;;
+  arch) linux_distro="arch" ;;
+  centos) linux_distro="centos" ;;
+  Darwin*) linux_distro="mac" ;;
+  *) echo "This is an unknown distribution. Value observed is $ID"
+      ;;
+esac
+
+if [ ! "$linux_distro" = "mac" ]; then
+  processor_arch='arm'
+  processor_bits='32'
+  case $(uname -m) in
+      i386)   processor_arch="x86"; processor_bits="32" ;;
+      i686)   processor_arch="x86"; processor_bits="32" ;;
+      x86_64) processor_arch="x86"; processor_bits="64" ;;
+      arm)    dpkg --print-architecture | grep -q "arm64" && processor_arch="arm" && processor_bits="64" ;;
+  esac
+fi
+
+header "Install script has determined you are running cpu_board = ${cpu_board} \n linux_distro = ${linux_distro} \n processor_arch = ${processor_arch} \n processor_bits = ${processor_bits}"
+
+#todo encrypt secrets somehow and feed it through in memory FS
 echo "Writing host specific .env for RogueOS to $rogue_wdir/.env"
 cat > $rogue_wdir/.env <<EOF
 os="$os"
@@ -91,6 +144,9 @@ host="$host"
 machine_name="$machine_name"
 secrets="$/secrets"
 secrets_size=".5G"
+linux_distro="$linux_distro"
+processor_arch="$processor_arch"
+processor_bits="$processor_bits"
 EOF
 
 source ./install_config.sh $machine_name
