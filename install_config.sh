@@ -1,12 +1,13 @@
 #! /bin/bash
 set -ex
+shopt -s expand_aliases
 host_name="${1:-$(hostname | cut -d. -f1)}"
 rogue_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source "$rogue_dir/.env"
 
 #get secrets
 #todo use memory for secret storage
-mount -o size="$secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
+#mount -o size="$secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
 if ! source $rogue_dir/scripts/rogue_secrets.sh "rogue_secrets:$host_name"; then
   echo "Did not set environment secrets. Exiting now"
   exit 1
@@ -18,25 +19,32 @@ RESTART=false
 
 file=rogue_dir/hosts/$host_name/.env
 [[ -f "$file" ]] && source "$file"
+unset file
 
 #create alias
-type python >/dev/null 2>&1 || alias python=python3
-python -m ensurepip --upgrade
-type pip >/dev/null 2>&1 || alias pip=pip3
+#type python >/dev/null 2>&1 || alias python=python3
+python3 -m ensurepip --upgrade
+#type pip >/dev/null 2>&1 || alias pip=pip3
 
 # check if it is a raspberry pi
 BOARD=false
-if [ -x "$(command -v python)" ] ; then
-  R_PI=`python -c "import platform; print('-rpi-' in platform.uname())"`
+if [ -x "$(command -v python3)" ] ; then
+  R_PI=`python3 -c "import platform; print('-rpi-' in platform.uname())"`
   if [ "$BOARD" = "True" ] ; then
     BOARD='PI'
   fi
 else
-  echo "Python not installed"
+  echo "Python3 not installed"
   exit 1
 fi
 #load os vars for identification
-source /etc/os-release
+if [ -f /etc/os-release ]; then
+  source /etc/os-release
+else
+  $rogue_dir/scripts/os-release.sh
+fi
+ID="${ID:-$OS}"
+
 DISTRO=false
 if [ -z ${ID+x} ]; then 
   ID="$(uname -s)"
@@ -47,7 +55,7 @@ case "$ID" in
   ubuntu) DISTRO="ubuntu" ;;
   arch) DISTRO="arch" ;;
   centos) DISTRO="centos" ;;
-  Darwin*) DISTRO=mac;
+  Darwin*) DISTRO="mac" ;;
   *) echo "This is an unknown distribution. Value observed is $ID"
       ;;
 esac
@@ -55,7 +63,7 @@ esac
 #create template json for jinja2 interpolation
 #https://stackoverflow.com/questions/74556998/create-json-of-environment-variables-name-value-pairs-from-array-of-environment
 arr=($(tr '\n' ' ' <  <(printenv  | sed 's;=.*;;')))
-env_json=jq -n '$ARGS.positional | map({ (.): env[.] }) | add' --args "${arr[@]}"
+env_json=$(jq -n '$ARGS.positional | map({ (.): env[.] }) | add' --args "${arr[@]}")
 
 if [ "$DISTRO" = "mac" ]; then
   echo "installing Mac software"
