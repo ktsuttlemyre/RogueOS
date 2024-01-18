@@ -7,11 +7,11 @@ os=RogueOS
 dir=/opt/$os
 host_name=$(hostname | cut -d. -f1)
 remote_install="${1:-ro}"
-branch="${2:-host_name}"
+branch="${2:-$host_name}"
 
 
-if curl -ss https://api.github.com/repos/ktsuttlemyre/RogueOS/branches/$host_name | grep '"message": "Branch not found"' ; then 
-  echo "You do not have a branch for this host_name = $host_name"
+if curl -ss https://api.github.com/repos/ktsuttlemyre/RogueOS/branches/$branch | grep '"message": "Branch not found"' ; then 
+  echo "You do not have a branch for this host_name = $branch"
   read -p "Do you wish to continue with read only Master branch? " -n 1 -r; echo
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       branch='' # blank means use master branch
