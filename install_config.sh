@@ -19,6 +19,7 @@ RESTART=false
 
 file=rogue_dir/hosts/$host_name/.env
 [[ -f "$file" ]] && source "$file"
+unset file
 
 #create alias
 #type python >/dev/null 2>&1 || alias python=python3
