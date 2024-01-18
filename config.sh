@@ -6,8 +6,8 @@ source "$script_dir/.env"
 unset script_dir
 
 function header () {
- echo "##############"
- echo "$1"
+ echo "____Rogue_OS_config____"
+ echo "\t$1"
 }
 
 DEVELOPER_TOOLS=false

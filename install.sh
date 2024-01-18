@@ -1,5 +1,12 @@
 #! /bin/bash
 set -ex
+
+function header () {
+ echo "____Rogue_OS_installer____"
+ echo "\t$1"
+}
+
+
 #force working directory
 cd /opt
 
@@ -149,6 +156,6 @@ processor_arch="$processor_arch"
 processor_bits="$processor_bits"
 EOF
 
-source ./install_config.sh $machine_name
+source ./config.sh $machine_name
 
 
