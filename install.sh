@@ -40,7 +40,10 @@ if [ $remote_install = "dev" ]; then
       source ./scripts/rogue_secrets.sh user_tokens
 
       #set ssh key 
-      ./scripts/generate_github_ssh_key.sh github_public_key_rw
+      if [ ! ./scripts/generate_github_ssh_key.sh github_public_key_rw ]; then
+        echo "did not set secret. Exiting now"
+        exit 1
+      fi
   fi
 
   # using git (for devs)

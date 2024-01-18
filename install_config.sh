@@ -6,7 +6,10 @@ source "$rogue_dir/.env"
 #get secrets
 #todo use memory for secret storage
 mount -o size=$"secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
-source $rogue_dir/scripts/rogue_secrets.sh "rogue_secrets:$host_name"
+if [ ! source $rogue_dir/scripts/rogue_secrets.sh "rogue_secrets:$host_name" ]; then
+  echo "Did not set environment secrets. Exiting now"
+  exit 1
+fi
 
 DEVELOPER_TOOLS=false
 DESKTOP=false
@@ -17,7 +20,7 @@ file=rogue_dir/hosts/$host_name/init.env
 
 # check if it is a raspberry pi
 BOARD=false
-if [ -x "$(command -v python)" ] ; then
+if [ -x "$(command -v p ython)" ] ; then
   R_PI=`python -c "import platform; print('-rpi-' in platform.uname())"`
   if [ "$BOARD" = "True" ] ; then
     BOARD='PI'
