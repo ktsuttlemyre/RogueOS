@@ -5,10 +5,10 @@ cd /opt
 
 os=RogueOS
 dir=/opt/$os
-host_name=$(hostname | cut -d. -f1)
+host=$(hostname | cut -d. -f1)
 remote_install="${1:-ro}"
-branch="${2:-$host_name}"
-
+host_name="${2:-$host}"
+branch="${2:-$host}"
 
 if curl -ss https://api.github.com/repos/ktsuttlemyre/RogueOS/branches/$branch | grep '"message": "Branch not found"' ; then 
   echo "You do not have a branch for this host_name = $branch"
@@ -87,7 +87,7 @@ echo "Writing host specific .env for RogueOS to $dir/.env"
 cat > $dir/.env <<EOF
 os="$os"
 dir="/opt/$os"
-host="$hostname"
+host="$host"
 secrets="$/secrets"
 secrets_size=".5G"
 EOF
