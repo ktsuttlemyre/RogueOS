@@ -7,7 +7,7 @@
 
 #add log4bash and debug flag
 debug=false
-source log4bash.sh
+source $rogue_wdir/scripts/libs/log4bash/log4bash.sh
 if [ ! debug ]; then
 	log_debug()  { :; }
 fi
