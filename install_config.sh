@@ -21,19 +21,19 @@ file=rogue_dir/hosts/$host_name/.env
 [[ -f "$file" ]] && source "$file"
 
 #create alias
-type python >/dev/null 2>&1 || alias python=python3
-python -m ensurepip --upgrade
-type pip >/dev/null 2>&1 || alias pip=pip3
+#type python >/dev/null 2>&1 || alias python=python3
+python3 -m ensurepip --upgrade
+#type pip >/dev/null 2>&1 || alias pip=pip3
 
 # check if it is a raspberry pi
 BOARD=false
-if [ -x "$(command -v python)" ] ; then
-  R_PI=`python -c "import platform; print('-rpi-' in platform.uname())"`
+if [ -x "$(command -v python3)" ] ; then
+  R_PI=`python3 -c "import platform; print('-rpi-' in platform.uname())"`
   if [ "$BOARD" = "True" ] ; then
     BOARD='PI'
   fi
 else
-  echo "Python not installed"
+  echo "Python3 not installed"
   exit 1
 fi
 #load os vars for identification
