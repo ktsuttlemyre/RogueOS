@@ -17,20 +17,6 @@ services:
         networks:
             - restreamer_network
 
-    cloudflared:
-        container_name: cloudflared
-        restart: unless-stopped
-        image: docker.io/cloudflare/cloudflared
-        command:
-            - tunnel
-            - --no-autoupdate
-            - run
-            - --token
-            - ${CLOUDFLARED_TUNNEL_TOKEN}
-        depends_on:
-            - restreamer
-        network_mode: host
-
 networks:
   restreamer_network:
     driver: bridge

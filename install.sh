@@ -1,4 +1,5 @@
 #! /bin/bash
+set -ex
 #force working directory
 cd /opt
 
@@ -40,7 +41,8 @@ if [ $remote_install = "dev" ]; then
       source ./scripts/rogue_secrets.sh user_tokens
 
       #set ssh key 
-      ./scripts/generate_github_ssh_key.sh github_public_key_rw
+      ./scripts/generate_github_ssh_key.sh github_public_key_rw ]
+
   fi
 
   # using git (for devs)
@@ -69,7 +71,7 @@ fi
 # adduser RogueOS
 # fi
 # sudo chown -R RogueOS .
-the_user="${USER:-$(whoami)}"
+the_user="${USER:-$SUDO_USER}"
 the_user="${the_user:-$LOGNAME}"
 the_user="${the_user:-$(id -n -u)}"
 sudo chown -R $the_user $dir
@@ -78,6 +80,16 @@ sudo chown -R $the_user $dir
 sudo chown -R 744 $dir
 #make all .sh files excutible
 find $dir -type f -iname "*.sh" -exec sudo chmod +x {} \;
+
+#todo encrypt this somehow and feed it through in memory FS
+echo "Writing host specific .env for RogueOS to $dir/.env"
+cat > $dir/.env <<EOF
+os="$os"
+dir="/opt/$os"
+host="$hostname"
+secrets="$/secrets"
+secrets_size=".5G"
+EOF
 
 source ./install_config.sh $host_name
 

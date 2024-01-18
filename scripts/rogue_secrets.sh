@@ -32,7 +32,7 @@ echo $list |jq -c '.[]' | while read i; do
 	#if there is a fields area then itereate the fields array of objects
 	if ! [ -z ${rogue_secret_fields+x} ]; then 
 		echo "found secret fields $rogue_secret_fields"
-		echo $rogue_secret_fields |jq -c '.[]' | while read j; do
+		while read j; do
 			#echo "$j"
 			#load them into bash variables
 			while read -rd $'' field; do
@@ -44,7 +44,7 @@ echo $list |jq -c '.[]' | while read i; do
 		#fix the scope of the vairable namespace
 		export "rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
 		echo "exporting rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
-		done
+		done <<< "$(echo $rogue_secret_fields |jq -c '.[]' )"
 		#clean up the environment
 		printenv |  grep '^rogue_secret_field_tmp_' | sed 's;=.*;;' | while read var_name; do
 			echo "unsetting $var_name"

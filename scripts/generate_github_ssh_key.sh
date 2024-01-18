@@ -47,9 +47,21 @@ echo "Public key deployed to remote service"
 
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/github_rsa
-
 echo "Added SSH key to the ssh-agent"
 
-# Test the SSH connection
+if [ ! -f ~/.ssh/config ]; then
+    touch ~/.ssh/config
+fi
 
+if ! grep -q "Host github.com" ~/.ssh/config; then
+cat > ~/.ssh/config <<EOF
+Host github.com
+    User git
+    IdentityFile ~/.ssh/github_rsa
+EOF
+echo "Added SSH key to the ~/.ssh.config"
+fi
+
+
+# Test the SSH connection
 ssh -T git@github.com
