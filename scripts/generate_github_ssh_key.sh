@@ -62,6 +62,5 @@ EOF
 echo "Added SSH key to the ~/.ssh.config"
 fi
 
-
 # Test the SSH connection
 ssh -T git@github.com
