@@ -62,7 +62,7 @@ esac
 #create template json for jinja2 interpolation
 #https://stackoverflow.com/questions/74556998/create-json-of-environment-variables-name-value-pairs-from-array-of-environment
 arr=($(tr '\n' ' ' <  <(printenv  | sed 's;=.*;;')))
-env_json=jq -n '$ARGS.positional | map({ (.): env[.] }) | add' --args "${arr[@]}"
+env_json=$(jq -n '$ARGS.positional | map({ (.): env[.] }) | add' --args "${arr[@]}")
 
 if [ "$DISTRO" = "mac" ]; then
   echo "installing Mac software"
