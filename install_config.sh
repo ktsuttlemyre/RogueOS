@@ -37,7 +37,13 @@ else
   exit 1
 fi
 #load os vars for identification
-source /etc/os-release
+if [ -f /etc/os-release ]; then
+  source /etc/os-release
+else
+  ./scripts/os-release
+fi
+ID="${ID:-$OS}"
+
 DISTRO=false
 if [ -z ${ID+x} ]; then 
   ID="$(uname -s)"
