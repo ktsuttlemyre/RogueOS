@@ -5,6 +5,13 @@
 #rogue_secret_field_base64 means it is base 64 encoded
 #rogue_secret_field_gzip means it is gzipped
 
+#add log4bash and debug flag
+debug=false
+source log4bash.sh
+if [ ! debug ]; then
+	log_debug()  { :; }
+fi
+
 secret_folder=$1
 echo "========================================="
 echo "Installing scripts from $secret_folder" 
@@ -31,23 +38,23 @@ echo $list |jq -c '.[]' | while read i; do
 
 	#if there is a fields area then itereate the fields array of objects
 	if ! [ -z ${rogue_secret_fields+x} ]; then 
-		echo "found secret fields $rogue_secret_fields"
+		log_debug "found secret fields $rogue_secret_fields"
 		while read j; do
-			#echo "$j"
+			#log_debug "$j"
 			#load them into bash variables
 			while read -rd $'' field; do
 				export "rogue_secret_field_tmp_$field"
-				#echo  "$field"
+				#log_debug  "$field"
 			done < <(jq -r <<<"$j" \
 				'to_entries|map("\(.key)=\(.value)\u0000")[]')
 
 		#fix the scope of the vairable namespace
 		export "rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
-		echo "exporting rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
+		log_debug "exporting rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
 		done <<< "$(echo $rogue_secret_fields |jq -c '.[]' )"
 		#clean up the environment
 		printenv |  grep '^rogue_secret_field_tmp_' | sed 's;=.*;;' | while read var_name; do
-			echo "unsetting $var_name"
+			log_debug "unsetting $var_name"
 			unset $var_name
 		done
 
@@ -69,17 +76,17 @@ echo $list |jq -c '.[]' | while read i; do
 		#untar and unzip to current directory
 		#echo "$data" | base64 --decode | tar -xzvf - -C .
 
-	echo "path is $rogue_secret_field_path"
+	log_debug "path is $rogue_secret_field_path"
 	if [ -z ${rogue_secret_field_path+x} ]; then
 		# load as envirnment variable
-		echo "exporting $rogue_secret_name to shell environment"
+		log_debug "exporting $rogue_secret_name to shell environment"
 		export "${rogue_secret_name}=$rogue_secret_notes"
 	else
 		#make the file
-		echo "writing $rogue_secret_name to $rogue_secret_field_path"
+		log_debug "writing $rogue_secret_name to $rogue_secret_field_path"
 		rogue_secret_field_path_only="$(dirname "${rogue_secret_field_path}")"
-		echo $rogue_secret_field_path
-		echo $rogue_secret_field_path_only
+		log_debug $rogue_secret_field_path
+		log_debug $rogue_secret_field_path_only
 		if ! [[ $rogue_secret_field_path_only == ~* ]]; then
 			mkdir -p $rogue_secret_field_path_only
 		else
