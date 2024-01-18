@@ -1,4 +1,5 @@
 #! /bin/bash
+set -ex
 host_name="${1:-$(hostname | cut -d. -f1)}"
 rogue_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source "$rogue_dir/.env"
@@ -6,7 +7,7 @@ source "$rogue_dir/.env"
 #get secrets
 #todo use memory for secret storage
 mount -o size=$"secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
-if [ ! source $rogue_dir/scripts/rogue_secrets.sh "rogue_secrets:$host_name" ]; then
+if ! source $rogue_dir/scripts/rogue_secrets.sh "rogue_secrets:$host_name"; then
   echo "Did not set environment secrets. Exiting now"
   exit 1
 fi
