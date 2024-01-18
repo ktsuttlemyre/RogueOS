@@ -1,5 +1,6 @@
 #! /bin/bash
 set -ex
+shopt -s expand_aliases
 host_name="${1:-$(hostname | cut -d. -f1)}"
 rogue_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source "$rogue_dir/.env"
