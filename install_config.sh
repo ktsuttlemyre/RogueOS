@@ -40,7 +40,7 @@ fi
 if [ -f /etc/os-release ]; then
   source /etc/os-release
 else
-  ./scripts/os-release
+  $rogue_dir/scripts/os-release
 fi
 ID="${ID:-$OS}"
 
