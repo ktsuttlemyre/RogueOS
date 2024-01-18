@@ -9,7 +9,7 @@ secret_folder=$1
 echo "========================================="
 echo "Installing scripts from $secret_folder" 
 echo "========================================="
-bw logout
+bw logout || true
 unset BW_SESSION
 while [ -z "$BW_SESSION" ]; do
 	BW_SESSION=$(bw login --raw)
