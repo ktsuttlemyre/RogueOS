@@ -11,6 +11,7 @@ services:
         networks:
             - novnc_network
         # Constants
+        #TODO use my own image
         image: gotget/novnc
         restart: always
         ports:

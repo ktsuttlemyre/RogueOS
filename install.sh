@@ -16,6 +16,7 @@ host="$(hostname | cut -d. -f1)"
 machine_name=$(scutil --get ComputerName 2>/dev/null || uname -n || host)
 remote_install="${1:-ro}"
 branch="${2:-$machine_name}"
+#TODO swich to correct branch to continue install
 
 if curl -ss https://api.github.com/repos/ktsuttlemyre/RogueOS/branches/$branch | grep '"message": "Branch not found"' ; then 
   echo "You do not have a branch = $branch"

@@ -128,7 +128,7 @@ else
   fi
 fi
 
-$rogue_wdir/hosts/$machine_name/init.sh
+$rogue_wdir/service-containers/service-engine.sh init
 
 
 if [ "$RESTART" = true ]; then
