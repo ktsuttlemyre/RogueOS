@@ -33,7 +33,7 @@ handle_file () {
 		fi
 		echo "starting service $service from file $FILE filetype=$file_type"
 		
-		[ "$ACTION" = "init" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" build
+		[ "$ACTION" = "init" ] && docker compose -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file" build
 		#todo add  -f ./service-containers/rogue.labels.yml to above command
 		[ "$ACTION" = "startup" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" config
 		[ "$ACTION" = "shutdown" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" down
