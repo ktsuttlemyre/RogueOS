@@ -1,5 +1,8 @@
 #! /bin/bash
 set -ex
+echo "Installing Rogue OS. Some of the commands will need sudo access. Please grant sudo use."
+#do a sudo command to get the password out of the way
+sudo echo "Thank you"
 
 function header () {
  echo "____Rogue_OS_installer____"
@@ -166,4 +169,6 @@ EOF
 
 source ./config.sh $machine_name
 
+
+echo "RogueOS is now installed"
 
