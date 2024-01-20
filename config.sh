@@ -135,15 +135,15 @@ if [ "$RESTART" = true ]; then
   header "RogueOS will now restart the computer"
   for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
   sudo shutdown -r now
-else
+elif [ ${DESKTOP} = true ]; then
   header "RogueOS will now start the grafix session"
   for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
   #Start xserver
-  if [ ${DESKTOP} = true ]; then
-    if command -v startx &> /dev/null; then
-      startx
-    else
-      sway
-    fi
+  if command -v startx &> /dev/null; then
+    startx &
+  else
+    sway &
   fi
 fi
+
+echo "RogueOS is now configured"

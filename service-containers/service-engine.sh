@@ -57,10 +57,8 @@ echo "RogueOS servicen engine is perfoming $1"
 
 case "$1" in
     "init")
-	    iter_dir=$host_wd/init
-		for FILE in `ls $iter_dir | sort -g`; do
-			handle_file $1 $FILE $iter_dir
-		done
+		#run init.sh
+	    $host_wd/init.sh
 		iter_dir=$host_wd/startup
 		for FILE in `ls $iter_dir | sort -g`; do
 			handle_file $1 $FILE $iter_dir

@@ -10,6 +10,4 @@ services:
             - run
             - --token
             - ${CLOUDFLARED_TUNNEL_TOKEN}
-        depends_on:
-            - restreamer
         network_mode: host
