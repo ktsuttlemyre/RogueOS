@@ -130,6 +130,8 @@ fi
 
 $rogue_wdir/service-containers/service-engine.sh init
 
+$rogue_wdir/service-containers/service-engine.sh startup
+
 
 if [ "$RESTART" = true ]; then
   header "RogueOS will now restart the computer"
