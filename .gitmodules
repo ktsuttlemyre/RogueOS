@@ -7,3 +7,6 @@
 [submodule "scripts/libs/log4bash"]
 	path = scripts/libs/log4bash
 	url = https://github.com/fredpalmer/log4bash.git
+[submodule "scripts/libs/discord.sh"]
+	path = scripts/libs/discord.sh
+	url = https://github.com/fieu/discord.sh.git

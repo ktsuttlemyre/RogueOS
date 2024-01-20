@@ -130,11 +130,14 @@ fi
 
 $rogue_wdir/hosts/$machine_name/init.sh
 
-header "Is install script forcing restart? $RESTART"
-for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
+
 if [ "$RESTART" = true ]; then
-   sudo shutdown -r now
+  header "RogueOS will now restart the computer"
+  for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
+  sudo shutdown -r now
 else
+  header "RogueOS will now start the grafix session"
+  for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo 
   #Start xserver
   if [ ${DESKTOP} = true ]; then
     if command -v startx &> /dev/null; then
