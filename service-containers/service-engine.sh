@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -ex
+set -x
 
 #add rogue vars
 source /opt/RogueOS/.env
@@ -17,13 +17,21 @@ handle_file () {
 	ACTION="$1"
 	FILE="$2"
 	iter_dir="$3"
+	if [[ $FILE == -* ]]; then
+		#this one is disabled
+	 	return
+	fi
 
 	IFS='.' read -ra array <<< "$FILE"
 	service="${array[1]}"
 	file_type=$(printf %s\\n "${array[@]:(-1)}")
-
+	#if isDisabled
+	if [ "${array[2]}" = "disbled" ]; then
+		return
+	fi
 
 	if [ "$file_type" = "yml" ]; then
+
 		#if there is an env-file variable in the header then grab it
 		env_file="$secrets/.env"
 		line=$(head -n 1 "$iter_dir/$FILE")
@@ -31,11 +39,11 @@ handle_file () {
 			env_file="${line/\#env\-file\=/}"
 			echo "found env_file for yml $env_file"
 		fi
+
 		echo "starting service $service from file $FILE filetype=$file_type"
-		
 		[ "$ACTION" = "init" ] && docker compose -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file" build
 		#todo add  -f ./service-containers/rogue.labels.yml to above command
-		[ "$ACTION" = "startup" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" config
+		[ "$ACTION" = "startup" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" up -d
 		[ "$ACTION" = "shutdown" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" down
 	elif [[ "$filetype" = ".sh" ]]; then
 		echo "running bash script from file $FILE filetype=$file_type"
