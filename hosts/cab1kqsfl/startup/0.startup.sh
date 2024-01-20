@@ -20,6 +20,7 @@ script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 echo "Updating system"
 brew upgrade
 brew upgrade --cask
+python3 -m pip install --upgrade pip
 
 video_dir="$HOME/Movies"
 echo "Cleaning old videos from $video_dir"
