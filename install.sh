@@ -155,7 +155,7 @@ cat > $rogue_wdir/.env <<EOF
 os="$os"
 rogue_wdir="$rogue_wdir"
 service_wd="$rogue_wdir/service-containers"
-host_wd="$rogue_wdir/host/$machine_name"
+host_wd="$rogue_wdir/hosts/$machine_name"
 machine_name="$machine_name"
 secrets="$HOME"
 secrets_size=".5G"
