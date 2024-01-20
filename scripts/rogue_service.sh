@@ -1,6 +1,12 @@
 #!/bin/bash
 #set -ex
-
+#DEPRICATED
+#DEPRICATED
+#DEPRICATED
+#DEPRICATED
+#DEPRICATED
+#DEPRICATED
+#DEPRICATED
 action="${1:-init}"
 add_remove="${2:-add}"
 service="${3:-$2}"

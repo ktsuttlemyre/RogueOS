@@ -9,8 +9,9 @@ script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 #add secrets
 
 
+
+
 original_pwd=$PWD
 
-#install software for this computer
-npm install --global obs-cli
-brew install discord --cask
+#build special service containers
+$rogue_wdir/scripts/apply_services.sh $script_dir/services.yml

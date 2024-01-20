@@ -15,6 +15,8 @@ script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 #add secrets
 #TODO
 
+
+
 echo "Updating system"
 brew upgrade
 brew upgrade --cask
@@ -38,24 +40,6 @@ if [ $num_vids -ne 0 ]; then
 	$rogue_wdir/scripts/discord_alert.sh info "Cleaned old videos folder $starting_size to $final_size deleting $num_vids videos"
 fi
 
-echo "Starting RogueOS services"
-function docker_up () {
-	IFS='_' read -r -a array <<< "$1"
-	service="${array[0]}"
-	id="${array[1]}"
-	env="$2"
-	yml="${3:-$rogue_wdir/hosts/$machine_name/$1.compose.yml}"
-	docker compose -f "$service_wd/$service/docker-compose.yml" -f "$yml" --env-file "$env" config # -d
-}
-
-#start services
-docker_up novnc $secrets/.env
-docker_up nginx-proxy-manager
-
-#docker compose -f $service_wd/novnc/docker-compose.yml up -d
-#docker compose -f $service_wd/restreamer/docker-compose.yml up -d
-#docker compose -f $service_wd/cloudflared/docker-compose.yml --env-file $HOME/.env up -d
-exit 1
 
 echo "Starting obs"
 obs --startstreaming --profile 'KQSFL' --scene "UnattendedKQSFL" --disable-updater --disable-shutdown-check &
