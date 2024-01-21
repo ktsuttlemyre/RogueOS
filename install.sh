@@ -35,27 +35,32 @@ fi
 
 #if already installed then ask to delete and replace
 if [ -d "$rogue_wdir" ]; then
-  read -p "Do you wish to replace the current RogueOS? located at $rogue_wdir? " -n 1 -r; echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-      sudo rm -rf $rogue_wdir
-  else
-    echo "exiting"
-    exit 0
-  fi
+  while true; do
+      read -p "Do you wish to replace the current RogueOS? located at $rogue_wdir? " yn
+      case $yn in
+          [Yy][Ee][Ss]* ) sudo rm -rf $rogue_wdir; break;;
+          [Nn][Oo]* ) echo "exiting"; exit;;
+          * ) echo "Please answer yes or no.";;
+      esac
+  done
 fi
 
 if [ $remote_install = "dev" ]; then
-  header "Installing as Developer mode"
-  read -p "Do you want to set a ssh key in github for this machine?" -n 1 -r; echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-      echo "geting github token to create sshkey"
-      #get github token
-      source ./scripts/rogue_secrets.sh user_tokens
+    while true; do
+      read -p "Do you want to set a ssh key in github for this machine? " yn
+      case $yn in
+          [Yy][Ee][Ss]* )
+            echo "geting github token to create sshkey"
+            #get github token
+            source ./scripts/rogue_secrets.sh user_tokens
 
-      #set ssh key 
-      ./scripts/generate_github_ssh_key.sh github_public_key_rw ]
-
-  fi
+            #set ssh key 
+            ./scripts/generate_github_ssh_key.sh github_public_key_rw ] break;;
+          [Nn][Oo]* ) break ;;
+          * ) echo "Please answer yes or no.";;
+      esac
+  done
+  #####
 
   # using git (for devs)
   sudo git clone "git@github.com:ktsuttlemyre/$os.git" -b $branch $rogue_wdir
@@ -78,7 +83,7 @@ fi
 
 #TODO create RogueOS user and chown all files and services
 # if [[ is mac os ]]; then
-# ./utils/adduser_mac.sh RogueOS
+# ./scripts/adduser_mac.sh RogueOS
 # else
 # adduser RogueOS
 # fi
