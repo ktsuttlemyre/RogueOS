@@ -29,8 +29,10 @@ while true; do
             echo "Did not set environment secrets. Exiting now"
             exit 1
           fi
-        break;;
-        [Nn][Oo]* ) echo "using old secrets" ;;
+          break;;
+        [Nn][Oo]* )
+          echo "using old secrets" 
+          break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
