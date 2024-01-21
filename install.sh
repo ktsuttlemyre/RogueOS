@@ -46,21 +46,20 @@ if [ -d "$rogue_wdir" ]; then
 fi
 
 if [ $remote_install = "dev" ]; then
-    while true; do
-      read -p "Do you want to set a ssh key in github for this machine? " yn
-      case $yn in
-          [Yy][Ee][Ss]* )
-            echo "geting github token to create sshkey"
-            #get github token
-            source ./scripts/rogue_secrets.sh user_tokens
+  while true; do
+    read -p "Do you want to set a ssh key in github for this machine? " yn
+    case $yn in
+        [Yy][Ee][Ss]* )
+          echo "geting github token to create sshkey"
+          #get github token
+          source ./scripts/rogue_secrets.sh user_tokens
 
-            #set ssh key 
-            ./scripts/generate_github_ssh_key.sh github_public_key_rw ] break;;
-          [Nn][Oo]* ) break ;;
-          * ) echo "Please answer yes or no.";;
-      esac
+          #set ssh key 
+          ./scripts/generate_github_ssh_key.sh github_public_key_rw ] break;;
+        [Nn][Oo]* ) break ;;
+        * ) echo "Please answer yes or no.";;
+    esac
   done
-  #####
 
   # using git (for devs)
   sudo git clone "git@github.com:ktsuttlemyre/$os.git" -b $branch $rogue_wdir
