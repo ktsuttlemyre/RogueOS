@@ -21,22 +21,39 @@ unset file
 #get secrets
 #todo use memory for secret storage
 #mount -o size="$secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
-if ! source $rogue_wdir/scripts/rogue_secrets.sh "rogue_secrets:$machine_name"; then
-  echo "Did not set environment secrets. Exiting now"
-  exit 1
-fi
+while true; do
+    read -p "Do you wish to set environment secrets? " yn
+    case $yn in
+        [Yy][Ee][Ss]* )
+          if ! source $rogue_wdir/scripts/rogue_secrets.sh "rogue_secrets:$machine_name"; then
+            echo "Did not set environment secrets. Exiting now"
+            exit 1
+          fi
+        break;;
+        [Nn][Oo]* ) echo "using old secrets" ;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+
+
+
+
 
 #create template json for jinja2 interpolation
 #https://stackoverflow.com/questions/74556998/create-json-of-environment-variables-name-value-pairs-from-array-of-environment
 arr=($(tr '\n' ' ' <  <(printenv  | sed 's;=.*;;')))
 env_json=$(jq -n '$ARGS.positional | map({ (.): env[.] }) | add' --args "${arr[@]}")
 
+pip3 install jinja2-cli
+
+
 if [ "$linux_distro" = "mac" ]; then
   echo "installing Mac software"
   brew upgrade || true
   brew upgrade --cask || true
 
-  pip3 install jinja2-cli
+
   pip3 install obs-cli
 
   echo "install hooks"

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 #add rogue vars
 source /opt/RogueOS/.env
@@ -94,12 +94,22 @@ case "$1" in
 		#TODO add rogueos label and only stop rogue containers
 		#stop all processes
 		docker stop $(docker ps -a -q)
+	;;
+	"stopall")
+		#stop all processes
+		docker stop $(docker ps -a -q)
+	;;
+	"kill")
+		#TODO add rogueos label and only stop rogue containers
+		#stop all processes
+		docker stop $(docker ps -a -q)
 		#Remove all the containers
 		docker rm $(docker ps -a -q)
 		#Remove networks
 		docker rm $(docker network ls -q)
 	;;
-	"stopall")
+	"killall")
+		#TODO add rogueos label and only stop rogue containers
 		#stop all processes
 		docker stop $(docker ps -a -q)
 		#Remove all the containers

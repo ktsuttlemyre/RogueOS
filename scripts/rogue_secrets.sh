@@ -5,10 +5,13 @@
 #rogue_secret_field_base64 means it is base 64 encoded
 #rogue_secret_field_gzip means it is gzipped
 
-#add log4bash and debug flag
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 debug=false
-source $rogue_wdir/scripts/libs/log4bash/log4bash.sh
-if [ ! debug ]; then
+
+#add log4bash and debug flag
+source $script_dir/libs/log4bash/log4bash.sh
+if ! [ debug ]; then
 	log_debug()  { :; }
 fi
 
@@ -27,14 +30,21 @@ folder_id=$(bw list folders  --session "$BW_SESSION" | jq -r ".[] | select(.name
 #parse bw item data
 list=$(bw list items --folderid "$folder_id"  --session "$BW_SESSION")
 
+log_warning "$list"
+log_info "$list"
+
 #iterate the secrets array
 echo $list |jq -c '.[]' | while read i; do
 
 	#load the secret object into prefixed bash variables 
 	while read -rd $'' entry; do
 		export "rogue_secret_$entry"
-	done < <(jq -r <<<"$i" \
-			 'to_entries|map("\(.key)=\(.value)\u0000")[]');
+		log_info "rogue_secret_$entry::::"
+		log_debug "$entry"
+		log_warning "$i"
+	done < <(jq -rj <<<"$i" \
+			 'to_entries|map("\(.key)=\(.value|tostring)\u0000")[]');
+	#got above anser from https://unix.stackexchange.com/questions/515573/convert-json-file-to-a-key-path-with-the-resulting-value-at-the-end-of-each-k
 
 	#if there is a fields area then itereate the fields array of objects
 	if ! [ -z ${rogue_secret_fields+x} ]; then 
@@ -45,8 +55,8 @@ echo $list |jq -c '.[]' | while read i; do
 			while read -rd $'' field; do
 				export "rogue_secret_field_tmp_$field"
 				#log_debug  "$field"
-			done < <(jq -r <<<"$j" \
-				'to_entries|map("\(.key)=\(.value)\u0000")[]')
+			done < <(jq -rj <<<"$j" \
+				'to_entries|map("\(.key)=\(.value|tostring)\u0000")[]')
 
 		#fix the scope of the vairable namespace
 		export "rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
@@ -59,7 +69,7 @@ echo $list |jq -c '.[]' | while read i; do
 		done
 
 	fi
-
+	rogue_secret_notes=$(echo "$rogue_secret_notes" | tr '\0' '\n')
 	#####
 	# All values are set
 	#rogue_secret_notes is the value
