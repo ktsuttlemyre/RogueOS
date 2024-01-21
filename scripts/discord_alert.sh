@@ -1,5 +1,7 @@
 #!/bin/bash
 #post to discord webhook
+#https://github.com/fieu/discord.sh
+
 #message="$1"
 #hook_url="$2"
 #curl -i -H "Accept: application/json" -H "Content-Type:application/json" -X POST --data "{\"content\": \"$message\"}" $hook_url

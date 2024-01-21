@@ -52,7 +52,7 @@ if [ $remote_install = "dev" ]; then
         [Yy][Ee][Ss]* )
           echo "geting github token to create sshkey"
           #get github token
-          source ./scripts/rogue_secrets.sh user_tokens
+          source ./scripts/rogue_secrets.sh 'user_tokens'
 
           #set ssh key 
           ./scripts/generate_github_ssh_key.sh github_public_key_rw ] break;;

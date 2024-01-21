@@ -12,7 +12,7 @@ services:
             - novnc_network
         # Constants
         image: rogueos/novnc
-        restart: always
+        restart: unless-stopped
         ports:
             - ${novnc_http:-6080}:6080
         build: .
