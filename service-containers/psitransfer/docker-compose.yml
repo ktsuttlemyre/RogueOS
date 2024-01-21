@@ -6,6 +6,6 @@ services:
         environment:
             - PSITRANSFER_ADMIN_PASS=secret
         volumes:
-            - $PWD/data:/data
+            - ${psitranser_volume_data:-$HOME/psitransfer}:/data
         image: psitrax/psitransfer
 # data volume needs UID 1000

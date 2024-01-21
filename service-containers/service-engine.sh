@@ -90,6 +90,23 @@ case "$1" in
 			handle_file $1 $FILE $iter_dir
 		done
 	;;
+	"stop")
+		#TODO add rogueos label and only stop rogue containers
+		#stop all processes
+		docker stop $(docker ps -a -q)
+		#Remove all the containers
+		docker rm $(docker ps -a -q)
+		#Remove networks
+		docker rm $(docker network ls -q)
+	;;
+	"stopall")
+		#stop all processes
+		docker stop $(docker ps -a -q)
+		#Remove all the containers
+		docker rm $(docker ps -a -q)
+		#Remove networks
+		docker rm $(docker network ls -q)
+	;;
 	*)
         echo "Unknown command: $command" 
         exit 1

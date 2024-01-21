@@ -11,11 +11,10 @@ services:
         networks:
             - novnc_network
         # Constants
-        #TODO use my own image
-        image: gotget/novnc
+        image: rogueos/novnc
         restart: always
         ports:
-            - 6080:6080
+            - ${novnc_http:-6080}:6080
         build: .
 
     # websockify:

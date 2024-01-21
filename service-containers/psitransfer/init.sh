@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo chown -R 1000 $PWD/data
+sudo chown -R 1000 $HOME/psitransfer/data
