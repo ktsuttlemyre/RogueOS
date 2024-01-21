@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 #add rogue vars
 source /opt/RogueOS/.env

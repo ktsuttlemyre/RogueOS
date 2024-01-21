@@ -44,6 +44,7 @@ echo $list |jq -c '.[]' | while read i; do
 		log_warning "$i"
 	done < <(jq -rj <<<"$i" \
 			 'to_entries|map("\(.key)=\(.value|tostring)\u0000")[]');
+	#got above anser from https://unix.stackexchange.com/questions/515573/convert-json-file-to-a-key-path-with-the-resulting-value-at-the-end-of-each-k
 
 	#if there is a fields area then itereate the fields array of objects
 	if ! [ -z ${rogue_secret_fields+x} ]; then 
