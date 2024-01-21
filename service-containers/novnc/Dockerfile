@@ -1,7 +1,5 @@
 # Initialize
 FROM python:3
-LABEL maintainer="Louis T. Getterman IV, GotGet <Docker+noVNC@GotGetLLC.com>"
-LABEL "com.gotgetllc.vendor"="GotGet, LLC"
 
 # Install
 WORKDIR /usr/src/app

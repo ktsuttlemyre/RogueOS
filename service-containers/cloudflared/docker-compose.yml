@@ -9,5 +9,5 @@ services:
             - --no-autoupdate
             - run
             - --token
-            - ${CLOUDFLARED_TUNNEL_TOKEN}
+            - ${CLOUDFLARED_TUNNEL_TOKEN:?error}
         network_mode: host

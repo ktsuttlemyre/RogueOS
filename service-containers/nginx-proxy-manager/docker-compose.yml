@@ -5,9 +5,9 @@ services:
     restart: unless-stopped
     ports:
       # These ports are in format <host-port>:<container-port>
-      - '80:80' # Public HTTP Port
-      - '443:443' # Public HTTPS Port
-      - '81:81' # Admin Web Port
+      - ${nginx_proxy_manager_http:-80}:80 # Public HTTP Port
+      - ${nginx_proxy_manager_https:-443}:443 # Public HTTPS Port
+      - ${nginx_proxy_manager_portal:-81}:81 # Admin Web Port
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
@@ -15,13 +15,13 @@ services:
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: ${nginx_proxy_manager_db_password}
+      DB_MYSQL_PASSWORD: ${nginx_proxy_manager_db_password:?error}
       DB_MYSQL_NAME: "npm"
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
-      - ~/RogueServices/nginx-proxy-manager/data:/data
-      - ~/RogueServices/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+      - ${nginx_proxy_manager_volume_data:-~/nginx-proxy-manager/data}:/data
+      - ${nginx_proxy_manager_volume_letsencrypt:-~/nginx-proxy-manager/letsencrypt}:/etc/letsencrypt
     depends_on:
       - db
 
@@ -32,6 +32,6 @@ services:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: ${nginx_proxy_manager_db_password}
+      MYSQL_PASSWORD: ${nginx_proxy_manager_db_password:?error}
     volumes:
-      - ~/RogueServices/nginx-proxy-manager/mysql:/var/lib/mysql
+      - ${nginx_proxy_manager_volume_database:-~/nginx-proxy-manager/mysql}:/var/lib/mysql
