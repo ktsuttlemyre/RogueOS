@@ -14,5 +14,5 @@ services:
       variable: "value"
     volumes:
       - ${discord_shell_config:-~/discord-shell/config}:/app/data
-    novnc:
+
 
