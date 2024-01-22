@@ -7,12 +7,12 @@ services:
     #command: python3 pyDiscordShellBot.py
     image: rogueos/discord-shell
     restart: unless-stopped
-    ports:
-        - ${discord_shell_port:-6080}:6080
+    # ports:
+    #     - ${discord_shell_port:-6080}:6080
     build: .
     environment:
       variable: "value"
     volumes:
-      - ${discord_shell_config:-~/discord-shell/config}:/app/data
+      - ${discord_shell_config:-~/discord-shell}:/app/data
 
 

@@ -2,13 +2,14 @@
 FROM python:3
 
 # Install
-WORKDIR /app/data
 RUN apt-get update
+RUN git clone https://github.com/EnriqueMoran/remoteDiscordShell.git /app
+WORKDIR /app
 #RUN apt-get install --yes \
 #		net-tools 
 RUN pip install --no-cache-dir \ 
-		discord
-RUN git clone https://github.com/EnriqueMoran/remoteDiscordShell.git
+		discord \
+		requests==2.31.0
 
-# Run-time
-ENTRYPOINT [ "python3", "pyDiscordShellBot.py" ]
+WORKDIR /app/data
+ENTRYPOINT [ "python3", "/app/pyDiscordShellBot.py" ]
