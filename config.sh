@@ -62,7 +62,7 @@ if [ "$linux_distro" = "mac" ]; then
   #startup
   #jinja2 /opt/RogueOS/util/mac/startup.plist.jinja "$env_json" > /System/Library/LaunchAgents
   #login
-  sudo mv distro-configs/$linux_distro/Library/LaunchDaemons/com.startup.sysctl.plist /Library/LaunchDaemons/
+  sudo cp distro-configs/$linux_distro/Library/LaunchDaemons/com.startup.sysctl.plist /Library/LaunchDaemons/
 else
   echo "installing Linux software"
 

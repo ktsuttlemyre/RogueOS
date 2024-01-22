@@ -45,9 +45,12 @@ handle_file () {
 		#todo add  -f ./service-containers/rogue.labels.yml to above command
 		[ "$ACTION" = "startup" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" up -d
 		[ "$ACTION" = "shutdown" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" down
-	elif [[ "$filetype" = ".sh" ]]; then
-		echo "running bash script from file $FILE filetype=$file_type"
-		$FILE
+	elif [ "$file_type" = "sh" ]; then
+		#only run  if the action matches the parent file 
+		if [[ $iter_dir == *${ACTION} ]]; then
+			echo "running bash script from file $FILE filetype=$file_type"
+			$iter_dir/$FILE
+		fi
 	fi
 }
 
