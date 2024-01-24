@@ -95,7 +95,7 @@ sudo chown -R $the_user $rogue_wdir
 #allows only user (owner) to do all actions; group and other users are allowed only to read.
 sudo chmod -R 744 $rogue_wdir
 #make all .sh files excutible
-find /opt/RogueOS -type f -iname "*\.sh" -exec sudo chmod -x {} \;
+find $rogue_wdir -type f -iname "*\.sh" -exec sudo chmod -x {} \;
 
 #if we are in a git repo then update submodules
 if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
