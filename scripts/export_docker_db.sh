@@ -1,5 +1,7 @@
 #!/bin/bash
-source ~/.env
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "$(dirname $script_dir)/env"
+source "$secrets/.env"
 conainer_name="$1"
 root_password="$2"
 database="$3"

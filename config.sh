@@ -14,18 +14,18 @@ DEVELOPER_TOOLS=false
 DESKTOP=false
 RESTART=false
 
-file=rogue_wdir/hosts/$machine_name/.env
+file=$rogue_wdir/hosts/$machine_name/env
 [[ -f "$file" ]] && source "$file"
 unset file
 
-#get secrets
+#get secrets from keyvault
 #todo use memory for secret storage
 #mount -o size="$secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
 while true; do
     read -p "Do you wish to set environment secrets? " yn
     case $yn in
         [Yy][Ee][Ss]* )
-          if ! source $rogue_wdir/scripts/rogue_secrets.sh "rogue_secrets:$machine_name"; then
+          if ! source $rogue_wdir/cli/secrets.sh "rogue_secrets:$machine_name"; then
             echo "Did not set environment secrets. Exiting now"
             exit 1
           fi
@@ -147,9 +147,9 @@ else
   fi
 fi
 
-$rogue_wdir/service-containers/service-engine.sh init
+$rogue_wdir/cli/service.sh init
 
-$rogue_wdir/service-containers/service-engine.sh startup
+$rogue_wdir/cli/service.sh startup
 
 
 if [ "$RESTART" = true ]; then

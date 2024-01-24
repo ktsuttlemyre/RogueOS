@@ -1,13 +1,11 @@
 #!/bin/bash
 #set -x
 
-#add rogue vars
-source /opt/RogueOS/.env
-
-#add host vars
 script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
-[ -f $host_wd/.env ] && source "$host_wd/.env"
+set -a      # turn on automatic exporting
+source "$(dirname $script_dir)/env"
+[ -f "$host_wd/env" ] && source "$host_wd/env"
+set +a      # turn off automatic exporting
 
 #add secrets?
 #TODO
@@ -42,9 +40,11 @@ handle_file () {
 
 		echo "starting service $service from file $FILE filetype=$file_type"
 		[ "$ACTION" = "init" ] && docker compose -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file" build
-		#todo add  -f ./service-containers/rogue.labels.yml to above command
+		[ "$ACTION" = "plan" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" config
 		[ "$ACTION" = "startup" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" up -d
-		[ "$ACTION" = "shutdown" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" down
+		[ "$ACTION" = "stop" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" down
+		#todo add  -f ./service-containers/rogue.labels.yml to above command
+
 	elif [ "$file_type" = "sh" ]; then
 		#only run  if the action matches the parent file 
 		if [[ $iter_dir == *${ACTION} ]]; then
@@ -54,51 +54,74 @@ handle_file () {
 	fi
 }
 
-echo "RogueOS servicen engine is perfoming $1"
-#depricated?
-# function docker_up () {
-# 	IFS='_' read -r -a array <<< "$1"
-# 	service="${array[0]}"
-# 	id="${array[1]}"
-# 	env="$2"
-# 	yml="${3:-$host_wd/$1.compose.yml}"
-# 	#docker compose -f "$service_wd/$service/docker-compose.yml" -f "$yml" --env-file "$env" config # -d
-# 	docker compose -f "$host_wd/startup/0.novnc.yml"  -f ./service-containers/novnc/docker-compose.yml -f ./service-containers/rogue.labels.yml --env-file ~/.env  --project-name novnc config
-# }
+echo "RogueOS service engine is perfoming $1"
+
+list="${@:2}"
+startup_list=$list
+startup_list="${startup_list:-$(ls $host_wd/startup | sort -g)}"
+
+shutdown_list=$list
+shutdown_list="${shutdown_list:-$(ls $host_wd/shutdown | sort -g)}"
 
 case "$1" in
+	"ls")
+		#run init.sh
+	    #$host_wd/init.sh
+	    echo "===Startup==="
+		for FILE in $startup_list; do
+			echo "$FILE"
+		done
+
+	    echo "===Shutdown==="
+		for FILE in $shutdown_list; do
+			echo "$FILE"
+		done
+	;;
+	"plan")
+		for FILE in $startup_list; do
+			handle_file $1 $FILE $host_wd/startup
+		done
+
+		for FILE in $shutdown_list; do
+			handle_file $1 $FILE $host_wd/shutdown
+		done
+	;;
     "init")
 		#run init.sh
 	    $host_wd/init.sh
-		iter_dir=$host_wd/startup
-		for FILE in `ls $iter_dir | sort -g`; do
-			handle_file $1 $FILE $iter_dir
+		for FILE in $startup_list; do
+			handle_file $1 $FILE $host_wd/startup
 		done
-		iter_dir=$host_wd/shutdown
-		for FILE in `ls $iter_dir | sort -g`; do
-			handle_file $1 $FILE $iter_dir
+
+		for FILE in $shutdown_list; do
+			handle_file $1 $FILE $host_wd/shutdown
 		done
 	;;
 
     "startup")
-	    iter_dir=$host_wd/startup
-		for FILE in `ls $iter_dir | sort -g`; do
-			handle_file $1 $FILE $iter_dir
+		for FILE in $startup_list; do
+			handle_file $1 $FILE $host_wd/startup
 		done
 	;;
 
     "shutdown")
-	    iter_dir=$host_wd/shutdown
-		for FILE in `ls $iter_dir | sort -g`; do
-			handle_file $1 $FILE $iter_dir
+		for FILE in $shutdown_list; do
+			handle_file $1 $FILE $host_wd/shutdown
 		done
 	;;
 	"stop")
-		#TODO add rogueos label and only stop rogue containers
-		#stop all processes
-		docker stop $(docker ps -a -q)
+		#stop a processes
+		if [ -z ${list+x} ]; then
+			echo "must provide a service file to stop"
+			exit 1
+		fi
+		for FILE in $list; do
+			handle_file $1 $FILE $host_wd/startup
+			handle_file $1 $FILE $host_wd/shutdown
+		done
 	;;
 	"stopall")
+		#TODO add rogueos label and only stop rogue containers
 		#stop all processes
 		docker stop $(docker ps -a -q)
 	;;
