@@ -52,10 +52,10 @@ if [ $remote_install = "dev" ]; then
         [Yy][Ee][Ss]* )
           echo "geting github token to create sshkey"
           #get github token
-          source ./scripts/rogue_secrets.sh 'user_tokens'
+          source $rogue_wdir/cli/secrets.sh 'user_tokens'
 
           #set ssh key 
-          ./scripts/generate_github_ssh_key.sh github_public_key_rw ] break;;
+          $rogue_wdir/scripts/generate_github_ssh_key.sh github_public_key_rw ] break;;
         [Nn][Oo]* ) break ;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -82,7 +82,7 @@ fi
 
 #TODO create RogueOS user and chown all files and services
 # if [[ is mac os ]]; then
-# ./scripts/adduser_mac.sh RogueOS
+# $rogue_wdir/scripts/adduser_mac.sh RogueOS
 # else
 # adduser RogueOS
 # fi
@@ -158,8 +158,8 @@ fi
 header "Install script has determined you are running cpu_board = ${cpu_board} \n linux_distro = ${linux_distro} \n processor_arch = ${processor_arch} \n processor_bits = ${processor_bits}"
 
 #todo encrypt secrets somehow and feed it through in memory FS
-header "Writing host specific .env to $rogue_wdir/.env"
-cat > $rogue_wdir/.env <<EOF
+header "Writing host specific .env to $rogue_wdir/env"
+cat > $rogue_wdir/env <<EOF
 os="$os"
 rogue_wdir="$rogue_wdir"
 service_wd="$rogue_wdir/service-containers"
@@ -172,7 +172,7 @@ processor_arch="$processor_arch"
 processor_bits="$processor_bits"
 EOF
 
-source ./config.sh $machine_name
+source $rogue_wdir/config.sh $machine_name
 
 
 echo "RogueOS is now installed"

@@ -6,7 +6,8 @@
 #hook_url="$2"
 #curl -i -H "Accept: application/json" -H "Content-Type:application/json" -X POST --data "{\"content\": \"$message\"}" $hook_url
 #get DISCORD_WEBHOOK
-source /opt/RogueOS/.env
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "$(dirname $script_dir)/env"
 source $secrets/.env
 
 #how to use ./discord_alert.sh (default,error,warn,info,debug) (text) (any other arguments to send to discord.sh)

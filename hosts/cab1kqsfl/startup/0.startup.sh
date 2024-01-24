@@ -5,18 +5,6 @@ set -ex
 #
 #TODO https://github.com/EnriqueMoran/remoteDiscordShell
 
-#add rogue vars
-source /opt/RogueOS/.env
-
-#add host vars
-script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-[ -f $script_dir/.env ] && source "$script_dir/.env"
-
-#add secrets
-#TODO
-
-
-
 echo "Updating system"
 brew upgrade
 brew upgrade --cask
