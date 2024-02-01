@@ -1,0 +1,17 @@
+#original https://www.programonaut.com/how-to-deploy-a-git-repository-to-a-server-using-github-actions/
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch:
+  
+jobs:
+  run_pull:
+    name: Request Pull
+    runs-on: docker://alpine:latest
+    steps:
+    - name: request pull
+      # check this thread to understand why its needed:
+      # https://stackoverflow.com/a/70447517
+      run: |
+        wget -O- https://cab1.kqsfl.com/update?token=${{ secrets.update_token }} > /dev/null 2>&1
