@@ -1,21 +1,34 @@
 #! /bin/bash
 #reads all secrets from a bitwarden folder and loads them based on their path field
-#rogue_secret_notes is the value
-#rogue_secret_field_path is where to put the value (- is shell environment)
-#rogue_secret_field_base64 means it is base 64 encoded
-#rogue_secret_field_gzip means it is gzipped
+#notes is the value
+#f_path is where to put the value (- is shell environment)
+#f_base64 means it is base 64 encoded
+#f_gzip means it is gzipped
 
 script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+#do not use this because it will cause all these values to be sent to terminal
+#set -a      # turn on automatic exporting
+source "$(dirname $script_dir)/env"
+[ -f "$host_wd/env" ] && source "$host_wd/env"
+#set +a      # turn off automatic exporting
 
 debug=false
 
 #add log4bash and debug flag
-source $script_dir/libs/log4bash/log4bash.sh
-if ! [ debug ]; then
+source $rogue_wdir/scripts/libs/log4bash/log4bash.sh
+if $debug; then
+
+	log_warning "THIS WILL SHOW SECRETS TO STDOUT TERMINAL"
+	  log_debug "====      debug logging enabled      ===="
+	log_warning "THIS WILL SHOW SECRETS TO STDOUT TERMINAL"
+else
 	log_debug()  { :; }
 fi
 
-secret_folder=$1
+secret_folder="${1:-rogue_secrets:$machine_name}"
+if [[ $secret_folder != rogue_secrets:* ]]; then
+	secret_folder="rogue_secrets:$secret_folder"
+fi
 echo "========================================="
 echo "Installing scripts from $secret_folder" 
 echo "========================================="
@@ -30,86 +43,99 @@ folder_id=$(bw list folders  --session "$BW_SESSION" | jq -r ".[] | select(.name
 #parse bw item data
 list=$(bw list items --folderid "$folder_id"  --session "$BW_SESSION")
 
-log_warning "$list"
-log_info "$list"
+log_debug "got this list of secrets from bitwarden: $list"
 
 #iterate the secrets array
-echo $list |jq -c '.[]' | while read i; do
+#source $rogue_wdir/scripts/json_to_env.sh <(echo "$list")
 
-	#load the secret object into prefixed bash variables 
-	while read -rd $'' entry; do
-		export "rogue_secret_$entry"
-		log_info "rogue_secret_$entry::::"
-		log_debug "$entry"
-		log_warning "$i"
-	done < <(jq -rj <<<"$i" \
-			 'to_entries|map("\(.key)=\(.value|tostring)\u0000")[]');
-	#got above anser from https://unix.stackexchange.com/questions/515573/convert-json-file-to-a-key-path-with-the-resulting-value-at-the-end-of-each-k
+# secrets=$(jq -r '. as $root |
+# 	path(..) | . as $path |
+# 	$root | getpath($path) as $value |
+# 	select($value | scalars) |
+# 	([$path[]] | "json_"+join("_")) + "=" + ($value | @json)
+# 	' <<< "$list")
 
-	#if there is a fields area then itereate the fields array of objects
-	if ! [ -z ${rogue_secret_fields+x} ]; then 
-		log_debug "found secret fields $rogue_secret_fields"
-		while read j; do
-			#log_debug "$j"
-			#load them into bash variables
-			while read -rd $'' field; do
-				export "rogue_secret_field_tmp_$field"
-				#log_debug  "$field"
-			done < <(jq -rj <<<"$j" \
-				'to_entries|map("\(.key)=\(.value|tostring)\u0000")[]')
+# while IFS= read -r line || [[ -n $line ]]; do
+#     export "$line"
+# done < <(printf '%s' "$secrets")
+# unset secrets
 
-		#fix the scope of the vairable namespace
-		export "rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
-		log_debug "exporting rogue_secret_field_$rogue_secret_field_tmp_name=$rogue_secret_field_tmp_value"
-		done <<< "$(echo $rogue_secret_fields |jq -c '.[]' )"
-		#clean up the environment
-		printenv |  grep '^rogue_secret_field_tmp_' | sed 's;=.*;;' | while read var_name; do
-			log_debug "unsetting $var_name"
-			unset $var_name
-		done
+# # Use indirect referencing to echo the value
+# variable_name="json_0_fields_0_name"
+# echo "${!variable_name}"
 
+# var="json_0_fields_0_value"
+# echo "trying to get json_0_fields_0_value ${!var}"
+
+
+#name is raw string
+#notes is json
+#fields is json
+while read -r name; do
+    read -r notes
+    read -r fields
+    log_info "found secret named: $name"
+    log_debug "name=$name"
+    log_debug "notes=$notes"
+    log_debug "fields=$fields"
+
+	f_path=''
+	f_base64=false
+	f_gzip=false
+    if ! [[ "$fields" == 'null' ]]; then
+	    while read -r f_name; do
+		    read -r f_value
+		    read -r f_type
+		    log_debug "$f_name |type:$f_type| = $f_value"
+		    declare "f_$f_name=$f_value"
+		done < <( echo "$fields" | jq -cr '.[] | (.name, .value, .type)')
+	fi #END handle field
+
+	log_debug "f_path=$f_path"
+    log_debug "f_base64=$f_base64"
+    log_debug "f_gzip=$f_gzip"
+
+    #string was originally json format
+    # meaning it was surrounded with ""
+    # and line breaks were endcoded as /n characters
+    data=$(jq -cr '.' <<< "$notes")
+	if $f_base64; then
+		log_info "doing base64 decode"
+		data=$(echo "$data" | base64 --decode)
 	fi
-	rogue_secret_notes=$(echo "$rogue_secret_notes" | tr '\0' '\n')
-	#####
-	# All values are set
-	#rogue_secret_notes is the value
-	#rogue_secret_field_path is where to put the value (- is shell environment)
-	#rogue_secret_field_base64 means it is base 64 encoded
-	#rogue_secret_field_gzip means it is gzipped
-	#####
 
-	#if $rogue_secret_field_base64; then
-	#	data = echo "$data" | base64 --decode
-	#if $rogue_secret_field_gzip; then
+	if $f_gzip; then
+		log_error "Need to implement gzip"
 		#get list of files from tar
-		#structure=echo "$data" | tar tzf - | awk -F/ '{ if($NF != "") print $NF }'
+		#structure=$(echo "$data" | tar tzf - | awk -F/ '{ if($NF != "") print $NF }')
 		#untar and unzip to current directory
-		#echo "$data" | base64 --decode | tar -xzvf - -C .
-
-	log_debug "path is $rogue_secret_field_path"
-	if [ -z ${rogue_secret_field_path+x} ]; then
-		# load as envirnment variable
-		log_debug "exporting $rogue_secret_name to shell environment"
-		export "${rogue_secret_name}=$rogue_secret_notes"
-	else
-		#make the file
-		log_debug "writing $rogue_secret_name to $rogue_secret_field_path"
-		rogue_secret_field_path_only="$(dirname "${rogue_secret_field_path}")"
-		log_debug $rogue_secret_field_path
-		log_debug $rogue_secret_field_path_only
-		if ! [[ $rogue_secret_field_path_only == ~* ]]; then
-			mkdir -p $rogue_secret_field_path_only
-		else
-			rogue_secret_field_path="${rogue_secret_field_path/#\~/$HOME}"
-		fi
-		echo "$rogue_secret_notes" > $rogue_secret_field_path
+		#echo "$data" | tar -xzvf - -C .
 	fi
 
-	#clean up the environment
-	printenv |  grep '^rogue_secret' | sed 's;=.*;;' | while read var_name; do
-		unset $var_name
-	done
-done
+	if [ -z "${f_path}" ]; then
+		# load as envirnment variable
+		log_info "exporting $name to shell environment"
+		export "$name=\"$data\""
+	else
+		log_info "writing $name to $f_path"
+
+		#replace ~ with $HOME
+		if [[ $f_path == ~* ]]; then
+			f_path="${f_path/#\~/$HOME}"
+		fi
+
+		#get path to parent dir
+		path_only="$(dirname "${f_path}")"
+
+		log_debug "full path=$f_path"
+		log_debug "path path_only=$path_only"
+
+		#make the directory path
+		mkdir -p $path_only
+		#write file
+		echo "$data" > "$f_path"
+	fi
+done < <( echo "$list" | jq -cr '.[] | (.name, (.notes | @json), (.fields | @json))')
 bw logout
 unset BW_SESSION
 

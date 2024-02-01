@@ -102,5 +102,5 @@ IFS=$'\n' y=($args)
 #echo "THE FINNAL countdown ${y[3]}"
 
 #run discord.sh to send
-./libs/discord.sh/discord.sh "${y[@]}"
+$script_dir/libs/discord.sh/discord.sh "${y[@]}"
 

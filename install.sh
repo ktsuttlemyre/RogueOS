@@ -2,13 +2,26 @@
 #set -ex
 echo "Installing Rogue OS. Some of the commands will need sudo access. Please grant sudo use."
 #do a sudo command to get the password out of the way
-sudo echo "Thank you"
+sudo echo "Thank you" || exit 1
 
 function header () {
  echo "____Rogue_OS_installer____"
  echo "\t$1"
 }
 
+prompt() {
+  message="$1"
+  while true; do
+      read -p "$message " yn
+      case $yn in
+          [Yy][Ee][Ss]* )
+            return ;;
+          [Nn][Oo]* )
+            false ;;
+          * ) echo "Please answer yes or no.";;
+      esac
+  done
+}
 
 #force working directory
 cd /opt
@@ -39,31 +52,23 @@ fi
 
 #if already installed then ask to delete and replace
 if [ -d "$rogue_wdir" ]; then
-  while true; do
-      read -p "Do you wish to replace the current RogueOS? located at $rogue_wdir? " yn
-      case $yn in
-          [Yy][Ee][Ss]* ) sudo rm -rf $rogue_wdir; break;;
-          [Nn][Oo]* ) echo "exiting"; exit;;
-          * ) echo "Please answer yes or no.";;
-      esac
-  done
+  if prompt "Do you wish to replace the current RogueOS? located at $rogue_wdir? "; then
+      sudo rm -rf $rogue_wdir;
+  else
+    echo "exiting"
+    exit 0
+  fi
 fi
 
 if [ $remote_install = "dev" ]; then
-  while true; do
-    read -p "Do you want to set a ssh key in github for this machine? " yn
-    case $yn in
-        [Yy][Ee][Ss]* )
-          echo "geting github token to create sshkey"
-          #get github token
-          source $rogue_wdir/cli/secrets.sh 'user_tokens'
+  if prompt "Do you want to set a ssh key in github for this machine? "; then
+    echo "geting github token to create sshkey"
+    #get github token
+    source $rogue_wdir/cli/secrets.sh 'user_tokens'
 
-          #set ssh key 
-          $rogue_wdir/scripts/generate_github_ssh_key.sh github_public_key_rw ] break;;
-        [Nn][Oo]* ) break ;;
-        * ) echo "Please answer yes or no.";;
-    esac
-  done
+    #set ssh key 
+    $rogue_wdir/scripts/generate_github_ssh_key.sh github_public_key_rw ]
+  fi
 
   # using git (for devs)
   sudo git clone "git@github.com:ktsuttlemyre/$os.git" -b $branch $rogue_wdir
@@ -86,7 +91,7 @@ fi
 
 #TODO create RogueOS user and chown all files and services
 # if [[ is mac os ]]; then
-# $rogue_wdir/scripts/adduser_mac.sh RogueOS
+# $rogue_wdir/scripts/adduser.mac.sh RogueOS
 # else
 # adduser RogueOS
 # fi
@@ -162,6 +167,25 @@ fi
 
 header "Install script has determined you are running cpu_board = ${cpu_board} \n linux_distro = ${linux_distro} \n processor_arch = ${processor_arch} \n processor_bits = ${processor_bits}"
 
+ramdisk=''
+#install nginx to system communication ramdisk
+if [ "$linux_distro" = "mac" ]; then
+  echo "installing Mac software"
+  ramdisk=/Volumes/RogueOSRam
+  $rogue_wdir/cli/rogue mountram "$ramdisk"
+
+  brew upgrade || true
+  brew upgrade --cask || true
+
+  #https://superuser.com/questions/1480144/creating-a-ram-disk-on-macos
+  brew install entr
+else
+  ramdisk=/mnt/RogueOSRam
+  #todo sleep service funciton
+  $rogue_wdir/cli/rogue mountram "$ramdisk" 8192
+fi
+
+
 #todo encrypt secrets somehow and feed it through in memory FS
 header "Writing host specific .env to $rogue_wdir/env"
 cat > $rogue_wdir/env <<EOF
@@ -175,6 +199,7 @@ secrets_size=".5G"
 linux_distro="$linux_distro"
 processor_arch="$processor_arch"
 processor_bits="$processor_bits"
+ramdisk="$ramdisk"
 EOF
 
 source $rogue_wdir/config.sh $machine_name

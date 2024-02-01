@@ -1,0 +1,31 @@
+#!/bin/bash
+action=$1
+
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "$(dirname $script_dir)/env"
+
+cmd="${@}"
+script="$rogue_wdir/cli/$1"
+while [ true ]; do
+	shift
+	if [[ -f $script.sh ]]; then
+		script="$script.sh"
+	    break
+	elif [[ -d $script ]]; then
+		script="$script/$1"
+	else
+		echo "$cmd is not valid. No action script for $script"
+		exit 1
+	fi
+	if [ "$#" -eq "0" ]; then
+	    echo "$cmd is not valid. No path for $script"
+	    exit 1
+	fi
+done
+
+echo "$script ${@:1}"
+
+#sudo protected and quaranteend to rogueos user:-D
+#/bin/su -s /bin/bash -c $script --login rogueos
+#TODO create the rogueos user and force all runtimes to be handled by them
+$script "${@:1}"

@@ -18,28 +18,33 @@ file=$rogue_wdir/hosts/$machine_name/env
 [[ -f "$file" ]] && source "$file"
 unset file
 
+
+prompt() {
+  message="$1"
+  while true; do
+      read -p "$message " yn
+      case $yn in
+          [Yy][Ee][Ss]* )
+            return ;;
+          [Nn][Oo]* )
+            false ;;
+          * ) echo "Please answer yes or no.";;
+      esac
+  done
+}
+
+
 #get secrets from keyvault
 #todo use memory for secret storage
 #mount -o size="$secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
-while true; do
-    read -p "Do you wish to set environment secrets? " yn
-    case $yn in
-        [Yy][Ee][Ss]* )
-          if ! source $rogue_wdir/cli/secrets.sh "rogue_secrets:$machine_name"; then
-            echo "Did not set environment secrets. Exiting now"
-            exit 1
-          fi
-          break;;
-        [Nn][Oo]* )
-          echo "using old secrets" 
-          break;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
-
-
-
-
+if prompt "Do you wish to set environment secrets? "; then
+  if ! source $rogue_wdir/cli/secrets.sh "rogue_secrets:$machine_name"; then
+    echo "Did not set environment secrets. An error occured. Exiting now"
+    exit 1
+  fi
+else
+    echo "using old secrets" 
+fi
 
 
 #create template json for jinja2 interpolation
@@ -55,14 +60,11 @@ if [ "$linux_distro" = "mac" ]; then
   brew upgrade || true
   brew upgrade --cask || true
 
-
-  pip3 install obs-cli
-
   echo "install hooks"
   #startup
   #jinja2 /opt/RogueOS/util/mac/startup.plist.jinja "$env_json" > /System/Library/LaunchAgents
   #login
-  sudo cp distro-configs/$linux_distro/Library/LaunchDaemons/com.startup.sysctl.plist /Library/LaunchDaemons/
+  sudo cp $rogue_wdir/distro-configs/$linux_distro/Library/LaunchDaemons/com.startup.sysctl.plist /Library/LaunchDaemons/
 else
   echo "installing Linux software"
 
@@ -124,12 +126,13 @@ else
     header 'Install kodi and chrome'
     sudo apt install -y kodi chromium-browser seahorse
 
-    header 'Install guacamole'
-    git clone "https://github.com/boschkundendienst/guacamole-docker-compose.git"
-    cd guacamole-docker-compose
-    $(./prepare.sh)
-    #docker-compose up -d
-    cd -
+    #TODO use the docker container
+    # header 'Install guacamole'
+    # git clone "https://github.com/boschkundendienst/guacamole-docker-compose.git"
+    # cd guacamole-docker-compose
+    # $(./prepare.sh)
+    # #docker-compose up -d
+    # cd -
     
     ##### Download Advanced Launcher by typing
     #wget https://github.com/SpiralCut/plugin.program.advanced.launcher/archive/master.zip
