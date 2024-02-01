@@ -14,4 +14,4 @@ jobs:
       # check this thread to understand why its needed:
       # https://stackoverflow.com/a/70447517
       run: |
-        wget -O- https://cab1.kqsfl.com/update?token=${{ secrets.update_token }} > /dev/null 2>&1
+        wget -O- https://cab1.kqsfl.com/update?token=${{ secrets.update_token }} > /dev/null
