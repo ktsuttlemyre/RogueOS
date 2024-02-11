@@ -41,6 +41,38 @@ prompt() {
   done
 }
 
+
+set_filepermissions () {
+#if we are in a git repo then update submodules
+#if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
+  echo "updating git submodules"
+  git submodule update --init --recursive
+  git submodule update --recursive
+  git config core.filemode false
+#fi
+
+
+#TODO create RogueOS user and chown all files and services
+# if [[ is mac os ]]; then
+# $rogue_wdir/scripts/adduser.mac.sh RogueOS
+# else
+# adduser RogueOS
+# fi
+# sudo chown -R RogueOS .
+the_user="${USER:-$SUDO_USER}"
+the_user="${the_user:-$LOGNAME}"
+the_user="${the_user:-$(id -n -u)}"
+
+sudo chown -R $the_user $rogue_wdir
+
+#allows only user (owner) to do all actions; group and other users are allowed only to read.
+sudo chmod -R 744 $rogue_wdir
+#make all .sh files excutible
+find $rogue_wdir -type f -iname "*\.sh" -exec echo "making {} excutable" && sudo chmod -x {} \;
+
+
+}
+
 ###########################################################################################################
 header "preparing this environment to become Rogue"
 # check if it is a raspberry pi
@@ -136,6 +168,7 @@ fi
 sudo mkdir $rogue_wdir
 if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then
   curl -LkSs "https://api.github.com/repos/${repo}tarball/" | sudo tar xz --strip=1 -C $rogue_wdir
+  set_filepermissions
   echo "You do not have a branch for this host: $branch"
   if prompt "Do you wish to create ${branch} now? "; then
     while [ -z "${github_public_key_rw}" ]; do
@@ -159,6 +192,7 @@ if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"me
 fi
 #Install branch or master branch (handles fallback to master gracefully) 
 curl -LkSs "https://api.github.com/repos/${repo}tarball/${branch}" | sudo tar xz --strip=1 -C $rogue_wdir
+set_filepermissions
 
 #see if we should elevate privlages from read only to git
 if [ $install_privlages = "dev" ]; then
@@ -189,31 +223,7 @@ if ! [[ $(pwd) -ef $rogue_wdir ]]; then
   exit 1
 fi
 
-#TODO create RogueOS user and chown all files and services
-# if [[ is mac os ]]; then
-# $rogue_wdir/scripts/adduser.mac.sh RogueOS
-# else
-# adduser RogueOS
-# fi
-# sudo chown -R RogueOS .
-the_user="${USER:-$SUDO_USER}"
-the_user="${the_user:-$LOGNAME}"
-the_user="${the_user:-$(id -n -u)}"
-
-sudo chown -R $the_user $rogue_wdir
-
-#allows only user (owner) to do all actions; group and other users are allowed only to read.
-sudo chmod -R 744 $rogue_wdir
-#make all .sh files excutible
-find $rogue_wdir -type f -iname "*\.sh" -exec echo "making {} excutable" && sudo chmod -x {} \;
-
-#if we are in a git repo then update submodules
-if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
-  echo "updating git submodules"
-  git submodule update --init --recursive
-  git submodule update --recursive
-  git config core.filemode false
-fi
+set_filepermissions
 
 ############################################################################################################
 header "Creating RAM Disk"
