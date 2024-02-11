@@ -44,6 +44,8 @@ prompt() {
 
 
 set_filepermissions () {
+  old_pwd=$(pwd)
+  cd "$rogue_wdir"
   #if we are in a git repo then update submodules
   if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
     echo "updating git submodules"
@@ -70,7 +72,7 @@ set_filepermissions () {
   sudo chmod -R 744 $rogue_wdir
   #make all .sh files excutible
   find $rogue_wdir -type f -iname "*\.sh" -exec sudo chmod -x {} \;
-
+  cd "$old_pwd"
 
 }
 
