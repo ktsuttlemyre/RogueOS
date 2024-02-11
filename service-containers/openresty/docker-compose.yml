@@ -11,6 +11,6 @@ services:
             - ${openresty_scripts:-~/openresty/scripts}:/scripts
 
             #this is for the npm index
-            - /opt/RogueOS/service-containers/nginx-proxy-manager/scripts:/npm_scripts
-            - ${nginx_proxy_manager_volume_data:-~/nginx-proxy-manager/data}:/npm_data
+            #- /opt/RogueOS/service-containers/nginx-proxy-manager/scripts:/npm_scripts
+            #- ${nginx_proxy_manager_volume_data:-~/nginx-proxy-manager/data}:/npm_data
         image: openresty/openresty:jammy

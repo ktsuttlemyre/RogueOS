@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # =========================
 # Add User OS X Interactive Command Line
 # =========================

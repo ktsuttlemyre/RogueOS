@@ -3,4 +3,4 @@ jq -r '. as $root |
 	$root | getpath($path) as $value |
 	select($value | scalars) |
 	([$path[]] | join("_")) + "=" + ($value | @json)
-	' < $1
+	'

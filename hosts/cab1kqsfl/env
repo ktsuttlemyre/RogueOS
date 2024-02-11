@@ -1,2 +1,3 @@
-restreamer_http=83
+restreamer_http=8080
 restreamer_https=446
+ssh_domain='cab1ssh.kqsfl.com'
