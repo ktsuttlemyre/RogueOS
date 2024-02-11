@@ -44,32 +44,32 @@ prompt() {
 
 
 set_filepermissions () {
-#if we are in a git repo then update submodules
-if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
-  echo "updating git submodules"
-  git submodule update --init --recursive
-  git submodule update --recursive
-  git config core.filemode false
-fi
-
-
-#TODO create RogueOS user and chown all files and services
-# if [[ is mac os ]]; then
-# $rogue_wdir/scripts/adduser.mac.sh RogueOS
-# else
-# adduser RogueOS
-# fi
-# sudo chown -R RogueOS .
-the_user="${USER:-$SUDO_USER}"
-the_user="${the_user:-$LOGNAME}"
-the_user="${the_user:-$(id -n -u)}"
-
-sudo chown -R $the_user $rogue_wdir
-
-#allows only user (owner) to do all actions; group and other users are allowed only to read.
-sudo chmod -R 744 $rogue_wdir
-#make all .sh files excutible
-find $rogue_wdir -type f -iname "*\.sh" -exec echo "making {} excutable" && sudo chmod -x {} \;
+  #if we are in a git repo then update submodules
+  if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
+    echo "updating git submodules"
+    git submodule update --init --recursive
+    git submodule update --recursive
+    git config core.filemode false
+  fi
+  
+  
+  #TODO create RogueOS user and chown all files and services
+  # if [[ is mac os ]]; then
+  # $rogue_wdir/scripts/adduser.mac.sh RogueOS
+  # else
+  # adduser RogueOS
+  # fi
+  # sudo chown -R RogueOS .
+  the_user="${USER:-$SUDO_USER}"
+  the_user="${the_user:-$LOGNAME}"
+  the_user="${the_user:-$(id -n -u)}"
+  
+  sudo chown -R $the_user $rogue_wdir
+  
+  #allows only user (owner) to do all actions; group and other users are allowed only to read.
+  sudo chmod -R 744 $rogue_wdir
+  #make all .sh files excutible
+  find $rogue_wdir -type f -iname "*\.sh" -exec sudo chmod -x {} \;
 
 
 }
