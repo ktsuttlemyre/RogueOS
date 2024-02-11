@@ -16,6 +16,28 @@
 
 set -e
 
+prompt() {
+  message="$1"
+  while true; do
+      read -p "$message " yn
+      case $yn in
+          [Yy][Ee][Ss]* )
+            return ;;
+          [Nn][Oo]* )
+            return 1 ;;
+          * ) echo "Please answer yes or no.";;
+      esac
+  done
+}
+
+
+if grep 'Host github.com' ~/.ssh/config; then
+  if ! prompt "You might already have a github ssh key on this machine. Would you like to continue? "; then
+    exit 0
+  fi
+fi
+
+
 # Generate SSH Key and Deploy to Github
 
 TOKEN=$1 # must have admin:public_key for DELETE
