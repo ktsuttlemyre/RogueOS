@@ -9,8 +9,8 @@ mkdir /tmp/RogueOS
 cd /tmp/
 
 function header () {
- printf "____Rogue_OS_installer____"
- printf "\t$1"
+ echo "____Rogue_OS_installer____"
+ echo "\t$1"
 }
 
 prompt() {
