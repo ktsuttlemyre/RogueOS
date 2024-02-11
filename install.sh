@@ -50,12 +50,10 @@ if [ -d "$rogue_wdir" ]; then
   fi
 fi
 
-#Install branch or master branch (handles fallback to master gracefully) 
+
 sudo mkdir $rogue_wdir
-curl -LkSs "https://api.github.com/repos/${repo}tarball/${branch}" | sudo tar xz --strip=1 -C $rogue_wdir
-
-
-if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then 
+if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then
+  curl -LkSs "https://api.github.com/repos/${repo}tarball/" | sudo tar xz --strip=1 -C $rogue_wdir
   echo "You do not have a branch for this host: $branch"
   if prompt "Do you wish to create ${branch} now? "; then
     while [ -z "${github_public_key_rw}" ]; do
@@ -69,12 +67,16 @@ if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"me
 
     curl -s -X POST -H "Authorization: token $TOKEN" \
     -d  "{\"ref\": \"refs/heads/$New_branch_name\",\"sha\": \"$SHA\"}"  "https://api.github.com/repos/${repo}git/refs"
+    sudo rm -rf $rogue_wdir;
+    sudo mkdir $rogue_wdir
   else
     echo "Using master branch in read only mode"
     branch='' # blank means use master branch
     install_privlages='ro'
   fi
 fi
+#Install branch or master branch (handles fallback to master gracefully) 
+curl -LkSs "https://api.github.com/repos/${repo}tarball/${branch}" | sudo tar xz --strip=1 -C $rogue_wdir
 
 #see if we should elevate privlages from read only to git
 if [ $install_privlages = "dev" ]; then
