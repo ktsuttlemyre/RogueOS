@@ -26,6 +26,7 @@ prompt() {
 #force working directory
 cd /opt
 
+repo="ktsuttlemyre/RogueOS/"
 os="RogueOS"
 rogue_wdir="/opt/$os"
 if [[ ./ -ef "$rogue_wdir" ]] || [ "$PWD" = "$rogue_wdir" ] || [ "$(pwd)" = "$rogue_wdir" ]; then
@@ -38,15 +39,40 @@ remote_install="${1:-ro}"
 branch="${2:-$machine_name}"
 #TODO swich to correct branch to continue install
 
-if curl -ss https://api.github.com/repos/ktsuttlemyre/RogueOS/branches/$branch | grep '"message": "Branch not found"' ; then 
+
+if prompt "Do you want to set a ssh key in github for this machine? "; then
+  echo "geting github token to create sshkey"
+  #get github token
+  while [ -z "${github_public_key_rw}" ]; do
+    source /dev/stdin 'user_tokens' <<< "$(curl https://raw.github.com/ktsuttlemyre/RogueOS/master/cli/secrets.sh)"
+  done
+
+  #set ssh key 
+  bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/scripts/generate_github_ssh_key.sh) github_public_key_rw
+fi
+
+if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then 
   echo "You do not have a branch = $branch"
-  read -p "Do you wish to continue with read only Master branch? " -n 1 -r; echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-      branch='' # blank means use master branch
-      remote_install='ro'
+  if prompt "Do you wish to create one now? "; then
+    while [ -z "${github_public_key_rw}" ]; do
+      source /dev/stdin 'user_tokens' <<< "$(curl https://raw.github.com/ktsuttlemyre/RogueOS/master/cli/secrets.sh)"
+    done
+    TOKEN="$github_public_key_rw" #this comes from rogue_secrets
+    Previous_branch_name='master'
+    New_branch_name="$branch"
+
+    SHA=$(curl -H "Authorization: token $TOKEN" "https://api.github.com/repos/${repo}git/refs/heads/${Previous_branch_name}" | jq -r '.object.sha')
+
+    curl -X POST -H "Authorization: token $TOKEN" \
+    -d  "{\"ref\": \"refs/heads/$New_branch_name\",\"sha\": \"$SHA\"}"  "https://api.github.com/repos/${repo}git/refs"
   else
-    echo "exiting"
-    exit 0
+    if prompt "Do you wish to continue with read only Master branch? "; then
+        branch='' # blank means use master branch
+        remote_install='ro'
+    else
+      echo "User cancelled install"
+      exit 1 
+    fi
   fi
 fi
 
@@ -61,15 +87,6 @@ if [ -d "$rogue_wdir" ]; then
 fi
 
 if [ $remote_install = "dev" ]; then
-  if prompt "Do you want to set a ssh key in github for this machine? "; then
-    echo "geting github token to create sshkey"
-    #get github token
-    source $rogue_wdir/cli/secrets.sh 'user_tokens'
-
-    #set ssh key 
-    $rogue_wdir/scripts/generate_github_ssh_key.sh github_public_key_rw ]
-  fi
-
   # using git (for devs)
   sudo git clone "git@github.com:ktsuttlemyre/$os.git" -b $branch $rogue_wdir
 elif [ $remote_install = "ro" ]; then
