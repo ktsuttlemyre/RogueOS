@@ -44,7 +44,8 @@ if prompt "Do you want to set a ssh key in github for this machine? "; then
   echo "geting github token to create sshkey"
   #get github token
   while [ -z "${github_public_key_rw}" ]; do
-    source /dev/stdin 'user_tokens' <<< "$(curl https://raw.github.com/ktsuttlemyre/RogueOS/master/cli/secrets.sh)"
+    curl -s https://raw.github.com/ktsuttlemyre/RogueOS/master/cli/secrets.sh -o /tmp/RogueOS
+    source /tmp/RogueOS/secrets.sh 'user_tokens'
   done
 
   #set ssh key 
@@ -55,15 +56,16 @@ if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"me
   echo "You do not have a branch = $branch"
   if prompt "Do you wish to create one now? "; then
     while [ -z "${github_public_key_rw}" ]; do
-      source /dev/stdin 'user_tokens' <<< "$(curl https://raw.github.com/ktsuttlemyre/RogueOS/master/cli/secrets.sh)"
+      curl -s https://raw.github.com/ktsuttlemyre/RogueOS/master/cli/secrets.sh -o /tmp/RogueOS
+      source /tmp/RogueOS/secrets.sh 'user_tokens'
     done
-    TOKEN="$github_public_key_rw" #this comes from rogue_secrets
+    TOKEN="${}github_public_key_rw}" #this comes from rogue_secrets
     Previous_branch_name='master'
     New_branch_name="$branch"
 
-    SHA=$(curl -H "Authorization: token $TOKEN" "https://api.github.com/repos/${repo}git/refs/heads/${Previous_branch_name}" | jq -r '.object.sha')
+    SHA=$(curl -s -H "Authorization: token $TOKEN" "https://api.github.com/repos/${repo}git/refs/heads/${Previous_branch_name}" | jq -r '.object.sha')
 
-    curl -X POST -H "Authorization: token $TOKEN" \
+    curl -s -X POST -H "Authorization: token $TOKEN" \
     -d  "{\"ref\": \"refs/heads/$New_branch_name\",\"sha\": \"$SHA\"}"  "https://api.github.com/repos/${repo}git/refs"
   else
     if prompt "Do you wish to continue with read only Master branch? "; then
