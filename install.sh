@@ -17,7 +17,7 @@ prompt() {
           [Yy][Ee][Ss]* )
             return ;;
           [Nn][Oo]* )
-            false ;;
+            return 1 ;;
           * ) echo "Please answer yes or no.";;
       esac
   done
