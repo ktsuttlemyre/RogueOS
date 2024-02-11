@@ -122,10 +122,12 @@ fi
 
 header "Install script has determined you are running\n\tcpu_board = ${cpu_board} \n\tlinux_distro = ${linux_distro} \n\tprocessor_arch = ${processor_arch} \n\tprocessor_bits = ${processor_bits}"
 
-if [ "$linux_distro" = "mac" ]; then
-  brew install git
-else
-  sudo apt-get install git-all
+if ! type "git" > /dev/null; then
+  if [ "$linux_distro" = "mac" ]; then
+    brew install git
+  else
+    sudo apt-get install git-all
+  fi
 fi
 
 #create alias
