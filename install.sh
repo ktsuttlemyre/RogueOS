@@ -3,7 +3,7 @@
 
 echo "Installing Rogue OS. Some of the commands will need sudo access. Please grant sudo use."
 #do a sudo command to get the password out of the way
-sudo echo "Thank you for granting sudo privlages" || exit 1
+sudo echo "Thank you for granting sudo privileges" || exit 1
 
 #cant run in the dir we are going to install
 os="RogueOS"
@@ -109,7 +109,7 @@ source "${rogue_wdir}.venv/bin/activate"
 
 
 #dependencies
-sudo apt install nodejs
+sudo apt-get install nodejs
 npm install -g @bitwarden/cli
 
 
