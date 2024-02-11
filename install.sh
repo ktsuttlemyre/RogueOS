@@ -19,8 +19,8 @@ cd /tmp/
 
 ################################### Functions ##########################################
 function header () {
- echo -e "\t\t____Rogue_OS_installer____"
- echo -e "$1"
+ echo -e "____Rogue_OS_installer____"
+ echo -e "\t$1"
 }
 
 prompt() {
@@ -165,7 +165,11 @@ if [ "$linux_distro" != "mac" ]; then
 fi
 
 sudo npm install -g @bitwarden/cli
-
+if [ "$linux_distro" != "mac" ]; then
+  sudo apt-get install -y  jq
+else
+  brew install jq
+fi
 
 ################################### Repo and install management ###################################
 header "Repo and installation linking"
