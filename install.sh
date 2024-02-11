@@ -18,8 +18,8 @@ cd /tmp/
 
 ################################### Functions ##########################################
 function header () {
- echo -e "____Rogue_OS_installer____"
- echo -e "\t$1"
+ echo -e "\t\t____Rogue_OS_installer____"
+ echo -e "$1"
 }
 
 prompt() {
@@ -88,7 +88,7 @@ if [ ! "$linux_distro" = "mac" ]; then
   esac
 fi
 
-header "Install script has determined you are running cpu_board = ${cpu_board} \n linux_distro = ${linux_distro} \n processor_arch = ${processor_arch} \n processor_bits = ${processor_bits}"
+header "Install script has determined you are running\n\tcpu_board = ${cpu_board} \n\tlinux_distro = ${linux_distro} \n\tprocessor_arch = ${processor_arch} \n\tprocessor_bits = ${processor_bits}"
 
 #create alias
 #type python >/dev/null 2>&1 || alias python=python3
