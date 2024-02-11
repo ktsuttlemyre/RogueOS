@@ -1,13 +1,22 @@
 #! /bin/bash
 #set -ex
+
 echo "Installing Rogue OS. Some of the commands will need sudo access. Please grant sudo use."
 #do a sudo command to get the password out of the way
-sudo echo "Thank you" || exit 1
+sudo echo "Thank you for granting sudo privlages" || exit 1
+
+#cant run in the dir we are going to install
+os="RogueOS"
+rogue_wdir="/opt/$os"
+if [[ ./ -ef "$rogue_wdir" ]] || [ "$PWD" = "$rogue_wdir" ] || [ "$(pwd)" = "$rogue_wdir" ]; then
+  echo "Sorry, you can not run this installer from the Rogue install path $rogue_wdir"
+fi
 
 #force working directory to tmp
-mkdir /tmp/RogueOS
+mkdir -p /tmp/RogueOS
 cd /tmp/
 
+################################### Functions ##########################################
 function header () {
  echo -e "____Rogue_OS_installer____"
  echo -e "\t$1"
@@ -34,11 +43,6 @@ prompt() {
 
 ###########################################################################################################
 header "preparing this environment to become Rogue"
-#create alias
-#type python >/dev/null 2>&1 || alias python=python3
-python3 -m ensurepip --upgrade
-#type pip >/dev/null 2>&1 || alias pip=pip3
-
 # check if it is a raspberry pi
 cpu_board=false
 if [ -x "$(command -v python3)" ] ; then
@@ -86,6 +90,24 @@ fi
 
 header "Install script has determined you are running cpu_board = ${cpu_board} \n linux_distro = ${linux_distro} \n processor_arch = ${processor_arch} \n processor_bits = ${processor_bits}"
 
+#create alias
+#type python >/dev/null 2>&1 || alias python=python3
+
+#type pip >/dev/null 2>&1 || alias pip=pip3
+
+if [ "$linux_distro" != "mac" ]; then
+ sudo apt-get install python3-pip
+#else
+#  python3 -m ensurepip --upgrade
+fi
+
+#create virtual environment without pip and with access to system site packages
+python3 -m venv .venv --without-pip --system-site-packages
+source "${rogue_wdir}.venv/bin/activate"
+#example
+#python3 -m pip install Django
+
+
 #dependencies
 sudo apt install nodejs
 npm install -g @bitwarden/cli
@@ -94,11 +116,6 @@ npm install -g @bitwarden/cli
 ################################### Repo and install management ###################################
 header "Repo and installation linking"
 repo="ktsuttlemyre/RogueOS/"
-os="RogueOS"
-rogue_wdir="/opt/$os"
-if [[ ./ -ef "$rogue_wdir" ]] || [ "$PWD" = "$rogue_wdir" ] || [ "$(pwd)" = "$rogue_wdir" ]; then
-  echo "Sorry, you can not run this installer from the Rogue install path $rogue_wdir"
-fi
 
 host="$(hostname | cut -d. -f1)"
 machine_name=$(scutil --get ComputerName 2>/dev/null || uname -n || host)
