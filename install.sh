@@ -157,7 +157,7 @@ if [ "$linux_distro" != "mac" ]; then
   sudo apt-get install -y nodejs npm
 fi
 
-npm install -g @bitwarden/cli
+sudo npm install -g @bitwarden/cli
 
 
 ################################### Repo and install management ###################################
