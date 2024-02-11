@@ -145,7 +145,7 @@ fi
 
 #create virtual environment without pip and with access to system site packages
 python3 -m venv .venv --without-pip --system-site-packages
-source "${rogue_wdir}.venv/bin/activate"
+source "${rogue_wdir}/.venv/bin/activate"
 #example
 #python3 -m pip install Django
 
