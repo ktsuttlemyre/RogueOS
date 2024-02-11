@@ -19,8 +19,7 @@ cd /tmp/
 
 ################################### Functions ##########################################
 function header () {
- echo -e "____Rogue_OS_installer____"
- echo -e "\t$1"
+ echo -e RogueOs[installer]  $1"
 }
 
 prompt() {
