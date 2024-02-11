@@ -14,7 +14,7 @@ if [ "$linux_distro" = "mac" ]; then
     diskutil apfs create $(hdiutil attach -nomount ram://8192) RogueOSRam && touch $ramdisk/.metadata_never_index
   fi
 else
-  # if [ ! -d /Volumes/RogueOSRam ]; then
-  #   mount tmpfs <mountpoint> -t tmpfs -o size=.25G
-  # fi
+  if [ ! -d /Volumes/RogueOSRam ]; then
+    mount tmpfs <mountpoint> -t tmpfs -o size=.25G
+  fi
 fi
