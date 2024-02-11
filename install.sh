@@ -46,13 +46,7 @@ prompt() {
 set_filepermissions () {
   old_pwd=$(pwd)
   cd "$rogue_wdir"
-  #if we are in a git repo then update submodules
-  if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
-    echo "updating git submodules"
-    git submodule update --init --recursive
-    git submodule update --recursive
-    git config core.filemode false
-  fi
+
   
   
   #TODO create RogueOS user and chown all files and services
@@ -72,6 +66,17 @@ set_filepermissions () {
   sudo chmod -R 744 $rogue_wdir
   #make all .sh files excutible
   find $rogue_wdir -type f -iname "*\.sh" -exec sudo chmod -x {} \;
+
+
+  #if we are in a git repo then update submodules
+  if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
+    echo "updating git submodules"
+    git submodule update --init --recursive
+    git submodule update --recursive
+    git config core.filemode false
+  fi
+
+  
   cd "$old_pwd"
 
 }
