@@ -126,7 +126,7 @@ if ! type "git" > /dev/null; then
   if [ "$linux_distro" = "mac" ]; then
     brew install git
   else
-    sudo apt-get install git-all
+    sudo apt-get install git
   fi
 fi
 
