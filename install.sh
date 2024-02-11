@@ -142,20 +142,6 @@ fi
 
 #type pip >/dev/null 2>&1 || alias pip=pip3
 
-#################################################################3
-header "Setting up python venv"
-if [ "$linux_distro" != "mac" ]; then
- sudo apt-get install python3-pip
-#else
-#  python3 -m ensurepip --upgrade
-fi
-
-#create virtual environment without pip and with access to system site packages
-python3 -m venv "${rogue_wdir}/.venv" --without-pip --system-site-packages
-source "${rogue_wdir}/.venv/bin/activate"
-#example
-#python3 -m pip install Django
-
 ########################################################################
 header "setting up nodejs"
 #dependencies
@@ -251,6 +237,22 @@ if ! [[ $(pwd) -ef $rogue_wdir ]]; then
 fi
 
 set_filepermissions
+
+
+#################################################################3
+header "Setting up python venv"
+if [ "$linux_distro" != "mac" ]; then
+ sudo apt-get install python3-pip
+#else
+#  python3 -m ensurepip --upgrade
+fi
+
+#create virtual environment without pip and with access to system site packages
+python3 -m venv "${rogue_wdir}/.venv" --without-pip --system-site-packages
+source "${rogue_wdir}/.venv/bin/activate"
+#example
+#python3 -m pip install Django
+
 
 ############################################################################################################
 header "Creating RAM Disk"
