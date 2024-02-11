@@ -35,8 +35,8 @@ fi
 
 host="$(hostname | cut -d. -f1)"
 machine_name=$(scutil --get ComputerName 2>/dev/null || uname -n || host)
-remote_install="${1:-ro}"
-branch="${2:-$machine_name}"
+branch="${1:-$machine_name}"
+install_privlages="${2:-ro}"
 #TODO swich to correct branch to continue install
 
 
@@ -49,27 +49,15 @@ if [ -d "$rogue_wdir" ]; then
     exit 0
   fi
 fi
-#do a temporary install so we can call other portions of code
+
+#Install branch or master branch (handles fallback to master gracefully) 
 sudo mkdir $rogue_wdir
-curl -LkSs "https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball/" | sudo tar xz --strip=1 -C $rogue_wdir
-  
+curl -LkSs "https://api.github.com/repos/${repo}tarball/${branch}" | sudo tar xz --strip=1 -C $rogue_wdir
 
-
-
-if prompt "Do you want to set a ssh key in github for this machine? "; then
-  echo "geting github token to create sshkey"
-  #get github token
-  while [ -z "${github_public_key_rw}" ]; do
-    source $rogue_wdir/cli/secrets.sh 'user_tokens'
-  done
-
-  #set ssh key 
-  bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/scripts/generate_github_ssh_key.sh) github_public_key_rw
-fi
 
 if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then 
-  echo "You do not have a branch = $branch"
-  if prompt "Do you wish to create one now? "; then
+  echo "You do not have a branch for this host: $branch"
+  if prompt "Do you wish to create ${branch} now? "; then
     while [ -z "${github_public_key_rw}" ]; do
       source $rogue_wdir/cli/secrets.sh 'user_tokens'
     done
@@ -82,30 +70,32 @@ if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"me
     curl -s -X POST -H "Authorization: token $TOKEN" \
     -d  "{\"ref\": \"refs/heads/$New_branch_name\",\"sha\": \"$SHA\"}"  "https://api.github.com/repos/${repo}git/refs"
   else
-    if prompt "Do you wish to continue with read only Master branch? "; then
-        branch='' # blank means use master branch
-        remote_install='ro'
-    else
-      echo "User cancelled install"
-      exit 1 
-    fi
+    echo "Using master branch in read only mode"
+    branch='' # blank means use master branch
+    install_privlages='ro'
   fi
 fi
 
-#remove temporary install
-sudo rm -rf $rogue_wdir;
+#see if we should elevate privlages from read only to git
+if [ $install_privlages = "dev" ]; then
+  #upgrade to a versioned instance
+  if prompt "Do you want to set a ssh key in github for this machine? "; then
+    echo "geting github token to create sshkey"
+    #get github token
+    while [ -z "${github_public_key_rw}" ]; do
+      source $rogue_wdir/cli/secrets.sh 'user_tokens'
+    done
 
-if [ $remote_install = "dev" ]; then
+    #set ssh key 
+    ${rogue_wdir}/scripts/generate_github_ssh_key.sh 'github_public_key_rw'
+  fi
+
+  #remove read only and upgrade to versioned
+  sudo rm -rf $rogue_wdir;
   # using git (for devs)
-  sudo git clone "git@github.com:ktsuttlemyre/$os.git" -b $branch $rogue_wdir
-elif [ $remote_install = "ro" ]; then
-  header "Installing as READ ONLY mode"
-  # Downloads the whole repo
-  # without version control (read only install)
-  sudo mkdir $rogue_wdir
-  curl -LkSs "https://api.github.com/repos/ktsuttlemyre/RogueOS/tarball/$branch" | sudo tar xz --strip=1 -C $rogue_wdir
-
+  sudo git clone "git@github.com:${repo}.git" -b $branch $rogue_wdir
 fi
+
 
 #set work dir to /opt/RogueOS path
 cd $rogue_wdir # "$(dirname "$0")"
