@@ -127,6 +127,8 @@ header "Install script has determined you are running\n\tcpu_board = ${cpu_board
 
 #type pip >/dev/null 2>&1 || alias pip=pip3
 
+#################################################################3
+header "Setting up python venv"
 if [ "$linux_distro" != "mac" ]; then
  sudo apt-get install python3-pip
 #else
@@ -139,9 +141,13 @@ source "${rogue_wdir}.venv/bin/activate"
 #example
 #python3 -m pip install Django
 
-
+########################################################################
+header "setting up nodejs"
 #dependencies
-sudo apt-get install -y nodejs npm
+if [ "$linux_distro" != "mac" ]; then
+  sudo apt-get install -y nodejs npm
+fi
+
 npm install -g @bitwarden/cli
 
 
