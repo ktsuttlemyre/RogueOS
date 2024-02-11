@@ -44,12 +44,12 @@ prompt() {
 
 set_filepermissions () {
 #if we are in a git repo then update submodules
-#if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
+if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
   echo "updating git submodules"
   git submodule update --init --recursive
   git submodule update --recursive
   git config core.filemode false
-#fi
+fi
 
 
 #TODO create RogueOS user and chown all files and services
@@ -167,7 +167,8 @@ fi
 
 sudo mkdir $rogue_wdir
 if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then
-  curl -LkSs "https://api.github.com/repos/${repo}tarball/" | sudo tar xz --strip=1 -C $rogue_wdir
+  #curl -LkSs "https://api.github.com/repos/${repo}tarball/" | sudo tar xz --strip=1 -C $rogue_wdir
+  sudo git clone https://github.com/ktsuttlemyre/RogueOS.git $rogue_wdir
   set_filepermissions
   echo "You do not have a branch for this host: $branch"
   if prompt "Do you wish to create ${branch} now? "; then
@@ -191,7 +192,8 @@ if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"me
   fi
 fi
 #Install branch or master branch (handles fallback to master gracefully) 
-curl -LkSs "https://api.github.com/repos/${repo}tarball/${branch}" | sudo tar xz --strip=1 -C $rogue_wdir
+#curl -LkSs "https://api.github.com/repos/${repo}tarball/${branch}" | sudo tar xz --strip=1 -C $rogue_wdir
+sudo git clone https://github.com/ktsuttlemyre/RogueOS.git -b "${branch}" $rogue_wdir
 set_filepermissions
 
 #see if we should elevate privlages from read only to git
