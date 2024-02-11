@@ -4,6 +4,9 @@ echo "Installing Rogue OS. Some of the commands will need sudo access. Please gr
 #do a sudo command to get the password out of the way
 sudo echo "Thank you" || exit 1
 
+#dependencies
+npm install -g @bitwarden/cli
+
 function header () {
  echo "____Rogue_OS_installer____"
  echo "\t$1"
@@ -41,10 +44,9 @@ fi
 
 host="$(hostname | cut -d. -f1)"
 machine_name=$(scutil --get ComputerName 2>/dev/null || uname -n || host)
-branch="${1:-$machine_name}"
+machine_name=${1:-machine_name}
+branch="$machine_name"
 install_privlages="${2:-ro}"
-#TODO swich to correct branch to continue install
-
 
 #if already installed then ask to delete and replace
 if [ -d "$rogue_wdir" ]; then
@@ -55,7 +57,6 @@ if [ -d "$rogue_wdir" ]; then
     exit 0
   fi
 fi
-
 
 sudo mkdir $rogue_wdir
 if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then
@@ -217,7 +218,7 @@ os="$os"
 rogue_wdir="$rogue_wdir"
 service_wd="$rogue_wdir/service-containers"
 host_wd="$rogue_wdir/hosts/$machine_name"
-machine_name="$machine_name"
+machine_name="$fv"
 secrets="$HOME"
 secrets_size=".5G"
 linux_distro="$linux_distro"
