@@ -4,12 +4,13 @@ echo "Installing Rogue OS. Some of the commands will need sudo access. Please gr
 #do a sudo command to get the password out of the way
 sudo echo "Thank you" || exit 1
 
-#dependencies
-npm install -g @bitwarden/cli
+#force working directory to tmp
+mkdir /tmp/RogueOS
+cd /tmp/
 
 function header () {
- echo "____Rogue_OS_installer____"
- echo "\t$1"
+ printf "____Rogue_OS_installer____"
+ printf "\t$1"
 }
 
 prompt() {
@@ -32,114 +33,8 @@ prompt() {
   done
 }
 
-#force working directory
-cd /opt
-
-repo="ktsuttlemyre/RogueOS/"
-os="RogueOS"
-rogue_wdir="/opt/$os"
-if [[ ./ -ef "$rogue_wdir" ]] || [ "$PWD" = "$rogue_wdir" ] || [ "$(pwd)" = "$rogue_wdir" ]; then
-  echo "Sorry, you can not run this installer from the Rogue install path $rogue_wdir"
-fi
-
-host="$(hostname | cut -d. -f1)"
-machine_name=$(scutil --get ComputerName 2>/dev/null || uname -n || host)
-machine_name=${1:-machine_name}
-branch="$machine_name"
-install_privlages="${2:-ro}"
-
-#if already installed then ask to delete and replace
-if [ -d "$rogue_wdir" ]; then
-  if prompt "Do you wish to replace the current RogueOS? located at $rogue_wdir? "; then
-      sudo rm -rf $rogue_wdir;
-  else
-    echo "exiting"
-    exit 0
-  fi
-fi
-
-sudo mkdir $rogue_wdir
-if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then
-  curl -LkSs "https://api.github.com/repos/${repo}tarball/" | sudo tar xz --strip=1 -C $rogue_wdir
-  echo "You do not have a branch for this host: $branch"
-  if prompt "Do you wish to create ${branch} now? "; then
-    while [ -z "${github_public_key_rw}" ]; do
-      source $rogue_wdir/cli/secrets.sh 'user_tokens'
-    done
-    TOKEN="$github_public_key_rw" #this comes from rogue_secrets
-    Previous_branch_name='master'
-    New_branch_name="$branch"
-
-    SHA=$(curl -s -H "Authorization: token $TOKEN" "https://api.github.com/repos/${repo}git/refs/heads/${Previous_branch_name}" | jq -r '.object.sha')
-
-    curl -s -X POST -H "Authorization: token $TOKEN" \
-    -d  "{\"ref\": \"refs/heads/$New_branch_name\",\"sha\": \"$SHA\"}"  "https://api.github.com/repos/${repo}git/refs"
-    sudo rm -rf $rogue_wdir;
-    sudo mkdir $rogue_wdir
-  else
-    echo "Using master branch in read only mode"
-    branch='' # blank means use master branch
-    install_privlages='ro'
-  fi
-fi
-#Install branch or master branch (handles fallback to master gracefully) 
-curl -LkSs "https://api.github.com/repos/${repo}tarball/${branch}" | sudo tar xz --strip=1 -C $rogue_wdir
-
-#see if we should elevate privlages from read only to git
-if [ $install_privlages = "dev" ]; then
-  #upgrade to a versioned instance
-  if prompt "Do you want to set a ssh key in github for this machine? "; then
-    echo "geting github token to create sshkey"
-    #get github token
-    while [ -z "${github_public_key_rw}" ]; do
-      source $rogue_wdir/cli/secrets.sh 'user_tokens'
-    done
-
-    #set ssh key 
-    ${rogue_wdir}/scripts/generate_github_ssh_key.sh 'github_public_key_rw'
-  fi
-
-  #remove read only and upgrade to versioned
-  sudo rm -rf $rogue_wdir;
-  # using git (for devs)
-  sudo git clone "git@github.com:${repo}.git" -b $branch $rogue_wdir
-fi
-
-
-#set work dir to /opt/RogueOS path
-cd $rogue_wdir # "$(dirname "$0")"
-
-if ! [[ $(pwd) -ef $rogue_wdir ]]; then
-  header "Must install RogueOS to $rogue_wdir"
-  exit 1
-fi
-
-#TODO create RogueOS user and chown all files and services
-# if [[ is mac os ]]; then
-# $rogue_wdir/scripts/adduser.mac.sh RogueOS
-# else
-# adduser RogueOS
-# fi
-# sudo chown -R RogueOS .
-the_user="${USER:-$SUDO_USER}"
-the_user="${the_user:-$LOGNAME}"
-the_user="${the_user:-$(id -n -u)}"
-
-sudo chown -R $the_user $rogue_wdir
-
-#allows only user (owner) to do all actions; group and other users are allowed only to read.
-sudo chmod -R 744 $rogue_wdir
-#make all .sh files excutible
-find $rogue_wdir -type f -iname "*\.sh" -exec echo "making {} excutable" && sudo chmod -x {} \;
-
-#if we are in a git repo then update submodules
-if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
-  echo "updating git submodules"
-  git submodule update --init --recursive
-  git submodule update --recursive
-  git config core.filemode false
-fi
-
+###########################################################################################################
+header "preparing this environment to become Rogue"
 #create alias
 #type python >/dev/null 2>&1 || alias python=python3
 python3 -m ensurepip --upgrade
@@ -192,6 +87,120 @@ fi
 
 header "Install script has determined you are running cpu_board = ${cpu_board} \n linux_distro = ${linux_distro} \n processor_arch = ${processor_arch} \n processor_bits = ${processor_bits}"
 
+#dependencies
+sudo apt install nodejs
+npm install -g @bitwarden/cli
+
+
+################################### Repo and install management ###################################
+header "Repo and installation linking"
+repo="ktsuttlemyre/RogueOS/"
+os="RogueOS"
+rogue_wdir="/opt/$os"
+if [[ ./ -ef "$rogue_wdir" ]] || [ "$PWD" = "$rogue_wdir" ] || [ "$(pwd)" = "$rogue_wdir" ]; then
+  echo "Sorry, you can not run this installer from the Rogue install path $rogue_wdir"
+fi
+
+host="$(hostname | cut -d. -f1)"
+machine_name=$(scutil --get ComputerName 2>/dev/null || uname -n || host)
+machine_name=${1:-machine_name}
+branch="$machine_name"
+install_privlages="${2:-ro}"
+
+#if already installed then ask to delete and replace
+if [ -d "$rogue_wdir" ]; then
+  if prompt "Do you wish to replace the current RogueOS? located at $rogue_wdir? "; then
+      sudo rm -rf $rogue_wdir;
+  else
+    echo "exiting"
+    exit 0
+  fi
+fi
+
+sudo mkdir $rogue_wdir
+if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then
+  curl -LkSs "https://api.github.com/repos/${repo}tarball/" | sudo tar xz --strip=1 -C $rogue_wdir
+  echo "You do not have a branch for this host: $branch"
+  if prompt "Do you wish to create ${branch} now? "; then
+    while [ -z "${github_public_key_rw}" ]; do
+      source $rogue_wdir/cli/secrets.sh 'user_tokens'
+    done
+    TOKEN="$github_public_key_rw" #this comes from rogue_secrets
+    Previous_branch_name='master'
+    New_branch_name="$branch"
+
+    SHA=$(curl -s -H "Authorization: token $TOKEN" "https://api.github.com/repos/${repo}git/refs/heads/${Previous_branch_name}" | jq -r '.object.sha')
+
+    curl -s -X POST -H "Authorization: token $TOKEN" \
+    -d  "{\"ref\": \"refs/heads/$New_branch_name\",\"sha\": \"$SHA\"}"  "https://api.github.com/repos/${repo}git/refs"
+    sudo rm -rf $rogue_wdir;
+    sudo mkdir $rogue_wdir
+  else
+    echo "Using master branch in read only mode"
+    branch='' # blank means use master branch
+    install_privlages='ro'
+  fi
+fi
+#Install branch or master branch (handles fallback to master gracefully) 
+curl -LkSs "https://api.github.com/repos/${repo}tarball/${branch}" | sudo tar xz --strip=1 -C $rogue_wdir
+
+#see if we should elevate privlages from read only to git
+if [ $install_privlages = "dev" ]; then
+  header "Linking to git repo"
+  if prompt "Do you want to set a ssh key in github for this machine? "; then
+    echo "geting github token to create sshkey"
+    #get github token
+    while [ -z "${github_public_key_rw}" ]; do
+      source $rogue_wdir/cli/secrets.sh 'user_tokens'
+    done
+
+    #set ssh key 
+    ${rogue_wdir}/scripts/generate_github_ssh_key.sh 'github_public_key_rw'
+  fi
+
+  #remove read only and upgrade to versioned
+  sudo rm -rf $rogue_wdir;
+  # using git (for devs)
+  sudo git clone "git@github.com:${repo}.git" -b $branch $rogue_wdir
+fi
+
+
+#set work dir to /opt/RogueOS path
+cd $rogue_wdir # "$(dirname "$0")"
+
+if ! [[ $(pwd) -ef $rogue_wdir ]]; then
+  header "Must install RogueOS to $rogue_wdir"
+  exit 1
+fi
+
+#TODO create RogueOS user and chown all files and services
+# if [[ is mac os ]]; then
+# $rogue_wdir/scripts/adduser.mac.sh RogueOS
+# else
+# adduser RogueOS
+# fi
+# sudo chown -R RogueOS .
+the_user="${USER:-$SUDO_USER}"
+the_user="${the_user:-$LOGNAME}"
+the_user="${the_user:-$(id -n -u)}"
+
+sudo chown -R $the_user $rogue_wdir
+
+#allows only user (owner) to do all actions; group and other users are allowed only to read.
+sudo chmod -R 744 $rogue_wdir
+#make all .sh files excutible
+find $rogue_wdir -type f -iname "*\.sh" -exec echo "making {} excutable" && sudo chmod -x {} \;
+
+#if we are in a git repo then update submodules
+if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
+  echo "updating git submodules"
+  git submodule update --init --recursive
+  git submodule update --recursive
+  git config core.filemode false
+fi
+
+############################################################################################################
+header "Creating RAM Disk"
 ramdisk=''
 #install nginx to system communication ramdisk
 if [ "$linux_distro" = "mac" ]; then
@@ -210,7 +219,8 @@ else
   $rogue_wdir/cli/rogue mountram "$ramdisk" 8192
 fi
 
-
+############################################################################################################
+header "Setting RogueEnvVars
 #todo encrypt secrets somehow and feed it through in memory FS
 header "Writing host specific .env to $rogue_wdir/env"
 cat > $rogue_wdir/env <<EOF
@@ -227,8 +237,10 @@ processor_bits="$processor_bits"
 ramdisk="$ramdisk"
 EOF
 
+###########################################################################################################
+header "Configuring $machine_name"
 source $rogue_wdir/config.sh $machine_name
 
 
-echo "RogueOS is now installed"
+header "RogueOS is now Ready"
 
