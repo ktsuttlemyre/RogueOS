@@ -1,14 +1,16 @@
 #!/bin/bash
 #set -x
 
-script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-set -a      # turn on automatic exporting
-source "$(dirname $script_dir)/env"
-[ -f "$host_wd/env" ] && source "$host_wd/env"
-set +a      # turn off automatic exporting
+if [ -z ${script_dir+x} ]; then
+	export script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+	set -a      # turn on automatic exporting
+	source "$(dirname $script_dir)/env"
+	[ -f "$host_wd/env" ] && source "$host_wd/env"
+	set +a      # turn off automatic exporting
 
-#add secrets?
-#TODO
+	#add secrets?
+	#TODO
+fi
 
 
 
@@ -19,6 +21,13 @@ handle_file () {
 	if [[ $FILE == -* ]]; then
 		#this one is disabled
 	 	return
+	fi
+	if [[ $FILE != [0-9]* ]]; then
+		#handle all matches
+		$script_dir/service.sh "ls" | grep "$FILE" | while read -r line ; do
+		    handle_file "$ACTION" "$line" "$iter_dir"
+		done
+		return
 	fi
 
 	IFS='.' read -ra array <<< "$FILE"
@@ -52,10 +61,12 @@ handle_file () {
 				#sudo useradd -s /bin/false -g $user_name -d $rogue_wdir $user_name
 			#fi
 		fi
-		[ "$ACTION" = "plan" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" config
-		[ "$ACTION" = "startup" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" up -d
-		[ "$ACTION" = "stop" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" down
-		#todo add  -f $service_wd/rogue.labels.yml to above command
+		if [ -f "$iter_dir/$FILE" ]; then
+			[ "$ACTION" = "plan" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" config
+			[ "$ACTION" = "startup" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" up -d
+			[ "$ACTION" = "stop" ] && docker compose -f "$iter_dir/$FILE"  -f "$service_wd/$service/docker-compose.yml" --env-file "$env_file"  --project-name "$service" down
+			#todo add  -f $service_wd/rogue.labels.yml to above command
+		fi
 
 	elif [ "$file_type" = "sh" ]; then
 		#only run  if the action matches the parent file 
@@ -88,16 +99,17 @@ case "$1" in
 			echo "$FILE"
 		done
 	;;
-	"plan")
+	"plan"|"config")
+		action='plan'
 		for FILE in $startup_list; do
-			handle_file $1 $FILE $host_wd/startup
+			handle_file $action $FILE $host_wd/startup
 		done
 
 		for FILE in $shutdown_list; do
-			handle_file $1 $FILE $host_wd/shutdown
+			handle_file $action $FILE $host_wd/shutdown
 		done
 	;;
-	"restart")
+	"restart"|"refresh")
 		if [ -z ${list+x} ]; then
 			$script_dir/service.sh "stopall" 
 		else
@@ -195,8 +207,7 @@ case "$1" in
 	*)
         echo "Unknown command: $command" 
         exit 1
-        ;;
-
+    ;;
 esac
 
 

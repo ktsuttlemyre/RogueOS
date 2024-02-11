@@ -59,6 +59,20 @@ if [ "$linux_distro" = "mac" ]; then
   echo "installing Mac software"
   brew upgrade || true
   brew upgrade --cask || true
+  
+  if [ -z "$ssh_subdomain" ]; then 
+    echo "!!!warning!!!"
+    echo "RogueOS has no ssh_subdomain RogueOS can not set a ssh_subdomain"
+    echo "!!warning!!!"
+  else
+    brew install cloudflared
+    if ! grep -q "Host $ssh_subdomain" ~/.ssh/config; then
+      cat > ~/.ssh/config <<EOF
+      Host $ssh_subdomain
+      ProxyCommand /opt/homebrew/bin/cloudflared access ssh --hostname %h
+EOF
+    fi
+  fi
 
   echo "install hooks"
   #startup

@@ -13,7 +13,7 @@ services:
             - ${restreamer_rtmp:-1935}:1935
             - ${restreamer_rtmps:-1936}:1936
             - ${restreamer_srt:-6000}:6000/udp
-        image: docker.io/datarhei/restreamer:2.6.0
+        image: docker.io/datarhei/restreamer:latest
 #        network_mode: host
 #         networks:
 #             - restreamer_network
