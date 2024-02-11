@@ -141,7 +141,7 @@ source "${rogue_wdir}.venv/bin/activate"
 
 
 #dependencies
-sudo apt-get install nodejs
+sudo apt-get install -y nodejs npm
 npm install -g @bitwarden/cli
 
 
