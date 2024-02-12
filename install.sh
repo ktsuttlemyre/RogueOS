@@ -266,7 +266,7 @@ if [ $install_privlages = "dev" ]; then
     done
 
     #set ssh key 
-    ${rogue_wdir}/scripts/generate_github_ssh_key.sh 'github_public_key_rw'
+    ${rogue_wdir}/scripts/generate_github_ssh_key.sh "${github_public_key_rw}"
   fi
 
   #remove read only and upgrade to versioned
