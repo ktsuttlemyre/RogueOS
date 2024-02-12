@@ -209,10 +209,10 @@ header "Repo and installation linking"
 repo="ktsuttlemyre/RogueOS/"
 
 host="$(hostname | cut -d. -f1)"
-machine_name=$(scutil --get ComputerName 2>/dev/null || uname -n || host)
-machine_name=${1:-machine_name}
+tmp=$(scutil --get ComputerName 2>/dev/null || uname -n || host)
+machine_name=${machine_name:-tmp}
 branch="$machine_name"
-install_privlages="${2:-ro}"
+install_privileges="${install_privileges:-ro}"
 
 #if already installed then ask to delete and replace
 if [ -d "$rogue_wdir" ]; then
@@ -247,7 +247,7 @@ if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"me
   else
     echo "Using master branch in read only mode"
     branch='' # blank means use master branch
-    install_privlages='ro'
+    install_privileges='ro'
   fi
 fi
 #Install branch or master branch (handles fallback to master gracefully) 
@@ -256,7 +256,7 @@ sudo git clone https://github.com/ktsuttlemyre/RogueOS.git -b "${branch}" $rogue
 set_filepermissions
 
 #see if we should elevate privlages from read only to git
-if [ $install_privlages = "dev" ]; then
+if [ $install_privileges = "dev" ]; then
   header "Linking to git repo"
   if prompt "Do you want to set a ssh key in github for this machine? " "$set_github_ssh_key"; then
     echo "geting github token to create sshkey"
