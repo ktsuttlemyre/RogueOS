@@ -15,7 +15,12 @@ fi
 
 #force working directory to tmp
 mkdir -p /tmp/RogueOS
-cd /tmp/
+cd /tmp/RogueOS
+
+env_file=$1
+if [ -f $env_file ]; then
+  set -a; source $env_file; set +a
+fi
 
 ################################### Functions ##########################################
 function header () {
@@ -307,6 +312,6 @@ source "${rogue_wdir}/.venv/bin/activate"
 header "Configuring $machine_name"
 source $rogue_wdir/config.sh $machine_name
 
-
+rm -rf $env_file
 header "RogueOS is now Ready"
 
