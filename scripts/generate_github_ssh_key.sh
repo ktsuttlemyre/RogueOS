@@ -49,7 +49,7 @@ if [ ! -f ~/.ssh/config ]; then
 fi
 
 if grep 'Host github.com' ~/.ssh/config; then
-  if ! prompt "You might already have a github ssh key on this machine. Would you like to continue? " force_addssh; then
+  if ! prompt "You might already have a github ssh key on this machine. Would you like to continue? " force_generate_github_ssh_key; then
     exit 0
   fi
 fi
