@@ -52,6 +52,7 @@ bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/ins
 ```
 
 ## Non-interactive install
+#### via env vars
 ```bash
 (
 #optional
@@ -61,11 +62,19 @@ bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/ins
 #export replace_old_rogue='yes'
 #export create_branch='yes'
 #export set_github_ssh_key='yes'
-# or from env file
-#set -a; source .env; set +a
 bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh)
 )
 ```
+#### or from an env file
+```bash
+(
+#optional
+#export machine_name=''
+bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh) env
+)
+```
+note: env file variables will override the exported ones before the call
+note: also env file will be deleted after attempted install
 
 You can automate answers via the following variables
 set_environment_secrets='yes,no,cancel or exit'
