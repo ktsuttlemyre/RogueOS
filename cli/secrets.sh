@@ -115,7 +115,7 @@ while read -r name; do
 	if [ -z "${f_path}" ]; then
 		# load as envirnment variable
 		log_info "exporting $name to shell environment"
-		export "$name=\"$data\""
+		export "$name=$data"
 	else
 		log_info "writing $name to $f_path"
 
