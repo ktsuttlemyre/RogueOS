@@ -14,7 +14,7 @@
 #   https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
 #   https://developer.github.com/v3/users/keys/
 
-set -e
+#set -e
 
 prompt() {
   message="$1"
@@ -64,13 +64,12 @@ ssh-keygen -q -b 4096 -t rsa -N "" -f ~/.ssh/github_rsa
 PUBKEY=`cat ~/.ssh/github_rsa.pub`
 TITLE=`hostname`
 
-RESPONSE=`curl -s -H "Authorization: token \"${TOKEN}\"" \
+RESPONSE=`curl -s -H "Authorization: token ${TOKEN}" \
   -X POST --data-binary "{\"title\":\"${TITLE}\",\"key\":\"${PUBKEY}\"}" \
   https://api.github.com/user/keys`
 
-echo $RESPONSE
-
-if [[ $RESPONSE == Error:* ]] ;then
+if [[ $RESPONSE == Error:* || $RESPONSE == Bad* ]] ;then
+  echo "an error occured!"
   rm  ~/.ssh/github_rsa
   echo $RESPONSE
   exit 1
