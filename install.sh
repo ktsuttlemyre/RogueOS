@@ -143,7 +143,7 @@ else
 fi
 
 ############################################################################################################
-header "Setting RogueEnvVars
+header "Setting RogueEnvVars"
 #todo encrypt secrets somehow and feed it through in memory FS
 header "Writing host specific .env to $rogue_wdir/env"
 cat > $rogue_wdir/env <<EOF
@@ -151,7 +151,7 @@ os="$os"
 rogue_wdir="$rogue_wdir"
 service_wd="$rogue_wdir/service-containers"
 host_wd="$rogue_wdir/hosts/$machine_name"
-machine_name="$fv"
+machine_name="$machine_name"
 secrets="$HOME"
 secrets_size=".5G"
 linux_distro="$linux_distro"
