@@ -5,10 +5,7 @@ script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source "$script_dir/env"
 unset script_dir
 
-function header () {
- echo "____Rogue_OS_config____"
- echo "\t$1"
-}
+
 
 DEVELOPER_TOOLS=false
 DESKTOP=false
@@ -18,6 +15,11 @@ file=$rogue_wdir/hosts/$machine_name/env
 [[ -f "$file" ]] && source "$file"
 unset file
 
+
+################################### Functions ##########################################
+function header () {
+ echo -e "RogueOs[installer]  $1"
+}
 
 prompt() {
   message="$1"
