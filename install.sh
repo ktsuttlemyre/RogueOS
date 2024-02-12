@@ -132,15 +132,14 @@ header "Install script has determined you are running\n\tcpu_board = ${cpu_board
 
 ramdisk=''
 if [ "$linux_distro" = "mac" ]; then
-  ramdisk=/Volumes/RogueOSRam
-
+  ramdisk="/Volumes/RogueOSRam"
   brew upgrade || true
   brew upgrade --cask || true
 
   #https://superuser.com/questions/1480144/creating-a-ram-disk-on-macos
   brew install entr
 else
-  ramdisk=/mnt/RogueOSRam
+  ramdisk="/mnt/RogueOSRam"
 fi
 
 ############################################################################################################
