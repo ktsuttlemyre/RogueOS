@@ -92,7 +92,7 @@ set_filepermissions () {
   processor_arch="$processor_arch"
   processor_bits="$processor_bits"
   ramdisk="$ramdisk"
-  EOF
+EOF
 
   
   cd "$old_pwd"
