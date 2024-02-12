@@ -1,5 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/git,linux,video,macos,games,images,windows,jetbrains,diskimage,executable,python,java,go,sublimetext,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=git,linux,video,macos,games,images,windows,jetbrains,diskimage,executable,python,java,go,sublimetext,node
+/env
+
 
 ### DiskImage ###
 *.dmg
