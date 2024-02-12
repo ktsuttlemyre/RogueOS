@@ -43,7 +43,7 @@ RoguePad - Gaming pad for the phone
 
 
 # Remote Install
-## Read only install (no git interaction)
+## Interactive install
 ```bash
 wget -O - https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh | bash
 ```
@@ -51,11 +51,27 @@ wget -O - https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.
 bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh)
 ```
 
-if first argument is `dev` it will use git to install `$hostname` branch
-if first argument is `ro` it will remote install `$hostname` branch from a tarball
-if first argument is empty then it will assume install is local
+## Non-interactive install
+```bash
+(
+#optional
+#export machine_name=''
+#export install_privileges='dev'
+#export set_environment_secrets='yes'
+#export replace_old_rogue='yes'
+#export create_branch='yes'
+#export set_github_ssh_key='yes'
+# or from env file
+#set -a; source .env; set +a
+bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh)
+)
+```
 
-
+You can automate answers via the following variables
+set_environment_secrets='yes,no,cancel or exit'
+replace_old_rogue='yes,no,cancel or exit'
+create_branch='yes,no,cancel or exit'
+set_github_ssh_key='yes,no,cancel or exit'
 
 In a runcmd cloud-init script
 ```yaml
