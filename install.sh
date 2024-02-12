@@ -230,7 +230,7 @@ if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"me
   sudo git clone https://github.com/ktsuttlemyre/RogueOS.git $rogue_wdir
   set_filepermissions
   echo "You do not have a branch for this host: $branch"
-  if prompt "Do you wish to create ${branch} now? " create_branch; then
+  if prompt "Do you wish to create ${branch} now? " "$create_branch"; then
     while [ -z "${github_public_key_rw}" ]; do
       source $rogue_wdir/cli/secrets.sh 'user_tokens'
     done
@@ -258,7 +258,7 @@ set_filepermissions
 #see if we should elevate privlages from read only to git
 if [ $install_privlages = "dev" ]; then
   header "Linking to git repo"
-  if prompt "Do you want to set a ssh key in github for this machine? " set_github_ssh_key; then
+  if prompt "Do you want to set a ssh key in github for this machine? " "$set_github_ssh_key"; then
     echo "geting github token to create sshkey"
     #get github token
     while [ -z "${github_public_key_rw}" ]; do
