@@ -129,6 +129,40 @@ fi
 
 header "Install script has determined you are running\n\tcpu_board = ${cpu_board} \n\tlinux_distro = ${linux_distro} \n\tprocessor_arch = ${processor_arch} \n\tprocessor_bits = ${processor_bits}"
 
+
+ramdisk=''
+if [ "$linux_distro" = "mac" ]; then
+  ramdisk=/Volumes/RogueOSRam
+
+  brew upgrade || true
+  brew upgrade --cask || true
+
+  #https://superuser.com/questions/1480144/creating-a-ram-disk-on-macos
+  brew install entr
+else
+  ramdisk=/mnt/RogueOSRam
+fi
+
+############################################################################################################
+header "Setting RogueEnvVars
+#todo encrypt secrets somehow and feed it through in memory FS
+header "Writing host specific .env to $rogue_wdir/env"
+cat > $rogue_wdir/env <<EOF
+os="$os"
+rogue_wdir="$rogue_wdir"
+service_wd="$rogue_wdir/service-containers"
+host_wd="$rogue_wdir/hosts/$machine_name"
+machine_name="$fv"
+secrets="$HOME"
+secrets_size=".5G"
+linux_distro="$linux_distro"
+processor_arch="$processor_arch"
+processor_bits="$processor_bits"
+ramdisk="$ramdisk"
+EOF
+
+
+
 if ! type "git" > /dev/null; then
   if [ "$linux_distro" = "mac" ]; then
     brew install git
@@ -258,43 +292,6 @@ source "${rogue_wdir}/.venv/bin/activate"
 #python3 -m pip install Django
 
 
-############################################################################################################
-header "Creating RAM Disk"
-ramdisk=''
-#install nginx to system communication ramdisk
-if [ "$linux_distro" = "mac" ]; then
-  echo "installing Mac software"
-  ramdisk=/Volumes/RogueOSRam
-  $rogue_wdir/cli/rogue mountram "$ramdisk"
-
-  brew upgrade || true
-  brew upgrade --cask || true
-
-  #https://superuser.com/questions/1480144/creating-a-ram-disk-on-macos
-  brew install entr
-else
-  ramdisk=/mnt/RogueOSRam
-  #todo sleep service funciton
-  $rogue_wdir/cli/rogue mountram "$ramdisk" 8192
-fi
-
-############################################################################################################
-header "Setting RogueEnvVars
-#todo encrypt secrets somehow and feed it through in memory FS
-header "Writing host specific .env to $rogue_wdir/env"
-cat > $rogue_wdir/env <<EOF
-os="$os"
-rogue_wdir="$rogue_wdir"
-service_wd="$rogue_wdir/service-containers"
-host_wd="$rogue_wdir/hosts/$machine_name"
-machine_name="$fv"
-secrets="$HOME"
-secrets_size=".5G"
-linux_distro="$linux_distro"
-processor_arch="$processor_arch"
-processor_bits="$processor_bits"
-ramdisk="$ramdisk"
-EOF
 
 ###########################################################################################################
 header "Configuring $machine_name"
