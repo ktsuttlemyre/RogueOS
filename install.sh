@@ -18,7 +18,7 @@ mkdir -p /tmp/RogueOS
 cd /tmp/RogueOS
 
 env_file=$1
-if [ -f $env_file ]; then
+if [ -f "$env_file" ]; then
   set -a; source $env_file; set +a
 fi
 
