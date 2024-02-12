@@ -64,7 +64,7 @@ ssh-keygen -q -b 4096 -t rsa -N "" -f ~/.ssh/github_rsa
 PUBKEY=`cat ~/.ssh/github_rsa.pub`
 TITLE=`hostname`
 
-RESPONSE=`curl -s -H "Authorization: token ${TOKEN}" \
+RESPONSE=`curl -s -H "Authorization: token \"${TOKEN}\"" \
   -X POST --data-binary "{\"title\":\"${TITLE}\",\"key\":\"${PUBKEY}\"}" \
   https://api.github.com/user/keys`
 
