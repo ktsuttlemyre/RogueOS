@@ -51,7 +51,7 @@ prompt() {
 #get secrets from keyvault
 #todo use memory for secret storage
 #mount -o size="$secrets_size" -t tmpfs none /mnt/RogueOS/secrets 
-if prompt "Do you wish to set environment secrets? "; then
+if prompt "Do you wish to set environment secrets? " set_environment_secrets; then
   if ! source $rogue_wdir/cli/secrets.sh "rogue_secrets:$machine_name"; then
     echo "Did not set environment secrets. An error occured. Exiting now"
     exit 1
