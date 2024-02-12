@@ -76,7 +76,7 @@ fi
 arr=($(tr '\n' ' ' <  <(printenv  | sed 's;=.*;;')))
 env_json=$(jq -n '$ARGS.positional | map({ (.): env[.] }) | add' --args "${arr[@]}")
 
-pip3 install jinja2-cli
+python3 -m pip install jinja2-cli
 
 
 if [ "$linux_distro" = "mac" ]; then
