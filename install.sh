@@ -149,7 +149,11 @@ if [ "$linux_distro" != "mac" ]; then
   sudo apt-get install -y nodejs npm
 fi
 
-sudo npm install -g @bitwarden/cli
+
+if ! type "bw" > /dev/null; then
+  sudo npm install -g @bitwarden/cli
+fi
+
 if [ "$linux_distro" != "mac" ]; then
   sudo apt-get install -y  jq
 else
