@@ -22,7 +22,11 @@ unset file
 prompt() {
   message="$1"
   while true; do
+    if ! [ -z "$2" ]; then
+      yn="$2"
+    else
       read -p "$message " yn
+    fi
       case $yn in
           [Yy][Ee][Ss]* )
             return ;;
@@ -33,10 +37,14 @@ prompt() {
           [Ee][Xx][Ii][Tt]* )
             echo "user exit"
             exit 0 ;;
-          * ) echo "Please answer yes,no,cancel,exit.";;
+          * )
+          echo "Please answer yes,no,cancel or exit."
+          if ! [ -z "$2" ]; then
+            echo "Invalid response. Program exiting now"
+            exit 1
+          fi;;  
       esac
   done
-}
 }
 
 
