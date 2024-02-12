@@ -309,7 +309,6 @@ source "${rogue_wdir}/.venv/bin/activate"
 
 
 ###########################################################################################################
-header "Configuring $machine_name"
 source $rogue_wdir/config.sh "$env_file"
 
 rm -rf "$env_file"
