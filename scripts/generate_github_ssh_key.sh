@@ -35,6 +35,9 @@ prompt() {
   done
 }
 
+if [ ! -f ~/.ssh/config ]; then
+    touch ~/.ssh/config
+fi
 
 if grep 'Host github.com' ~/.ssh/config; then
   if ! prompt "You might already have a github ssh key on this machine. Would you like to continue? "; then
@@ -75,10 +78,6 @@ echo "Public key deployed to remote service"
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/github_rsa
 echo "Added SSH key to the ssh-agent"
-
-if [ ! -f ~/.ssh/config ]; then
-    touch ~/.ssh/config
-fi
 
 if ! grep -q "Host github.com" ~/.ssh/config; then
 cat > ~/.ssh/config <<EOF
