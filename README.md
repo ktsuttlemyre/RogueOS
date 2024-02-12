@@ -78,6 +78,26 @@ https://github.com/fractalnetworksco/selfhosted-gateway
 #Software Services
 
 
+```
+TODO add in mounting of ramdisk
+header "Creating RAM Disk"
+ramdisk=''
+#install nginx to system communication ramdisk
+if [ "$linux_distro" = "mac" ]; then
+  echo "installing Mac software"
+  ramdisk=/Volumes/RogueOSRam
+  $rogue_wdir/cli/rogue mountram "$ramdisk"
 
+  brew upgrade || true
+  brew upgrade --cask || true
+
+  #https://superuser.com/questions/1480144/creating-a-ram-disk-on-macos
+  brew install entr
+else
+  ramdisk=/mnt/RogueOSRam
+  #todo sleep service funciton
+  $rogue_wdir/cli/rogue mountram "$ramdisk" 8192
+fi
+```
 
 
