@@ -68,7 +68,7 @@ RESPONSE=`curl -s -H "Authorization: token ${TOKEN}" \
   -X POST --data-binary "{\"title\":\"${TITLE}\",\"key\":\"${PUBKEY}\"}" \
   https://api.github.com/user/keys`
 
-if [[ $RESPONSE == Error:* || $RESPONSE == Bad* ]] ;then
+if [[ $RESPONSE == *Error:* || $RESPONSE == *Bad* ]] ;then
   echo "an error occured!"
   rm  ~/.ssh/github_rsa
   echo $RESPONSE
@@ -98,4 +98,10 @@ echo "Added SSH key to the ~/.ssh.config"
 fi
 
 # Test the SSH connection
-ssh -T git@github.com
+response="$(ssh -T git@github.com)
+
+if [[ $response == *successfully* ]]; then 
+  exit 0
+else
+  exit 1
+fi
