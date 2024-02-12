@@ -75,6 +75,25 @@ set_filepermissions () {
     git config core.filemode false
   fi
 
+
+  ############################################################################################################
+  header "Setting RogueEnvVars"
+  #todo encrypt secrets somehow and feed it through in memory FS
+  header "Writing host specific .env to $rogue_wdir/env"
+  cat > $rogue_wdir/env <<EOF
+  os="$os"
+  rogue_wdir="$rogue_wdir"
+  service_wd="$rogue_wdir/service-containers"
+  host_wd="$rogue_wdir/hosts/$machine_name"
+  machine_name="$machine_name"
+  secrets="$HOME"
+  secrets_size=".5G"
+  linux_distro="$linux_distro"
+  processor_arch="$processor_arch"
+  processor_bits="$processor_bits"
+  ramdisk="$ramdisk"
+  EOF
+
   
   cd "$old_pwd"
 
@@ -142,23 +161,6 @@ else
   ramdisk="/mnt/RogueOSRam"
 fi
 
-############################################################################################################
-header "Setting RogueEnvVars"
-#todo encrypt secrets somehow and feed it through in memory FS
-header "Writing host specific .env to $rogue_wdir/env"
-cat > $rogue_wdir/env <<EOF
-os="$os"
-rogue_wdir="$rogue_wdir"
-service_wd="$rogue_wdir/service-containers"
-host_wd="$rogue_wdir/hosts/$machine_name"
-machine_name="$machine_name"
-secrets="$HOME"
-secrets_size=".5G"
-linux_distro="$linux_distro"
-processor_arch="$processor_arch"
-processor_bits="$processor_bits"
-ramdisk="$ramdisk"
-EOF
 
 
 
