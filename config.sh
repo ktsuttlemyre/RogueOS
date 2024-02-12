@@ -18,10 +18,15 @@ file=$rogue_wdir/hosts/$machine_name/env
 [[ -f "$file" ]] && source "$file"
 unset file
 
+env_file=$1
+if [ -f "$env_file" ]; then
+  set -a; source $env_file; set +a
+fi
+
 
 ################################### Functions ##########################################
 function header () {
- echo -e "RogueOs[installer]  $1"
+ echo -e "RogueOs[config]  $1"
 }
 
 prompt() {
@@ -75,7 +80,7 @@ pip3 install jinja2-cli
 
 
 if [ "$linux_distro" = "mac" ]; then
-  echo "installing Mac software"
+  header "installing Mac software"
   brew upgrade || true
   brew upgrade --cask || true
   
@@ -93,13 +98,13 @@ EOF
     fi
   fi
 
-  echo "install hooks"
+  header "install hooks"
   #startup
   #jinja2 /opt/RogueOS/util/mac/startup.plist.jinja "$env_json" > /System/Library/LaunchAgents
   #login
   sudo cp $rogue_wdir/distro-configs/$linux_distro/Library/LaunchDaemons/com.startup.sysctl.plist /Library/LaunchDaemons/
 else
-  echo "installing Linux software"
+  header "installing Linux software"
 
   header "Current Config is _____"
 
@@ -203,4 +208,5 @@ elif [ ${DESKTOP} = true ]; then
   fi
 fi
 
-echo "RogueOS is now configured"
+rm -rf "$env_file"
+header "RogueOS is now configured"
