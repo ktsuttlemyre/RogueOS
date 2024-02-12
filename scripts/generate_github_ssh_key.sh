@@ -25,7 +25,12 @@ prompt() {
             return ;;
           [Nn][Oo]* )
             return 1 ;;
-          * ) echo "Please answer yes or no.";;
+          [Cc][Aa][Nn][Cc][Ee][Ll]* )
+            return 2 ;;
+          [Ee][Xx][Ii][Tt]* )
+            echo "user exit"
+            exit 0 ;;
+          * ) echo "Please answer yes,no,cancel,exit.";;
       esac
   done
 }
