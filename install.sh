@@ -24,6 +24,21 @@ function header () {
 
 prompt() {
   message="$1"
+  if ! [ -z "$2" ]; then
+      case $2 in
+          [Yy][Ee][Ss]* )
+            return ;;
+          [Nn][Oo]* )
+            return 1 ;;
+          [Cc][Aa][Nn][Cc][Ee][Ll]* )
+            return 2 ;;
+          [Ee][Xx][Ii][Tt]* )
+            echo "user exit"
+            exit 0 ;;
+          * ) echo "Invalid response. Please answer yes,no,cancel or exit. Program exiting now"; exit 1;;
+      esac
+  fi
+  
   while true; do
       read -p "$message " yn
       case $yn in
@@ -207,7 +222,7 @@ install_privlages="${2:-ro}"
 
 #if already installed then ask to delete and replace
 if [ -d "$rogue_wdir" ]; then
-  if prompt "Do you wish to replace the current RogueOS? located at $rogue_wdir? "; then
+  if prompt "Do you wish to replace the current RogueOS? located at $rogue_wdir? " $replace_old_rogue; then
       sudo rm -rf $rogue_wdir;
   else
     echo "exiting"
