@@ -1,6 +1,6 @@
 #! /bin/bash
 set -e
-set -x
+#set -x
 
 echo "Installing Rogue OS. Some of the commands will need sudo access. Please grant sudo use."
 #do a sudo command to get the password out of the way
