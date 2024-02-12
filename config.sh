@@ -1,10 +1,13 @@
 #! /bin/bash
 #set -ex
 
-script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source "$script_dir/env"
-unset script_dir
-
+######## Add env vars if not sourced ###############
+(return 0 2>/dev/null) && sourced=true || sourced=false
+if ! $sourced; then
+ script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+ source "$script_dir/env"
+ unset script_dir
+fi
 
 
 DEVELOPER_TOOLS=false
