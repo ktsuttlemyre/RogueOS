@@ -6,32 +6,32 @@ day="$(date '+%A')"
 month="$(date '+%b')"
 numerical_date="$(date +'%D')"
 hour="$(date '+%H')"
-
+year="$(date '+%y')"
 
 title="$month. $day games [$numerical_date]"
 
 case "$day"
   Monday)
-    title="$month. $day Try Hard Games [$numerical_date]"
+    title="$month. $day Try Hard Games '$year"
   ;;
   Thurs)
-    title="$month. $day Social Sets [$numerical_date]"
+    title="$month. $day Social Sets '$year"
   ;;
   Friday)
-    title="$month. $day Fun [$numerical_date]"
+    title="$month. $day Fun '$year"
   ;;
   Saturday)
     if [ "$hour" -lt 17 ]; then # 5:00
-      title="$month. $day Tournament Sets [$numerical_date]"
+      title="$month. $day Tournament Sets '$year"
     else
-      title="$month. $day Sloppy Sets [$numerical_date]"
+      title="$month. $day Sloppy Sets '$year"
     fi
   ;;
   Sunday)
     if [ "$hour" -lt 17 ]; then # 5:00
-      title="$month. $day Tournament Sets [$numerical_date]"
+      title="$month. $day Tournament Sets '$year"
     else
-      title="$month. $day Social Sets [$numerical_date]"
+      title="$month. $day Social Sets '$year"
     fi
   ;;
   *)
