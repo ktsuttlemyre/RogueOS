@@ -1,6 +1,13 @@
 #!/bin/bash
 
-channel='KQSFL'
+#twitch_channel='${1:-KQSFL}'
+if [ -z "$twitch_channel" ]; then
+  if [[ $machine_name == "cab1kqsfl" ]]; then
+    twitch_channel='KQSFL'
+  elif [[ $machine_name == "cab2kqfl" ]]; then
+    twitch_channel='KQSFL_2'
+  fi
+fi
 
 day="$(date '+%A')"
 month="$(date '+%b')"
@@ -8,30 +15,30 @@ numerical_date="$(date +'%D')"
 hour="$(date '+%H')"
 year="$(date '+%y')"
 
-title="$month. $day games [$numerical_date]"
+title="${1:-($month. $day games \'$year)}"
 
 case "$day"
   Monday)
-    title="$month. $day Try Hard Games '$year"
+    title="$month. $day Try Hard Games \'$year"
   ;;
   Thurs)
-    title="$month. $day Social Sets '$year"
+    title="$month. $day Social Sets \'$year"
   ;;
   Friday)
-    title="$month. $day Fun '$year"
+    title="$month. $day Fun \'$year"
   ;;
   Saturday)
     if [ "$hour" -lt 17 ]; then # 5:00
-      title="$month. $day Tournament Sets '$year"
+      title="$month. $day Tournament Sets \'$year"
     else
-      title="$month. $day Sloppy Sets '$year"
+      title="$month. $day Sloppy Sets \'$year"
     fi
   ;;
   Sunday)
     if [ "$hour" -lt 17 ]; then # 5:00
-      title="$month. $day Tournament Sets '$year"
+      title="$month. $day Tournament Sets \'$year"
     else
-      title="$month. $day Social Sets '$year"
+      title="$month. $day Social Sets \'$year"
     fi
   ;;
   *)
@@ -48,7 +55,7 @@ get_token() {
 
 # Function to update stream title
 update_title() {
-  twitch stream update --channel "$channel" --title "$title" --token $1
+  twitch stream update --channel "$twitch_channel" --title "$title" --token $1
 }
 
 # Main script
