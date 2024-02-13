@@ -18,37 +18,40 @@ numerical_date="$(date +'%D')"
 hour="$(date '+%H')"
 year="$(date '+%y')"
 
-title="${1:-($month. $day games \'$year)}"
 
-case "$day"
-  Monday)
-    title="$month. $day Try Hard Games \'$year"
-  ;;
-  Thurs)
-    title="$month. $day Social Sets \'$year"
-  ;;
-  Friday)
-    title="$month. $day Fun \'$year"
-  ;;
-  Saturday)
-    if [ "$hour" -lt 17 ]; then # 5:00
-      title="$month. $day Tournament Sets \'$year"
-    else
-      title="$month. $day Sloppy Sets \'$year"
-    fi
-  ;;
-  Sunday)
-    if [ "$hour" -lt 17 ]; then # 5:00
-      title="$month. $day Tournament Sets \'$year"
-    else
+if [ -z "$1" ]; then
+  case "$day"
+    Monday)
+      title="$month. $day Try Hard Games \'$year"
+    ;;
+    Thurs)
       title="$month. $day Social Sets \'$year"
-    fi
-  ;;
-  *)
-  echo "unknown $day"
-  ;;
-esac
-
+    ;;
+    Friday)
+      title="$month. $day Fun \'$year"
+    ;;
+    Saturday)
+      if [ "$hour" -lt 17 ]; then # 5:00
+        title="$month. $day Tournament Sets \'$year"
+      else
+        title="$month. $day Sloppy Sets \'$year"
+      fi
+    ;;
+    Sunday)
+      if [ "$hour" -lt 17 ]; then # 5:00
+        title="$month. $day Tournament Sets \'$year"
+      else
+        title="$month. $day Social Sets \'$year"
+      fi
+    ;;
+    *)
+      title="$month. $day Social Sets \'$year"
+    ;;
+  esac
+else
+  title="$1"
+fi
+  
 echo "$title"
 
 # Function to get a new OAuth token
