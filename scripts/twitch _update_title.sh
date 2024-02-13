@@ -6,6 +6,9 @@ if [ -z "$twitch_channel" ]; then
     twitch_channel='KQSFL'
   elif [[ $machine_name == "cab2kqfl" ]]; then
     twitch_channel='KQSFL_2'
+  else
+    echo "Env Variable twitch_channel can not be determined"
+    exit 1
   fi
 fi
 
