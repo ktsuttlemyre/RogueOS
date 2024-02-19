@@ -98,7 +98,7 @@ echo "Added SSH key to the ~/.ssh.config"
 fi
 
 # Test the SSH connection
-response="$(ssh -T git@github.com)
+response="$(ssh -T git@github.com)"
 
 if [[ $response == *successfully* ]]; then 
   exit 0
