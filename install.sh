@@ -130,7 +130,7 @@ fi
 if [ -f /etc/os-release ]; then
   source /etc/os-release
 else
-  source $rogue_wdir/scripts/os-release.sh
+  source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/scripts/os-release.sh)"
 fi
 ID="${ID:-$OS}"
 
