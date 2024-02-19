@@ -164,6 +164,13 @@ fi
 header "Install script has determined you are running\n\tcpu_board = ${cpu_board} \n\tlinux_distro = ${linux_distro} \n\tprocessor_arch = ${processor_arch} \n\tprocessor_bits = ${processor_bits}"
 
 
+if [ "$linux_distro" = "mac" ]; then
+  # install brew
+  if ! command -v brew &> /dev/null; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+fi
+
 ramdisk=''
 if [ "$linux_distro" = "mac" ]; then
   ramdisk="/Volumes/RogueOSRam"
