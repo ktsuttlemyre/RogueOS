@@ -185,14 +185,14 @@ fi
 
 
 
-
-if ! command -v git &> /dev/null; then
+#force latest
+#if ! command -v git &> /dev/null; then
   if [ "$linux_distro" = "mac" ]; then
     brew install git
   else
     sudo apt-get install git
   fi
-fi
+#fi
 
 #create alias
 #type python >/dev/null 2>&1 || alias python=python3
