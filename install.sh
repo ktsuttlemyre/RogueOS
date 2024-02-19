@@ -186,7 +186,7 @@ fi
 
 
 
-if ! type "git" > /dev/null; then
+if ! command -v git &> /dev/null; then
   if [ "$linux_distro" = "mac" ]; then
     brew install git
   else
@@ -209,7 +209,7 @@ else
 fi
 
 
-if ! type "bw" > /dev/null; then
+if ! command -v bw &> /dev/null; then
   sudo npm install -g @bitwarden/cli
 fi
 
