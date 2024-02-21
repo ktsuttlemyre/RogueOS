@@ -45,7 +45,7 @@ RoguePad - Gaming pad for the phone
 # Remote Install
 ## Interactive install
 ```bash
-wget -O - https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh | bash
+bash <(wget -qO- -nv https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh)
 ```
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh)
@@ -123,6 +123,19 @@ else
   #todo sleep service funciton
   $rogue_wdir/cli/rogue mountram "$ramdisk" 8192
 fi
+```
+
+
+
+dev note
+```
+command -v wget >/dev/null 2>&1 && { ; exit 1; } ||
+g="$(command -v adfsa >/dev/null 2>&1 && echo wget || echo curl)"
+
+{url='https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/install.sh'
+cmd="$(command -v adfsa >/dev/null 2>&1 && echo wget -qO- -nv $url || echo curl -s $url)"
+$cmd
+}
 ```
 
 
