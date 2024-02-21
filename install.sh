@@ -190,7 +190,7 @@ fi
   if [ "$linux_distro" = "mac" ]; then
     brew install git
   else
-    sudo apt-get install git
+    sudo apt-get install -y git
   fi
 #fi
 
@@ -205,6 +205,8 @@ header "setting up nodejs"
 if [ "$linux_distro" == "mac" ]; then
   brew install node jq yq
 else
+  sudo add-apt-repository ppa:rmescandon/yq
+  sudo apt update
   sudo apt-get install -y nodejs npm jq yq
 fi
 
