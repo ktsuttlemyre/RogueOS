@@ -210,10 +210,11 @@ header "setting up nodejs"
 if [ "$linux_distro" == "mac" ]; then
   brew install node jq yq
 else
-  curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  nvm install node
   sudo add-apt-repository ppa:rmescandon/yq
   sudo apt update
-  sudo apt-get install -y nodejs npm jq yq
+  sudo apt-get install -y jq yq
 fi
 
 
