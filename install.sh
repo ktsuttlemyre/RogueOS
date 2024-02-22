@@ -213,6 +213,9 @@ else
   #todo check version
   if ! command -v nvm &> /dev/null; then
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # this loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # this loads nvm bash completion
   fi
   
   node_version=$(node -v)
@@ -225,8 +228,9 @@ else
   if [ $node_version -lt 21 ]; then
      nvm install node
   fi
-  
-  sudo add-apt-repository ppa:rmescandon/yq
+  if ! command -v yq &> /dev/null; then
+    sudo add-apt-repository ppa:rmescandon/yq
+  fi
   sudo apt update
   sudo apt-get install -y jq yq
 fi
@@ -289,7 +293,7 @@ set_filepermissions
 
 #see if we should elevate privlages from read only to git
 if [ $install_privileges = "dev" ]; then
-  header "Linking to git repo"
+  header "Linking to git repo $repo on branch $branch"
   if prompt "Do you want to set a ssh key in github for this machine? " "$set_github_ssh_key"; then
     echo "geting github token to create sshkey"
     #get github token
@@ -304,6 +308,7 @@ if [ $install_privileges = "dev" ]; then
   #remove read only and upgrade to versioned
   sudo rm -rf $rogue_wdir;
   # using git (for devs)
+  
   sudo git clone "git@github.com:${repo}.git" -b $branch $rogue_wdir
 fi
 
