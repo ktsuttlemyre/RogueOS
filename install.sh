@@ -168,6 +168,11 @@ if [ "$linux_distro" = "mac" ]; then
   # install brew
   if ! command -v brew &> /dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  else
+    sudo apt upgrade
+    sudo apt update
+    #sudo dpg --configure -a
+    sudo apt autoremove
   fi
 fi
 
@@ -205,6 +210,7 @@ header "setting up nodejs"
 if [ "$linux_distro" == "mac" ]; then
   brew install node jq yq
 else
+  curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
   sudo add-apt-repository ppa:rmescandon/yq
   sudo apt update
   sudo apt-get install -y nodejs npm jq yq
