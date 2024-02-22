@@ -210,8 +210,22 @@ header "setting up nodejs"
 if [ "$linux_distro" == "mac" ]; then
   brew install node jq yq
 else
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-  nvm install node
+  #todo check version
+  if ! command -v nvm &> /dev/null; then
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  fi
+  
+  node_version=$(node -v)
+  
+  # "node -v" outputs version in the format "v18.12.1"
+  node_version=${node_version:1} # Remove 'v' at the beginning
+  node_version=${node_version%\.*} # Remove trailing ".*".
+  node_version=${node_version%\.*} # Remove trailing ".*".
+  node_version=$(($node_version)) # Convert the NodeJS version number from a string to an integer.
+  if [ $node_version -lt 21 ]; then
+     nvm install node
+  fi
+  
   sudo add-apt-repository ppa:rmescandon/yq
   sudo apt update
   sudo apt-get install -y jq yq
