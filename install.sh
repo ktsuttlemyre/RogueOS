@@ -327,7 +327,7 @@ set_filepermissions
 #################################################################3
 header "Setting up python venv"
 if [ "$linux_distro" != "mac" ]; then
- sudo apt-get install python3-pip
+ sudo apt-get install -y python3-pip
 #else
 #  python3 -m ensurepip --upgrade
 fi
