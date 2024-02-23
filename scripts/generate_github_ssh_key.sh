@@ -98,10 +98,7 @@ echo "Added SSH key to the ~/.ssh.config"
 fi
 
 # Test the SSH connection
-response="$(ssh -T git@github.com)"
+ssh -T git@github.com || true
 
-if [[ $response == *successfully* ]]; then 
-  exit 0
-else
-  exit 1
-fi
+echo "continuing in"
+for i in {5..1..1};do echo -n "$i." && sleep 1; done
