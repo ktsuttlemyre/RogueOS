@@ -130,8 +130,9 @@ else
   sudo apt-get update
   sudo apt-get install ca-certificates curl gnupg
   sudo install -m 0755 -d /etc/apt/keyrings
+  sudo mkdir -p /etc/apt/keyrings
   REPO="$linux_distro" #known values are rasbian and ubuntu others expected to work based on the $linux_distro var detemined from /etc/os-release #ID var
-  curl -fsSL https://download.docker.com/linux/$REPO/gpg | sudo gpg --dearmor --output - > /etc/apt/keyrings/docker.gpg
+  curl -fsSL https://download.docker.com/linux/$REPO/gpg | sudo gpg --dearmor --yes --output /etc/apt/keyrings/docker.gpg
   sudo chmod a+r /etc/apt/keyrings/docker.gpg
   # Add the repository to Apt sources:
   echo \
