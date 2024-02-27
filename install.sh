@@ -176,6 +176,28 @@ if [ "$linux_distro" = "mac" ]; then
   fi
 fi
 
+
+install_mpm () {
+  command -v brew &> /dev/null && brew install meta-package-manager && return 0
+  command -v pipx &> /dev/null && pipx install meta-package-manager && return 0
+  command -v python &> /dev/null && python -m pip install meta-package-manager && return 0
+  command -v python3 &> /dev/null && python3 -m pip install meta-package-manager && return 0
+  command -v pip &> /dev/null && pip install meta-package-manager && return 0
+  command -v pip3 &> /dev/null && pip3 install meta-package-manager && return 0
+  command -v pacaur &> /dev/null && pacaur -S meta-package-manager && return 0
+  command -v pacman &> /dev/null && pacman -S meta-package-manager && return 0
+  command -v paru &> /dev/null && paru -S meta-package-manager && return 0
+  command -v yay &> /dev/null && yay -S meta-package-manager && return 0
+  command -v pacaur &> /dev/null && pacaur -S meta-package-manager && return 0
+  return 1
+}
+
+if install_mpm; then
+  header 'mpm installed'
+else
+  exit 1
+fi 
+
 ramdisk=''
 if [ "$linux_distro" = "mac" ]; then
   ramdisk="/Volumes/RogueOSRam"
