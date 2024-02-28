@@ -157,9 +157,9 @@ case "$ID" in
       ;;
 esac
 
-if [ ! "$linux_distro" = "steamos"]; then
+#if [ ! "$linux_distro" = "steamos"]; then
 
-fi
+#fi
 
 if [ ! "$linux_distro" = "mac" ]; then
   processor_arch='arm'
