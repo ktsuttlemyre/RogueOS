@@ -6,9 +6,14 @@ echo "Installing Rogue OS. Some of the commands will need sudo access. Please gr
 #do a sudo command to get the password out of the way
 sudo echo "Thank you for granting sudo privileges" || exit 1
 
+env_file=$1
+if [ -f "$env_file" ]; then
+  set -a; source $env_file; set +a;
+fi
+
 #cant run in the dir we are going to install
 os="RogueOS"
-rogue_wdir="/opt/$os"
+rogue_wdir="${rogue_wdir:-/opt/$os}"
 if [[ ./ -ef "$rogue_wdir" ]] || [ "$PWD" = "$rogue_wdir" ] || [ "$(pwd)" = "$rogue_wdir" ]; then
   echo "Sorry, you can not run this installer from the Rogue install path $rogue_wdir"
 fi
@@ -16,11 +21,6 @@ fi
 #force working directory to tmp
 mkdir -p /tmp/RogueOS
 cd /tmp/RogueOS
-
-env_file=$1
-if [ -f "$env_file" ]; then
-  set -a; source $env_file; set +a
-fi
 
 ################################### Functions ##########################################
 function header () {
@@ -157,6 +157,10 @@ case "$ID" in
       ;;
 esac
 
+if [ ! "$linux_distro" = "steamos"]; then
+
+fi
+
 if [ ! "$linux_distro" = "mac" ]; then
   processor_arch='arm'
   processor_bits='32'
@@ -247,13 +251,18 @@ else
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # this loads nvm bash completion
   fi
   
-  node_version=$(node -v)
-  
-  # "node -v" outputs version in the format "v18.12.1"
-  node_version=${node_version:1} # Remove 'v' at the beginning
-  node_version=${node_version%\.*} # Remove trailing ".*".
-  node_version=${node_version%\.*} # Remove trailing ".*".
+  if command -v node &> /dev/null; then
+    node_version=$(node -v)
+    
+    # "node -v" outputs version in the format "v18.12.1"
+    node_version=${node_version:1} # Remove 'v' at the beginning
+    node_version=${node_version%\.*} # Remove trailing ".*".
+    node_version=${node_version%\.*} # Remove trailing ".*".
+  else
+    node_version='1'
+  fi
   node_version=$(($node_version)) # Convert the NodeJS version number from a string to an integer.
+
   if [ $node_version -lt 21 ]; then
      nvm install node
   fi
