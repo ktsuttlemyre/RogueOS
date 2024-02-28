@@ -17,9 +17,9 @@ fi
 
 #create self hosted tunnel/gateway
 #https://github.com/fractalnetworksco/selfhosted-gateway
-git clone https://github.com/fractalnetworksco/selfhosted-gateway.git && cd selfhosted-gateway
-make docker
-make link GATEWAY=root@123.456.789.101 FQDN=$service.mydomain.com EXPOSE=$service:80 > $secrets/ddns/$service-gateway.yml
+#git clone https://github.com/fractalnetworksco/selfhosted-gateway.git && cd selfhosted-gateway
+#make docker
+#make link GATEWAY=root@123.456.789.101 FQDN=$service.mydomain.com EXPOSE=$service:80 > $secrets/ddns/$service-gateway.yml
   # link:
   #   image: fractalnetworks/gateway-client:latest
   #   environment:
