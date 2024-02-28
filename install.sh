@@ -118,10 +118,14 @@ header "preparing this environment to become Rogue"
 # check if it is a raspberry pi
 motherboard_arch=false
 if [ -x "$(command -v python3)" ] ; then
-  R_PI=`python3 -c "import platform; print('-rpi-' in platform.uname())"`
-  if [ "$motherboard_arch" = "True" ] ; then
-    motherboard_arch='PI'
-  fi
+  uname=`python3 -c "import platform; print(platform.uname())"`
+  case $uname in
+    *"-rpi-"*)
+        motherboard_arch="raspberry pi";;
+    *)
+        motherboard_arch="$uname"
+        echo "Unknown motherboard_arch $uname";;
+  esac
 else
   header "found that Python3 not installed"
   exit 1
