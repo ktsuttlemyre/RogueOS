@@ -183,6 +183,7 @@ if [ "$linux_distro" = "mac" ]; then
     sudo apt upgrade
     sudo apt update
     #sudo dpg --configure -a
+    sudo apt install -y software-properties-common
     sudo apt autoremove
   fi
 fi
