@@ -122,6 +122,8 @@ if [ -x "$(command -v python3)" ] ; then
   case $uname in
     *"-rpi-"*)
         motherboard_arch="raspberry pi";;
+    *"-valve"*)
+      motherboard_arch="steamdeck";;
     *)
         motherboard_arch="$uname"
         echo "Unknown motherboard_arch $uname";;
