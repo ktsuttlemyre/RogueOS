@@ -7,6 +7,13 @@ original_pwd=$PWD
 pip3 install obs-cli
 brew install discord --cask
 
+#set gpu power settings for charging and battery
+#https://nathansnelgrove.com/2020/03/how-to-force-your-macbook-pro-to-use-its-discrete-graphics-card-when-its-plugged-in
+#not the best way to detedt descrete grafx card but if we find 2 cards then assume we have a descrete gpu setup
+if [ "$(system_profiler SPDisplaysDataType | grep -w 'Chipset' | wc -l)" -gt "1" ]; then
+  # Always use the integrated graphics card while running on battery power && always use descrete card on macbook pro while charging
+  sudo pmset -b gpuswitch 0 && pmset -c gpuswitch 1
+fi
 
 #create self hosted tunnel/gateway
 #https://github.com/fractalnetworksco/selfhosted-gateway
