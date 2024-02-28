@@ -116,11 +116,11 @@ EOF
 ###########################################################################################################
 header "preparing this environment to become Rogue"
 # check if it is a raspberry pi
-cpu_board=false
+motherboard_arch=false
 if [ -x "$(command -v python3)" ] ; then
   R_PI=`python3 -c "import platform; print('-rpi-' in platform.uname())"`
-  if [ "$cpu_board" = "True" ] ; then
-    cpu_board='PI'
+  if [ "$motherboard_arch" = "True" ] ; then
+    motherboard_arch='PI'
   fi
 else
   header "found that Python3 not installed"
@@ -146,6 +146,7 @@ case "$ID" in
   arch) linux_distro="arch" ;;
   centos) linux_distro="centos" ;;
   Darwin*) linux_distro="mac" ;;
+  steamos) linux_distro="steamos" ;;
   *) echo "This is an unknown distribution. Value observed is $ID"
       ;;
 esac
@@ -161,7 +162,7 @@ if [ ! "$linux_distro" = "mac" ]; then
   esac
 fi
 
-header "Install script has determined you are running\n\tcpu_board = ${cpu_board} \n\tlinux_distro = ${linux_distro} \n\tprocessor_arch = ${processor_arch} \n\tprocessor_bits = ${processor_bits}"
+header "Install script has determined you are running\n\tmotherboard_arch = ${motherboard_arch} \n\tlinux_distro = ${linux_distro} \n\tprocessor_arch = ${processor_arch} \n\tprocessor_bits = ${processor_bits}"
 
 
 if [ "$linux_distro" = "mac" ]; then
