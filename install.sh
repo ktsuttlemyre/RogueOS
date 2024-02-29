@@ -19,6 +19,8 @@ if [[ ./ -ef "$rogue_wdir" ]] || [ "$PWD" = "$rogue_wdir" ] || [ "$(pwd)" = "$ro
 fi
 
 #force working directory to tmp
+#_rogue_wdir="$rogue_wdir"
+rogue_wdir=/tmp/RogueOS
 mkdir -p /tmp/RogueOS
 cd /tmp/RogueOS
 
@@ -139,12 +141,9 @@ else
   #TODO don't do this
   source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/ktsuttlemyre/RogueOS/master/scripts/os-release.sh)"
 fi
-ID="${ID:-$OS}"
 
 linux_distro=false
-if [ -z ${ID+x} ]; then 
-  ID="$(uname -s)"
-fi
+[ -z ${ID+x} ] && ID="$(uname -s)"
 
 case "$ID" in
   raspbian) linux_distro="raspbian" ;;
@@ -153,13 +152,8 @@ case "$ID" in
   centos) linux_distro="centos" ;;
   Darwin*) linux_distro="mac" ;;
   steamos) linux_distro="steamos" ;;
-  *) echo "This is an unknown distribution. Value observed is $ID"
-      ;;
+  *) echo "This is an unknown distribution. Value observed is $ID";;
 esac
-
-#if [ ! "$linux_distro" = "steamos"]; then
-
-#fi
 
 if [ ! "$linux_distro" = "mac" ]; then
   processor_arch='arm'
@@ -174,6 +168,16 @@ fi
 
 header "Install script has determined you are running\n\tmotherboard_arch = ${motherboard_arch} \n\tlinux_distro = ${linux_distro} \n\tprocessor_arch = ${processor_arch} \n\tprocessor_bits = ${processor_bits}"
 
+if [ ! "$linux_distro" = "steamos"]; then
+  if ! prompt "This is a steamdeck. It is suggested you install RogueOS to distrobox. Do you wish to continue?" $install_on_steamdeck_as_host; then
+    echo "exiting"
+    exit 0
+  fi
+fi
+
+if [ install_type = "minimal" ]; then
+  echo 'todo'
+fi
 
 if [ "$linux_distro" = "mac" ]; then
   # install brew
@@ -289,6 +293,8 @@ machine_name=${machine_name:-tmp}
 branch="$machine_name"
 install_privileges="${install_privileges:-ro}"
 
+#restore workdir
+#rogue_wdir="$_rogue_wdir"
 #if already installed then ask to delete and replace
 if [ -d "$rogue_wdir" ]; then
   if prompt "Do you wish to replace the current RogueOS? located at $rogue_wdir? " $replace_old_rogue; then
