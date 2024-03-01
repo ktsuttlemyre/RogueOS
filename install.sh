@@ -2,6 +2,10 @@
 set -e
 #set -x
 
+#TODO figure out what minimmal install means
+minimal_install=${minimal_install:-false}
+
+
 echo "Installing Rogue OS. Some of the commands will need sudo access. Please grant sudo use."
 #do a sudo command to get the password out of the way
 sudo echo "Thank you for granting sudo privileges" || exit 1
@@ -175,19 +179,18 @@ if [ ! "$linux_distro" = "steamos"]; then
   fi
 fi
 
-if [ install_type = "minimal" ]; then
-  echo 'todo'
-fi
+
 
 if [ "$linux_distro" = "mac" ]; then
   # install brew
   if ! command -v brew &> /dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   else
-    sudo apt upgrade
+    ! $minimal_install && sudo apt upgrade
     sudo apt update
     #sudo dpg --configure -a
-    sudo apt install -y software-properties-common
+    #In practice that means it provides some useful scripts for adding and removing PPAs:
+    ! $minimal_install && sudo apt install -y software-properties-common
     sudo apt autoremove
   fi
 fi
