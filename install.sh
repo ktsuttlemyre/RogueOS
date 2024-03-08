@@ -289,10 +289,9 @@ fi
 ################################### Repo and install management ###################################
 header "Repo and installation linking"
 repo="ktsuttlemyre/RogueOS/"
-
-host="$(hostname | cut -d. -f1)"
-tmp=$(scutil --get ComputerName 2>/dev/null || uname -n || host)
-machine_name=${machine_name:-tmp}
+host="$(hostname)"
+host="$(scutil --get ComputerName 2>/dev/null || uname -n || ${host%%.*})"
+machine_name=${machine_name:-$host}
 branch="$machine_name"
 install_privileges="${install_privileges:-ro}"
 
