@@ -1,6 +1,8 @@
 #/!bin/bash
 # https://raspberrypi.stackexchange.com/questions/13936/find-raspberry-pi-address-on-local-network
 
+ip neigh
+
 #search arp table (local cache of hosts) (fast)
 arp -na
 
@@ -10,7 +12,7 @@ IFS=$'\n' ;for device in $devices ; do
   network=$(nmcli dev show $device | grep "GATEWAY" |  tr -s ' ' | cut -d" " -f2)
   IFS=$'\n' ;for mask in $network ; do 
     #todo fix ipv6 cider notation
-    nmap -sP $mask/24
+    nmap -sA $mask/24
   done
 done
 
