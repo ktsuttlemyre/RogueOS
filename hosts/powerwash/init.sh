@@ -46,5 +46,3 @@ for dir in "${dirs[@]}"; do
 done
 
 echo "unShaderBackgroundProcessingThreads $(nproc)" >> ${folder}steam_dev.cfg
-
-"${var/#\~/$HOME}"
