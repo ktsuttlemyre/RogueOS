@@ -11,6 +11,7 @@ apt install pulseeffects lsp-plugins solaar
 pacmd load-module module-virtual-surround-sink sink_name=vsurround sink_properties=device.description=VirtualSurround hrir=/opt/hrir/hrir-kemar.wav master=alsa_output.usb-Logitech_PRO_X_Wireless_Gaming_Headset-00.analog-stereo
 
 #ssh
+#https://medium.com/@julmariodacruz2018/steps-to-install-ssh-on-linux-mint-a39a267cc22b
 sudo apt install openssh-server
 sudo ufw allow ssh
 sudo ufw enable
