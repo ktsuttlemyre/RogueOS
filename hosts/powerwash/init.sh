@@ -10,7 +10,14 @@ apt install gpustat conky
 apt install pulseeffects lsp-plugins solaar
 pacmd load-module module-virtual-surround-sink sink_name=vsurround sink_properties=device.description=VirtualSurround hrir=/opt/hrir/hrir-kemar.wav master=alsa_output.usb-Logitech_PRO_X_Wireless_Gaming_Headset-00.analog-stereo
 
+#ssh
+sudo apt install openssh-server
+sudo ufw allow ssh
+sudo ufw enable
+sudo ufw reload
+sudo ufw status verbose
 
+#TODO add fail2ban
 
 llama gpt
 #TODO use rogeos docker install here
