@@ -2,6 +2,7 @@
 #modified from https://raw.githubusercontent.com/linuxserver/docker-baseimage-kasmvnc/ubuntujammy/Dockerfile
 #changes 
 # added BASEIMAGETAG and changed all FROM instructions to use my base image
+#disable openbox
 ARG BASEIMAGETAG="rogueos/base"
 
 FROM node:12-buster as wwwstage
@@ -315,7 +316,7 @@ RUN \
     mesa-va-drivers \
     nginx \
     nodejs \
-    openbox \
+#    openbox \
     openssh-client \
     openssl \
     pciutils \
@@ -357,13 +358,13 @@ RUN \
   ln -s /usr/local/share/kasmvnc /usr/share/kasmvnc && \
   ln -s /usr/local/etc/kasmvnc /etc/kasmvnc && \
   ln -s /usr/local/lib/kasmvnc /usr/lib/kasmvncserver && \
-  echo "**** openbox tweaks ****" && \
-  sed -i \
-    -e 's/NLIMC/NLMC/g' \
-    -e '/debian-menu/d' \
-    -e 's|</applications>|  <application class="*"><maximized>yes</maximized></application>\n</applications>|' \
-    -e 's|</keyboard>|  <keybind key="C-S-d"><action name="ToggleDecorations"/></keybind>\n</keyboard>|' \
-    /etc/xdg/openbox/rc.xml && \
+  # echo "**** openbox tweaks ****" && \
+  # sed -i \
+  #   -e 's/NLIMC/NLMC/g' \
+  #   -e '/debian-menu/d' \
+  #   -e 's|</applications>|  <application class="*"><maximized>yes</maximized></application>\n</applications>|' \
+  #   -e 's|</keyboard>|  <keybind key="C-S-d"><action name="ToggleDecorations"/></keybind>\n</keyboard>|' \
+  #   /etc/xdg/openbox/rc.xml && \
   echo "**** user perms ****" && \
   sed -e 's/%sudo	ALL=(ALL:ALL) ALL/%sudo ALL=(ALL:ALL) NOPASSWD: ALL/g' \
     -i /etc/sudoers && \
@@ -409,9 +410,9 @@ RUN \
   for LOCALE in $(curl -sL https://raw.githubusercontent.com/thelamer/lang-stash/master/langs); do \
     localedef -i $LOCALE -f UTF-8 $LOCALE.UTF-8; \
   done && \
-  echo "**** theme ****" && \
-  curl -s https://raw.githubusercontent.com/thelamer/lang-stash/master/theme.tar.gz \
-    | tar xzvf - -C /usr/share/themes/Clearlooks/openbox-3/ && \
+  # echo "**** theme ****" && \
+  # curl -s https://raw.githubusercontent.com/thelamer/lang-stash/master/theme.tar.gz \
+  #   | tar xzvf - -C /usr/share/themes/Clearlooks/openbox-3/ && \
   echo "**** cleanup ****" && \
   apt-get autoclean && \
   rm -rf \
