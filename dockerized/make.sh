@@ -18,4 +18,8 @@ sudo tar -C unsquashfs -c . | docker import - rogueos/base
 
 #add kasmvnc
 #https://github.com/linuxserver/docker-baseimage-kasmvnc
+docker build . -t rogueos/rogueos:latest
+
+
+
 
