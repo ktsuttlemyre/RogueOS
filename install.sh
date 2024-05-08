@@ -310,7 +310,7 @@ fi
 sudo mkdir $rogue_wdir
 if curl -ss "https://api.github.com/repos/${repo}branches/${branch}" | grep '"message": "Branch not found"' ; then
   #curl -LkSs "https://api.github.com/repos/${repo}tarball/" | sudo tar xz --strip=1 -C $rogue_wdir
-  sudo git clone https://github.com/ktsuttlemyre/RogueOS.git $rogue_wdir
+  git clone https://github.com/ktsuttlemyre/RogueOS.git $rogue_wdir
   set_filepermissions
   echo "You do not have a branch for this host: $branch"
   if prompt "Do you wish to create ${branch} now? " "$create_branch"; then
