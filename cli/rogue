@@ -6,6 +6,15 @@ source "$(dirname $script_dir)/env"
 
 cmd="${@}"
 script="$rogue_wdir/cli/$1"
+
+#https://medium.com/oracledevs/creating-an-oracle-cloud-infrastructure-cli-toolkit-docker-image-35be0ca71aa
+#TODO use wrapper
+#docker run \
+#  --interactive --tty --rm \
+#  --volume "$PWD":/oracle-cloud \
+#  --workdir /oracle-cloud \
+#  rogueos/rogueos:latest "$@"
+
 while [ true ]; do
 	shift
 	if [[ -f $script.sh ]]; then
