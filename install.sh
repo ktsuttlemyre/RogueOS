@@ -283,7 +283,7 @@ fi
 
 
 if ! command -v bw &> /dev/null; then
-  sudo npm install -g @bitwarden/cli
+  npm install -g @bitwarden/cli
 fi
 
 ################################### Repo and install management ###################################
