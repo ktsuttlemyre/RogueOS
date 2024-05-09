@@ -33,7 +33,7 @@ RUN \
   mkdir Downloads
 
 
-FROM ${BASEIMAGETAG} as buildstage
+FROM ghcr.io/linuxserver/baseimage-ubuntu:jammy as buildstage
 
 ARG KASMVNC_RELEASE="d49d07b88113d28eb183ca7c0ca59990fae1153c"
 
@@ -183,7 +183,7 @@ RUN \
   rm -Rf /build-out/usr/local/man
 
 # nodejs builder
-FROM ${BASEIMAGETAG} as nodebuilder
+FROM ghcr.io/linuxserver/baseimage-ubuntu:jammy as nodebuilder
 ARG KCLIENT_RELEASE
 
 RUN \
@@ -316,7 +316,7 @@ RUN \
     mesa-va-drivers \
     nginx \
     nodejs \
-#    openbox \
+    openbox \
     openssh-client \
     openssl \
     pciutils \
@@ -358,13 +358,13 @@ RUN \
   ln -s /usr/local/share/kasmvnc /usr/share/kasmvnc && \
   ln -s /usr/local/etc/kasmvnc /etc/kasmvnc && \
   ln -s /usr/local/lib/kasmvnc /usr/lib/kasmvncserver && \
-  # echo "**** openbox tweaks ****" && \
-  # sed -i \
-  #   -e 's/NLIMC/NLMC/g' \
-  #   -e '/debian-menu/d' \
-  #   -e 's|</applications>|  <application class="*"><maximized>yes</maximized></application>\n</applications>|' \
-  #   -e 's|</keyboard>|  <keybind key="C-S-d"><action name="ToggleDecorations"/></keybind>\n</keyboard>|' \
-  #   /etc/xdg/openbox/rc.xml && \
+ echo "**** openbox tweaks ****" && \
+ sed -i \
+   -e 's/NLIMC/NLMC/g' \
+   -e '/debian-menu/d' \
+   -e 's|</applications>|  <application class="*"><maximized>yes</maximized></application>\n</applications>|' \
+   -e 's|</keyboard>|  <keybind key="C-S-d"><action name="ToggleDecorations"/></keybind>\n</keyboard>|' \
+   /etc/xdg/openbox/rc.xml && \
   echo "**** user perms ****" && \
   sed -e 's/%sudo	ALL=(ALL:ALL) ALL/%sudo ALL=(ALL:ALL) NOPASSWD: ALL/g' \
     -i /etc/sudoers && \
@@ -410,9 +410,9 @@ RUN \
   for LOCALE in $(curl -sL https://raw.githubusercontent.com/thelamer/lang-stash/master/langs); do \
     localedef -i $LOCALE -f UTF-8 $LOCALE.UTF-8; \
   done && \
-  # echo "**** theme ****" && \
-  # curl -s https://raw.githubusercontent.com/thelamer/lang-stash/master/theme.tar.gz \
-  #   | tar xzvf - -C /usr/share/themes/Clearlooks/openbox-3/ && \
+ echo "**** theme ****" && \
+ curl -s https://raw.githubusercontent.com/thelamer/lang-stash/master/theme.tar.gz \
+   | tar xzvf - -C /usr/share/themes/Clearlooks/openbox-3/ && \
   echo "**** cleanup ****" && \
   apt-get autoclean && \
   rm -rf \
@@ -421,8 +421,9 @@ RUN \
     /tmp/*
 
 # add local files
-COPY /root /
+COPY ./docker-baseimage-kasmvnc/root /
 
 # ports and volumes
 EXPOSE 3000 3001
 VOLUME /config
+
