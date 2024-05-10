@@ -71,6 +71,42 @@ else
     header "using old secrets" 
 fi
 
+#install kasmvnc
+if prompt "Do you want to install kasmvnc?" "$install_kasmvnc"; then
+  echo "You can find the kasm_vnc package for your distro at https://github.com/kasmtech/KasmVNC/releases":
+  read -p "Enter the url to your kasmvnc install or accept the default bookworm 1.3.1: " kasmvnc_url
+  kasmvnc_url=${kasmvnc_url:-https://github.com/kasmtech/KasmVNC/releases/download/v1.3.1/kasmvncserver_bookworm_1.3.1_amd64.deb}
+  echo $name
+
+  wget "${kasmvnc_url}"
+
+  if command -v apt &> /dev/null; then
+    sudo apt-get install ./kasmvncserver_*.deb
+   
+    # Add your user to the ssl-cert group
+    sudo addgroup $USER ssl-cert
+   elif command -v dnf &> /dev/null; then
+    # Ensure KasmVNC dependencies are available
+    sudo dnf config-manager --set-enabled ol8_codeready_builder
+    sudo dnf install oracle-epel-release-el8
+    
+    sudo dnf localinstall ./kasmvncserver_*.rpm
+    
+    # Add your user to the kasmvnc-cert group
+    sudo usermod -a -G kasmvnc-cert $USER
+   elif command -v yum &> /dev/null; then
+    # Ensure KasmVNC dependencies are available
+    sudo yum install epel-release
+    
+    sudo yum install ./kasmvncserver_*.rpm
+    
+    # Add your user to the kasmvnc-cert group
+    sudo usermod -a -G kasmvnc-cert $USER
+   fi
+   rm *kasmvncserver_*
+fi
+
+
 
 #create template json for jinja2 interpolation
 #https://stackoverflow.com/questions/74556998/create-json-of-environment-variables-name-value-pairs-from-array-of-environment
