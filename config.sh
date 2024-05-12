@@ -191,6 +191,16 @@ else
     sudo apt-get install -y qemu qemu-user-static
   fi
 
+  #add ssh
+  #chedk if an sshd is running
+  if [ -z "$(ps -aux | grep sshd)" ]; then
+    sudo apt update
+    sudo apt install -y openssh-server
+    sudo service ssh start
+    sudo systemctl enable ssh
+    sudo ufw allow ssh
+  fi
+
   if [ ${DESKTOP} = true ]; then
     header 'Install window manager'
     #https://www.adamlabay.net/2019/08/10/raspberry-pi-4-kodi-and-chrome-an-uncomfortable-alliance/
