@@ -1,0 +1,14 @@
+version: "3"
+name: ${project}
+services:
+    ${image}:
+        stdin_open: true
+        init: true
+        tty: true
+        volumes:
+            # - ${PWD}:/tmp/roguesecrets
+            # - /:/host_root/
+ #       env_file:
+ #           - /under/my
+        # working_dir: /tmp/roguesecrets
+        image: ${project}/${image}:${tag}
