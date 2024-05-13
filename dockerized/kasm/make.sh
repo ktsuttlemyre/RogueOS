@@ -1,35 +1,68 @@
 #!/bin/bash
-#Devnote
-#
-# Linux Mint 21 is based on Ubuntu 22.04.Jammy Jellyfish
-#
-#
-iso='linuxmint-21.3-cinnamon-64bit.iso'
-wget -e robots=off "https://mirrors.seas.harvard.edu/linuxmint/stable/21.3/${ISO}"
+#custom image name
+set -a      # turn on automatic exporting
+source ./params.env
+set +a      # turn off automatic exporting
 
-#https://medium.com/@SofianeHamlaoui/convert-iso-images-to-docker-images-4e1b1b637d75
-declare -a dirs=("rootfs" "unquashfs" "docker-baseimage-kasmvnc")
 
-for dir in "${dirs[@]}"; do
-  if [ -d "./$dir" ]; then
-   sudo rm -rf "./$dir"
+if [ "$1" == "--" ]; then
+  if [ "$2" == "reset" ]; then
+    cd ..
+    rm -rf RogueSecrets/
+    docker rmi $(docker images --filter=reference="rogueos/*:*" -q) -f
+    git clone https://github.com/ktsuttlemyre/RogueSecrets.git
+    cd RogueSecrets/
+    chmod +x ./index.sh ./reset.sh
+    #./index.sh
   fi
-  mkdir "./$dir"
-done
+fi
 
-git clone https://github.com/linuxserver/docker-baseimage-kasmvnc.git -b ubuntujammy
+git_pull () {
+  git stash
+  git pull
+  git stash pop
+  git submodule update --init --recursive --remote
+}
 
-sudo mount -o loop "${iso}" rootfs
-shfs=$(sudo find . -type f | grep filesystem.squashfs | head -n 1)
-sudo unsquashfs -f -d unsquashfs/ "${shfs}"
-sudo tar -C unsquashfs -c . | docker import - rogueos/base
-sudo umount rootfs
-rm -rf rootfs
-rm -rf unsquashfs
-#test
-#docker run -h ubuntu -i -t rogueos/base bash
+docker_build () {
+  local log; log="$(docker build . -t $project/$image:$tag $1)"
+  if [ $? -ne 0 ]; then
+    echo "Error building image = $project/$image:$tag" > /dev/stderr
+    echo "$log" > /dev/stderr
+  fi
+}
 
-#add kasmvnc
-#https://github.com/linuxserver/docker-baseimage-kasmvnc
-docker build . -t rogueos/rogueos:latest
+#if image not already here
+if [ -z "$(docker images -q $project/$image:$tag 2> /dev/null)" ]; then
+  docker_build
+else
+  #cache to rebuild image evey week hard rebuild every month
+  created_date="$(docker inspect -f '{{ .Created }}' $project/$image:$tag)"
+  created_week=$(date +'%V' -d +'%Y-%m-%dT%H:%M:%S' --date="$created_date")
+  created_month=$(date +'%m' -d +'%Y-%m-%dT%H:%M:%S' --date="$created_date")
+  current_week=$(date +'%V')
+  current_month=$(date +'%m')
+  if [ "$created_week" -ne "$current_week" ]; then
+    git_pull
+    [ "$created_month" -ne "$current_month" ] && cache='--no-cache'
+    docker_build $cache
+  fi
+fi
 
+#Run image
+docker compose -f <( envsubst < docker-compose.yaml ) --env-file <( env ) run --build roguesecrets /home/roguesecrets/main.sh
+if ! [ -z "$is_service" ]; then
+   docker compose -f <( envsubst < docker-compose.yaml ) down
+fi
+
+
+rogue_envvars="${PWD}/.exported_envs.env"
+if [ -f $rogue_envvars ]; then
+  unamestr=$(uname)
+  if [ "$unamestr" = 'Linux' ]; then
+    export $(grep -v '^#' $rogue_envvars | xargs -d '\n')
+  elif [ "$unamestr" = 'FreeBSD' ] || [ "$unamestr" = 'Darwin' ]; then
+    export $(grep -v '^#' $rogue_envvars | xargs -0)
+  fi
+  rm $rogue_envvars
+fi
