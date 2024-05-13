@@ -6,7 +6,7 @@ services:
         stdin_open: true
         init: true
         tty: true
-        volumes:
+#        volumes:
             # - ${PWD}:/tmp/roguesecrets
             # - /:/host_root/
  #       env_file:
