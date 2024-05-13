@@ -25,7 +25,7 @@ RUN apt-get update \
 
 #https://gist.github.com/allisson/7ff8487b696fd30c4767341d3d797595
 COPY ./build ./
-RUN cd ./build && chmod +x ./remove_snap.sh && ./remove_snap.sh && cd ../ && rm -rf ./build
+RUN for sh in ./build/*.sh; do chmod+x $sh && $sh; done && rm -rf ./build
 
 # tip from https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04
 #add-apt-repository -y ppa:mozillateam/ppa
