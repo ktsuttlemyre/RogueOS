@@ -24,34 +24,8 @@ RUN apt-get update \
 #
 
 #https://gist.github.com/allisson/7ff8487b696fd30c4767341d3d797595
-#COPY remove_snap.sh ./
-#RUN chmod +x ./remove_snap.sh && ./remove_snap.sh && rm ./remove_snap.sh
-
-#snap remove --purge firefox
-#snap remove --purge snap-store
-#snap remove --purge snapd-desktop-integration
-#snap remove --purge gtk-common-themes
-#snap remove --purge gnome-3-38-2004
-#snap remove --purge core20
-#snap remove --purge bare
-#snap remove --purge snapd
-#apt remove -y --purge snapd
-#apt-mark hold snapd # avoid install snapd again
-#apt-mark hold gnome-software-plugin-snap # avoid install this plugin
-#apt install -y gnome-software gnome-software-plugin-flatpak
-
-#https://askubuntu.com/questions/1345385/how-can-i-stop-apt-from-installing-snap-packages
-# apt-get autopurge snapd
-#and then create special configuration file for APT, as LinuxMint did:
-#cat <<EOF | sudo tee /etc/apt/preferences.d/nosnap.pref
-## To prevent repository packages from triggering the installation of Snap,
-## this file forbids snapd from being installed by APT.
-## For more information: https://linuxmint-user-guide.readthedocs.io/en/latest/snap.html
-#
-#Package: snapd
-#Pin: release a=*
-#Pin-Priority: -10
-#EOF
+COPY /build ./
+RUN cd ./build && chmod +x ./remove_snap.sh && ./remove_snap.sh && cd .. && rm -rf ./build
 
 # tip from https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04
 #add-apt-repository -y ppa:mozillateam/ppa
@@ -122,18 +96,19 @@ ARG exe=''
 
 ##### GTK Theme Options
 RUN \
-    GTKTHEME=( "Default" "Greybird" "Greybird-dark" "Orchis-Light" "Orchis-Dark" ); \
+    GTKTHEME=( "Default" "Greybird" "Greybird-dark" "Orchis-Light" "Orchis-Dark" ) && \
     ##### Window Manager Options
-    XFWM4THEME=( "Default" "Greybird" "Greybird-dark" "Orchis-Light" "Orchis-Dark" ); \
+    XFWM4THEME=( "Default" "Greybird" "Greybird-dark" "Orchis-Light" "Orchis-Dark" ) && \
     ##### Background Options
     # WALLPAPER[1]=/usr/share/backgrounds/xfce/xfce-verticals.png
     # WALLPAPER[2]=/usr/share/backgrounds/xfce/xfce-blue.png
     # WALLPAPER[3]=/home/toz/upload/2560x1440.png
     # WALLPAPER[4]=/home/toz/upload/1920x1080.png
     ##### make the changes
-    xfconf-query -c xsettings -p /Net/ThemeName -s ${GTKTHEME[2]}; \
-    xfconf-query -c xfwm4 -p /general/theme -s ${XFWM4THEME[2]};
-    #xfconf-query -c xfce4-desktop -p  /backdrop/screen0/monitorVirtual-1/workspace0/last-image -s ${WALLPAPER[$1]}
+    xfconf-query -c xsettings -p /Net/ThemeName -s ${GTKTHEME[2]} && \
+    xfconf-query -c xfwm4 -p /general/theme -s ${XFWM4THEME[2]}
+
+#xfconf-query -c xfce4-desktop -p  /backdrop/screen0/monitorVirtual-1/workspace0/last-image -s ${WALLPAPER[$1]}
 
 
 
