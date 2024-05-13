@@ -62,10 +62,10 @@ RUN \
   && chmod +x $HOME/Desktop/sublime_text.desktop \
   && chown 1000:1000 $HOME/Desktop/sublime_text.desktop
 
-# Add startup rutine
-RUN \
-  echo "/usr/bin/desktop_ready && /opt/sublime_text/sublime_text &" > $STARTUPDIR/custom_startup.sh \
-  && chmod +x $STARTUPDIR/custom_startup.sh
+# # Add startup rutine
+# RUN \
+#   echo "/usr/bin/desktop_ready && /opt/sublime_text/sublime_text &" > $STARTUPDIR/custom_startup.sh \
+#   && chmod +x $STARTUPDIR/custom_startup.sh
 
 # change background RUN wget https://cdn.hipwallpaper.com/i/92/9/0Ts6mr.png -O /usr/share/backgrounds/bg_default.png
 
@@ -78,7 +78,7 @@ RUN \
 COPY ./root /
 #RUN apt-get install -y cinnamon-desktop-environment
 
-ARG exe=''
+#ARG exe=''
 #
 # Configurations
 #
