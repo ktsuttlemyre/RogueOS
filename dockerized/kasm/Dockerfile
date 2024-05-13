@@ -1,6 +1,7 @@
 #https://github.com/linuxserver/docker-baseimage-kasmvnc
 #FROM ghcr.io/linuxserver/baseimage-kasmvnc:debianbookworm
-FROM kasmweb/core-ubuntu-jammy:1.15.0-rolling
+FROM kasmweb/ubuntu-jammy-dind-rootless:1.15.0-rolling
+#FROM kasmweb/core-ubuntu-jammy:1.15.0-rolling
 #custom image code
 #https://kasmweb.com/docs/latest/how_to/building_images.html
 USER root
