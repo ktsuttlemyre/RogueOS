@@ -6,15 +6,15 @@ set +a      # turn off automatic exporting
 
 
 if [ "$1" == "--" ]; then
-  if [ "$2" == "reset" ]; then
-    cd ..
-    rm -rf RogueSecrets/
-    docker rmi $(docker images --filter=reference="rogueos/*:*" -q) -f
-    git clone https://github.com/ktsuttlemyre/RogueSecrets.git
-    cd RogueSecrets/
-    chmod +x ./index.sh ./reset.sh
-    #./index.sh
-  fi
+  # if [ "$2" == "reset" ]; then
+  #   cd ..
+  #   rm -rf RogueSecrets/
+  #   docker rmi $(docker images --filter=reference="rogueos/*:*" -q) -f
+  #   git clone https://github.com/ktsuttlemyre/RogueSecrets.git
+  #   cd RogueSecrets/
+  #   chmod +x ./index.sh ./reset.sh
+  #   #./index.sh
+  # fi
 fi
 
 git_pull () {
@@ -50,19 +50,19 @@ else
 fi
 
 #Run image
-docker compose -f <( envsubst < docker-compose.yaml ) --env-file <( env ) run --build roguesecrets /home/roguesecrets/main.sh
+docker compose -f <( envsubst < docker-compose.yaml ) --env-file <( env ) run --build "${project}"
 if ! [ -z "$is_service" ]; then
    docker compose -f <( envsubst < docker-compose.yaml ) down
 fi
 
 
-rogue_envvars="${PWD}/.exported_envs.env"
-if [ -f $rogue_envvars ]; then
-  unamestr=$(uname)
-  if [ "$unamestr" = 'Linux' ]; then
-    export $(grep -v '^#' $rogue_envvars | xargs -d '\n')
-  elif [ "$unamestr" = 'FreeBSD' ] || [ "$unamestr" = 'Darwin' ]; then
-    export $(grep -v '^#' $rogue_envvars | xargs -0)
-  fi
-  rm $rogue_envvars
-fi
+# rogue_envvars="${PWD}/.exported_envs.env"
+# if [ -f $rogue_envvars ]; then
+#   unamestr=$(uname)
+#   if [ "$unamestr" = 'Linux' ]; then
+#     export $(grep -v '^#' $rogue_envvars | xargs -d '\n')
+#   elif [ "$unamestr" = 'FreeBSD' ] || [ "$unamestr" = 'Darwin' ]; then
+#     export $(grep -v '^#' $rogue_envvars | xargs -0)
+#   fi
+#   rm $rogue_envvars
+# fi
