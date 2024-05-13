@@ -6,6 +6,11 @@ services:
         stdin_open: true
         init: true
         tty: true
+        shm_size: 512m
+        ports:
+            - 6901:6901
+        environment:
+            - VNC_PW=password
 #        volumes:
             # - ${PWD}:/tmp/roguesecrets
             # - /:/host_root/
