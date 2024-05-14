@@ -26,7 +26,7 @@ RUN apt-get update \
 #   Run Build scripts
 ########################
 COPY ./build ./build
-RUN for sh in ./build/*.sh; do chmod +x $sh && $sh; done && rm -rf ./build
+RUN for sh in ./build/pre.*.sh; do chmod +x $sh && $sh; done
 
 # tip from https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04
 #add-apt-repository -y ppa:mozillateam/ppa
@@ -91,6 +91,7 @@ COPY ./root /
 #RUN echo "export DISPLAY=:1" >> /root/.bashrc 
 #RUN echo "export PATH="$PATH"" >> /root/.bashrc 
 
+RUN for sh in ./build/post.*.sh; do chmod +x $sh && $sh; done && rm -rf ./build
 
 ####################################################
 ######### End Rogue Customizations Above ###########
