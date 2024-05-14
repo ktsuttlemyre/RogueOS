@@ -8,7 +8,8 @@ services:
         tty: true
         shm_size: 512m
         ports:
-            - 6901:4902
+            - 6901:6901
+            # or maybe 4902:4902
         environment:
             - VNC_PW=password
 #        volumes:
