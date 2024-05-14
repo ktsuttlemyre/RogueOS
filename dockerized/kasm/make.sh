@@ -4,6 +4,7 @@ set -a      # turn on automatic exporting
 source ./params.env
 set +a      # turn off automatic exporting
 
+export DOCKER_BUILDKIT=1
 
 # if [ "$1" == "--" ]; then
 #   if [ "$2" == "reset" ]; then
