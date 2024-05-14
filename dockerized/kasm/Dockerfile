@@ -63,7 +63,7 @@ RUN for dsk in $HOME/Desktop/*.desktop; do chmod +x $dsk && chown 1000:1000 $dsk
 
 # # Add startup rutine
 RUN \
-  echo "/usr/bin/desktop_ready && xfconf-query -c xsettings -p /Net/ThemeName -s 'Greybird-dark' && xfconf-query -c xfwm4 -p /general/theme -s 'Greybird-dark'" > $STARTUPDIR/custom_script.sh \
+  echo "until [ -f /usr/bin/desktop_ready ];do sleep 1; done && xfconf-query -c xsettings -p /Net/ThemeName -s 'Greybird-dark' && xfconf-query -c xfwm4 -p /general/theme -s 'Greybird-dark'" > $STARTUPDIR/custom_script.sh \
   && chmod +x $STARTUPDIR/custom_script.sh
 
 
