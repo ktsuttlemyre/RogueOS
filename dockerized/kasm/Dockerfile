@@ -92,7 +92,7 @@ COPY ./root /
 #RUN echo "export DISPLAY=:1" >> /root/.bashrc 
 #RUN echo "export PATH="$PATH"" >> /root/.bashrc 
 
-RUN for sh in ./build/post.*.sh; do chmod +x $sh && $sh; done && rm -rf ./build
+#RUN for sh in ./build/post.*.sh; do chmod +x $sh && $sh; done && rm -rf ./build
 
 ####################################################
 ######### End Rogue Customizations Above ###########
