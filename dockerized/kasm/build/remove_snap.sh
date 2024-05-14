@@ -1,4 +1,5 @@
 #/bin/bash
+# https://gist.github.com/allisson/7ff8487b696fd30c4767341d3d797595
 snap remove --purge firefox
 snap remove --purge snap-store
 snap remove --purge snapd-desktop-integration
