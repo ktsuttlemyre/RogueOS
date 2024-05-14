@@ -76,6 +76,8 @@ RUN \
 
 
 COPY ./root /
+RUN chmod +x /dockerstartup/custom_startup.sh
+
 #RUN apt-get install -y cinnamon-desktop-environment
 
 #ARG exe=''
