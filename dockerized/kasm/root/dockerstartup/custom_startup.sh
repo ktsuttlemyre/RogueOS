@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# This file is part of the kasm vnc/kasm workspaces images
+# it was created by the kasm team to run dockerd-rootless.sh which removed startup functionality for end users
+# it is copied from kasm dnd rootless 1.15.0 docker image and file path /dockerstartup/custom_startup.sh
+# I modified it to call /dockerstartup/custom_script.sh 
 set -ex
 START_COMMAND="$DOCKER_BIN/dockerd-rootless.sh"
 PGREP="dockerd"
