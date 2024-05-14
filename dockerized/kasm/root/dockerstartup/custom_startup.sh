@@ -77,7 +77,7 @@ kasm_startup() {
     fi
 
 } 
-/dockerstartup/custom_startup.sh
+/dockerstartup/custom_startup.sh &
 if [ -n "$GO" ] || [ -n "$ASSIGN" ] ; then
     kasm_exec
 else
