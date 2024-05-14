@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-#this will overwrite /dockerstartup/custom_startup.sh
-# this is modifed from the kasm dnd rootless 1.15.0 image
 set -ex
 START_COMMAND="$DOCKER_BIN/dockerd-rootless.sh"
 PGREP="dockerd"
@@ -67,6 +65,7 @@ kasm_startup() {
                 /usr/bin/desktop_ready
                 set +e
                 bash ${MAXIMIZE_SCRIPT} &
+                bash $STARTUPDIR/custom_script.sh &
                 $START_COMMAND $ARGS
                 set -e
             fi
