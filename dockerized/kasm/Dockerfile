@@ -62,9 +62,9 @@ RUN for dsk in $HOME/Desktop/*.desktop; do chmod +x $dsk && chown 1000:1000 $dsk
 
 
 # # Add startup rutine
-RUN \
-  echo "until [ -f /usr/bin/desktop_ready ];do sleep 1; done && xfconf-query -c xsettings -p /Net/ThemeName -s 'Greybird-dark' && xfconf-query -c xfwm4 -p /general/theme -s 'Greybird-dark'" > $STARTUPDIR/custom_startup.sh \
-  && chmod +x $STARTUPDIR/custom_startup.sh
+# RUN \
+#   echo "until [ -f /usr/bin/desktop_ready ];do sleep 1; done && xfconf-query -c xsettings -p /Net/ThemeName -s 'Greybird-dark' && xfconf-query -c xfwm4 -p /general/theme -s 'Greybird-dark'" > $STARTUPDIR/custom_startup.sh \
+#   && chmod +x $STARTUPDIR/custom_startup.sh
 
 
 # change background RUN wget https://cdn.hipwallpaper.com/i/92/9/0Ts6mr.png -O /usr/share/backgrounds/bg_default.png
