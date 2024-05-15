@@ -61,7 +61,8 @@ run () {
 
   container_name=rogueos-${host_name:-base}
   #!!! don't use --rm in run unless you set up a server on the host to run docker commit before exiting the container
-  docker run --privileged  -it --name $container_name -v $HOME/$host_name:/home/rogue --shm-size=512m -p 6901:6901 -e VNC_PW=password $image_name
+  mkdir -p $HOME/rogueos_homes/$user_name
+  docker run --privileged  -it --name $container_name -v $HOME/$host_name:$HOME/rogueos_homes/$user_name --shm-size=512m -p 6901:6901 -e VNC_PW=password $image_name
   if ! [ -z "$is_service" ]; then
      docker compose -f <( envsubst < docker-compose.yaml ) down
   fi
