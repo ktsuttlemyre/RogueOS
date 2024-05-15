@@ -81,12 +81,12 @@ run () {
 }
 
 #if [ "$1" == "--" ]; then
-case "$2" in
+case "$1" in
   "build")
-    build "$3"
+    build "$2"
     ;;
   "run")
-    run "$3"
+    run "$2"
     ;;
   "inspect")
      echo "devnote: use https://github.com/wagoodman/dive/"
