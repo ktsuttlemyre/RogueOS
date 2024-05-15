@@ -16,15 +16,15 @@ git_pull () {
 
 build () {
   cache="${1}"
-  # local log; log="$(docker build . -t $project/$image:$tag $1)"
-  # if [ $? -ne 0 ]; then
-  #   echo "Error building image = $project/$image:$tag" > /dev/stderr
-  #   echo "$log" > /dev/stderr
-  #   exit 1
-  # fi
+  local log; log="$(docker build . -t $project/$image:$tag $1)"
+  if [ $? -ne 0 ]; then
+    echo "Error building image = $project/$image:$tag" > /dev/stderr
+    echo "$log" > /dev/stderr
+    exit 1
+  fi
   
   #Build image
-  docker compose -f <( envsubst < docker-compose.yaml ) --env-file <( env ) build $cache
+  #docker compose -f <( envsubst < docker-compose.yaml ) --env-file <( env ) build $cache
 }
 
 
@@ -85,6 +85,7 @@ case "$1" in
   "build")
     build "$2"
     ;;
+  "")
   "run")
     run "$2"
     ;;
