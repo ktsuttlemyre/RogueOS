@@ -1,5 +1,6 @@
 #!/bin/bash
-
+#disabled for now
+exit 0
 #TODO run RSYNC to rogueos_data
 
 #SYMLINK only things that will sync
