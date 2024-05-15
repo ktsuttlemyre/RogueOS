@@ -84,7 +84,7 @@ RUN \
 
 
 COPY ./root /
-RUN chmod +x /dockerstartup/custom_startup.sh
+RUN chmod +x /dockerstartup/custom_startup.sh kasm_post_run_root.sh
 
 #RUN apt-get install -y cinnamon-desktop-environment
 
