@@ -1,3 +1,11 @@
+#Devnotes
+#
+# Build image history
+#FROM https://github.com/kasmtech/workspaces-core-images/blob/develop/dockerfile-kasm-core
+#FROM https://github.com/kasmtech/workspaces-images/blob/develop/dockerfile-kasm-ubuntu-focal-dind-rootless
+#
+#
+
 #https://github.com/linuxserver/docker-baseimage-kasmvnc
 #FROM ghcr.io/linuxserver/baseimage-kasmvnc:debianbookworm
 FROM kasmweb/ubuntu-jammy-dind-rootless:1.15.0-rolling
