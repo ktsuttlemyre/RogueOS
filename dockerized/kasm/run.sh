@@ -14,7 +14,7 @@ git_pull () {
 }
 
 
-build () {
+build_base () {
   cache="${1}"
   local log; log="$(docker build . -t $project/$image:$tag $1)"
   if [ $? -ne 0 ]; then
@@ -31,7 +31,9 @@ build () {
 run () {
   host_name="${1}"
   user_name="${2:-kasm-user}"
-  
+  if [ -z "$(docker images -q $project/$image:$tag 2> /dev/null)" ]; then
+    build_base
+  fi
   if [ -z "$host_name" ]; then
     image_name=${project}/${image}:${tag}
   else
@@ -42,7 +44,7 @@ run () {
   fi
   #if image not already here
   # if [ -z "$(docker images -q $project/$image:$tag 2> /dev/null)" ]; then
-  #   build
+  #   build_base
   # else
   #   #cache to rebuild image evey week hard rebuild every month
   #   created_date="$(docker inspect -f '{{ .Created }}' $project/$image:$tag)"
@@ -53,7 +55,7 @@ run () {
   #   if [ "$created_week" -ne "$current_week" ]; then
   #     git_pull
   #     [ "$created_month" -ne "$current_month" ] && cache='--no-cache'
-  #     build $cache
+  #     build_base $cache
   #   fi
   # fi
 
@@ -83,10 +85,9 @@ run () {
 #if [ "$1" == "--" ]; then
 case "$1" in
   "build")
-    build "$2"
+    build_base "$2"
     ;;
-  "")
-  "run")
+  "run"|"")
     run "$2"
     ;;
   "inspect")
