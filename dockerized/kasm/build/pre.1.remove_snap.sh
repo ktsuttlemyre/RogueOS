@@ -8,13 +8,13 @@ snap remove --purge gnome-3-38-2004
 snap remove --purge core20
 snap remove --purge bare
 snap remove --purge snapd
-apt remove -y --purge snapd
+apt-get remove -y --purge snapd
 apt-mark hold snapd # avoid install snapd again
 apt-mark hold gnome-software-plugin-snap # avoid install this plugin
-apt install -y gnome-software gnome-software-plugin-flatpak
+apt-get install -y gnome-software gnome-software-plugin-flatpak
 
 #https://askubuntu.com/questions/1345385/how-can-i-stop-apt-from-installing-snap-packages
-apt autopurge snapd
+apt-get autopurge snapd
 #and then create special configuration file for APT, as LinuxMint did:
 cat <<EOF | sudo tee /etc/apt/preferences.d/nosnap.pref
 # To prevent repository packages from triggering the installation of Snap,
