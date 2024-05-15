@@ -29,7 +29,7 @@ build_base () {
 
 
 run () {
-  host_name="${1}"
+  host_name="${1:-rogue}"
   user_name="${2:-kasm-user}"
   if [ -z "$(docker images -q $project/$image:$tag 2> /dev/null)" ]; then
     build_base
