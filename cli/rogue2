@@ -1,0 +1,68 @@
+#!/bin/bash
+set -x
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# source "$(dirname $script_dir)/env"
+
+#if first variable == --help then print readme.md
+if [ "$1" == "--help" ]; then
+	# if glow exists then use that
+	if command -v glow &> /dev/null; then
+		glow "$script_dir/README.md"
+	else
+		cat "$script_dir/README.md"
+	fi
+	exit 0
+fi
+
+
+inpath=$1
+cmd="${@:2}"
+# if [[ $inpath == ~* ]]; then
+# 	#inpath="${inpath/#\~/$HOME}"
+# 	echo "unaccepted path"
+# 	exit 1
+# fi
+# if [[ $inpath == /* ]]; then
+# 	#inpath="${inpath/#\/}"
+# 	echo "unaccepted path"
+# 	exit 1
+# fi
+
+#https://medium.com/oracledevs/creating-an-oracle-cloud-infrastructure-cli-toolkit-docker-image-35be0ca71aa
+#TODO use wrapper
+#docker run \
+#  --interactive --tty --rm \
+#  --volume "$PWD":/oracle-cloud \
+#  --workdir /oracle-cloud \
+#  python/python3:latest "$@"
+
+
+echo $cmd
+
+path_array=$(echo "$inpath" | sed 's/\//\n/g')
+
+echo $path_array
+
+path="$script_dir"
+while IFS= read -r path_e; do
+	path="$path/$path_e"
+	#check if path is a directory or file
+	if [[ -d $path ]]; then
+		#iterate all files in path that are hidden files and source them
+		for file in $path/.*; do
+			[[ -f $file ]] && source $file
+		done
+		continue
+	fi
+
+	#if path variables is a file then source it
+	if [[ -f $path ]]; then
+		source $path "${cmd}"
+		#if it fails then exit with the same error numbe as the previous command
+		if [ $? -ne 0 ]; then
+			exit $?
+		fi
+		break
+	fi
+
+done <<< "$path_array"
