@@ -1,5 +1,6 @@
 #!/bin/bash
-set -x
+#set -x
+set -e
 script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # source "$(dirname $script_dir)/env"
 
@@ -14,9 +15,7 @@ if [ "$1" == "--help" ]; then
 	exit 0
 fi
 
-
 inpath=$1
-cmd="${@:2}"
 # if [[ $inpath == ~* ]]; then
 # 	#inpath="${inpath/#\~/$HOME}"
 # 	echo "unaccepted path"
@@ -37,11 +36,9 @@ cmd="${@:2}"
 #  python/python3:latest "$@"
 
 
-echo $cmd
-
 path_array=$(echo "$inpath" | sed 's/\//\n/g')
 
-echo $path_array
+#echo $path_array
 
 path="$script_dir"
 while IFS= read -r path_e; do
@@ -50,15 +47,29 @@ while IFS= read -r path_e; do
 	if [[ -d $path ]]; then
 		#iterate all files in path that are hidden files and source them
 		for file in $path/.*; do
-			[[ -f $file ]] && source $file
+			if [[ -f $file ]]; then 
+				#if file ends with .sh or .env
+				if [[ $file == *.sh || $file == *.env ]]; then
+					source $file
+				else
+					env $file
+				fi
+			fi
 		done
 		continue
 	fi
 
 	#if path variables is a file then source it
 	if [[ -f $path ]]; then
-		source $path "${cmd}"
-		#if it fails then exit with the same error numbe as the previous command
+		exec env $path "${@:2}" < /dev/tty
+		# if test ! -t 0; then
+		#     #echo "Read from stdin"
+		#     #currently doesnt work with decrypt
+		#     exec env $path "${@:2}" < /dev/stdin # or < /proc/$$/fd/0 for stdin
+		# else
+		# 	exec env $path "${@:2}" < /dev/tty # or < /proc/$$/fd/0 for stdin
+		# fi
+		#if it fails then exit with the same error number as the previous command
 		if [ $? -ne 0 ]; then
 			exit $?
 		fi
