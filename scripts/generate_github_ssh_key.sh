@@ -88,13 +88,14 @@ eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/github_rsa
 echo "Added SSH key to the ssh-agent"
 
-if ! grep -q "Host github.com" ~/.ssh/config; then
+if ! grep -q "Host github.com" ~/.ssh/config > /dev/null; then
+echo "Adding SSH key to the ~/.ssh/config"
 cat > ~/.ssh/config <<EOF
 Host github.com
     User git
     IdentityFile ~/.ssh/github_rsa
 EOF
-echo "Added SSH key to the ~/.ssh.config"
+echo "Added SSH key to the ~/.ssh/config"
 fi
 
 # Test the SSH connection
