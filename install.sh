@@ -392,6 +392,7 @@ if prompt "Do you wish to install kde plasma? This will allow kasmvnc to run in 
     sudo apt update; sudo apt upgrade
     sudo apt-mark minimize-manual
     sudo apt install kubuntu-desktop
+    sudo apt install $(check-language-support -l en)
     sudo apt remove ubuntu-desktop
     sudo apt remove ubuntu-desktop-minimal || true
     sudo apt remove ubuntu-desktop-raspi || true
