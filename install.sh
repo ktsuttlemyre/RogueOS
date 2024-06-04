@@ -392,6 +392,8 @@ if prompt "Do you wish to install kde plasma? This will allow kasmvnc to run in 
     sudo apt update; sudo apt upgrade
     sudo apt-mark minimize-manual
     sudo apt install kubuntu-desktop
+    #TODO I dont trust this lang but it would be nice to make the language support auto
+    #lang=$locale | grep ^LANG= | cut -d\" -f2 | cut -d_ -f1 | cut -d= -f2)
     sudo apt install $(check-language-support -l en)
     sudo apt remove ubuntu-desktop
     sudo apt remove ubuntu-desktop-minimal || true
