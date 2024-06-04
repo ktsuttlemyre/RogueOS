@@ -104,6 +104,7 @@ if prompt "Do you want to install kasmvnc?" "$install_kasmvnc"; then
     sudo usermod -a -G kasmvnc-cert $USER
    fi
    rm *kasmvncserver_*
+   sudo cp ./root/etc/kasmvnc/kasmvnc.yaml /etc/kasmvnc/kasmvnc.yaml
 fi
 
 
