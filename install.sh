@@ -386,6 +386,21 @@ source "${rogue_wdir}/.venv/bin/activate"
 #python3 -m pip install Django
 
 
+#https://askubuntu.com/questions/1390779/how-do-i-safely-switch-from-gnome-to-kde-plasma
+if prompt "Do you wish to install kde plasma? This will allow kasmvnc to run in gpu accelerated mode " $install_kde; then
+  if [[ $XDG_CURRENT_DESKTOP == *"GNOME"* ]]; then
+    sudo apt update; sudo apt upgrade
+    sudo apt-mark minimize-manual
+    sudo apt install kubuntu-desktop
+    sudo apt remove ubuntu-desktop
+    sudo apt remove ubuntu-desktop-minimal || true
+    sudo apt remove ubuntu-desktop-raspi || true
+    //TODO auto logout and log into a kde session
+    gnome-session-quit
+    sudo apt autoremove
+  fi
+fi
+
 
 ###########################################################################################################
 source $rogue_wdir/config.sh "$env_file"
