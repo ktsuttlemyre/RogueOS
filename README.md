@@ -139,3 +139,25 @@ $cmd
 ```
 
 
+### Manage KASMVNC
+
+#### configs
+main config is in /root/etc/kasmvnc/kasmvnc.yaml
+xstart is in /home/.vnc/xstart
+
+#### Additinal install
+Turn off compositing https://kasmweb.com/kasmvnc/docs/master/gpu_acceleration.html#desktop-compositing
+Dont use Gnome
+use x11 not wayland 
+ - disable wayland https://askubuntu.com/questions/1428525/how-to-permanetely-disable-wayland
+Use nouveau2 drivers (open source) because Nvidia doesnt support DRI3
+
+
+#### Stopping KASMVNC
+killall Xvnc; kasmvncserver -kill :1 
+where :1 can be any display number, ususally :1 unless running mutiple instances
+
+#### List all KASMVNC servers
+kasmvncserver -list
+
+
