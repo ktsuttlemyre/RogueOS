@@ -20,8 +20,13 @@ set -x
 
 #my solution
 XDG_CURRENT_DESKTOP=KDE exec dbus-launch --exit-with-session /usr/bin/plasmashell
-#XDG_CURRENT_DESKTOP=KDE exec dbus-launch --exit-with-session /usr/bin/kwin
+###XDG_CURRENT_DESKTOP=KDE exec dbus-launch --exit-with-session /usr/bin/kwin
 /usr/bin/kwin
 #when plasmashell was fork bombing i tried to stop it with this but didnt work
 #BACK_PID=$!
 #wait $BACK_PID
+
+#for more information see 
+#https://github.com/kasmtech/KasmVNC/blob/9f7a6b58cedaa8637e9274e428a498e023b0fc2f/builder/startup/deb/select-de.sh#L>
+
+
