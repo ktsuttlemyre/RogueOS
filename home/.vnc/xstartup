@@ -1,0 +1,26 @@
+#!/bin/sh
+set -x
+#original for gnome
+#XDG_CURRENT_DESKTOP=GNOME exec dbus-launch --exit-with-session /usr/bin/gnome-session
+
+#fallback for terminal if nothisng works
+#xterm
+
+#test line
+#startkde plasmashell
+
+#old kde
+#DISPLAY=:0 kstart plasma-desktop
+#https://unix.stackexchange.com/questions/548704/xstartup-for-kde
+#/etc/init.d/kdm restart
+#[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+#[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+#vncconfig -iconic &
+#dbus-launch --exit-with-session startkde &
+
+#my solution
+XDG_CURRENT_DESKTOP=KDE exec dbus-launch --exit-with-session /usr/bin/plasmashell
+
+#when plasmashell was fork bombing i tried to stop it with this but didnt work
+#BACK_PID=$!
+#wait $BACK_PID
