@@ -1,31 +1,31 @@
 ---
 desktop:
-  resolution:
-    width: 1024
-    height: 768
+#  resolution:
+#    width: 1024
+#    height: 768
   allow_resize: true
   pixel_depth: 24
   gpu:
-    hw3d: true
+    hw3d: false
     drinode: /dev/dri/renderD128
 
-network:
-  protocol: http
-  interface: 0.0.0.0
-  websocket_port: auto
-  use_ipv4: true
-  use_ipv6: true
-  udp:
-    public_ip: auto
-    port: auto
-    stun_server: auto
-  ssl:
-    pem_certificate: /etc/ssl/certs/ssl-cert-snakeoil.pem
-    pem_key: /etc/ssl/private/ssl-cert-snakeoil.key
-    require_ssl: true
-  # unix_relay:
-  #   name:
-  #   path:
+#network:
+#  protocol: http
+#  interface: 0.0.0.0
+#  websocket_port: auto
+#  use_ipv4: true
+#  use_ipv6: true
+#  udp:
+#    public_ip: auto
+#    port: auto
+#    stun_server: auto
+#  ssl:
+#    pem_certificate: /etc/ssl/certs/ssl-cert-snakeoil.pem
+#    pem_key: /etc/ssl/private/ssl-cert-snakeoil.key
+#    require_ssl: true
+#  # unix_relay:
+#  #   name:
+#  #   path:
 user_session:
   # session_type: shared
   new_session_disconnects_existing_exclusive_session: false
@@ -33,10 +33,10 @@ user_session:
   concurrent_connections_prompt_timeout: 10
   idle_timeout: never
 keyboard:
-  remap_keys:
-    # - 0x22->0x40
-  ignore_numlock: false
-  raw_keyboard: false
+#  remap_keys:
+#    # - 0x22->0x40
+#  ignore_numlock: false
+#  raw_keyboard: false
 
 #Mouse, trackpad, etc.
 pointer:
@@ -131,20 +131,20 @@ encoding:
   zrle_zlib_level: auto
   hextile_improved_compression: true
 
-server:
-  http:
-    headers:
-      - Cross-Origin-Embedder-Policy=require-corp
-      - Cross-Origin-Opener-Policy=same-origin
-    httpd_directory: /usr/share/kasmvnc/www
-  advanced:
-    x_font_path: auto
-    kasm_password_file: ${HOME}/.kasmpasswd
-    x_authority_file: auto
-  auto_shutdown:
-    no_user_session_timeout: never
-    active_user_session_timeout: never
-    inactive_user_session_timeout: never
+#server:
+#  http:
+#    headers:
+#      - Cross-Origin-Embedder-Policy=require-corp
+#      - Cross-Origin-Opener-Policy=same-origin
+#    httpd_directory: /usr/share/kasmvnc/www
+#  advanced:
+#    x_font_path: auto
+#    kasm_password_file: ${HOME}/.kasmpasswd
+#    x_authority_file: auto
+#  auto_shutdown:
+#    no_user_session_timeout: never
+#    active_user_session_timeout: never
+#    inactive_user_session_timeout: never
 
 command_line:
   prompt: true
