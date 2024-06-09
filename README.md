@@ -160,4 +160,7 @@ where :1 can be any display number, ususally :1 unless running mutiple instances
 #### List all KASMVNC servers
 kasmvncserver -list
 
+if you get an error about connectiong to the snakeoil certificate make sure to run as usergroup
+sg ssl-cert kasmvncserver 
+
 
