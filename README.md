@@ -163,4 +163,7 @@ kasmvncserver -list
 if you get an error about connectiong to the snakeoil certificate make sure to run as usergroup
 sg ssl-cert kasmvncserver 
 
+docker run --privileged --rm -it --shm-size=512m -p 6901:6901 -e VNC_PW=password -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -h $HOSTNAME -v $HOME/.Xauthority:/home/kasm-user/.Xauthority  ghcr.io/ktsuttlemyre/rogueos:master /opt/sublime_text/sublime_text
 
+
+https://l10nn.medium.com/running-x11-applications-with-docker-75133178d090
