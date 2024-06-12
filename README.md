@@ -167,3 +167,6 @@ docker run --privileged --rm -it --shm-size=512m -p 6901:6901 -e VNC_PW=password
 
 
 https://l10nn.medium.com/running-x11-applications-with-docker-75133178d090
+
+
+kqsfl@cab2kqsfl:~/tmp$ setsid sh -c 'exec x11docker --desktop --xorg --init=tini x11docker/xfce <> /dev/tty2 >&0 2>&1'
