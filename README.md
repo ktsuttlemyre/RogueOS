@@ -1,3 +1,10 @@
+#depricated
+This is currently being moved to RogueCLI
+
+#migration details
+./cli is migrated
+
+
 #Descripion
 
 For many years computers always had a keyboard, mouse, and monitor. After introducing the internet and the concept of The Internet of Things computers interact with and each other in many different ways. This project is the base OS for several of my other projects. RogueOS attempts to become what you need when you need it to fill that need. It does this by detecting how it can interact with the environment and sets itself up to best use that interaction.
