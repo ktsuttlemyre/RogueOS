@@ -3,6 +3,7 @@ This is currently being moved to RogueCLI
 
 #migration details
 ./cli is migrated
+./service containers migrated
 
 
 #Descripion
